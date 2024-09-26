@@ -1,0 +1,44 @@
+{
+	"schemaVersion": 1,
+	"id": "redstone_kit",
+	"version": "${version}",
+	"name": "Redstone Kit",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/redstone_kit/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"github.xevira.redstone_kit.RedstoneKit"
+		],
+		"client": [
+			"github.xevira.redstone_kit.RedstoneKitClient"
+		],
+		"fabric-datagen": [
+			"github.xevira.redstone_kit.RedstoneKitDataGenerator"
+		]
+	},
+	"mixins": [
+		"redstone_kit.mixins.json",
+		{
+			"config": "redstone_kit.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.16.5",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "redstone_kit:block/weather_detector"
+    }
+  }
+}
