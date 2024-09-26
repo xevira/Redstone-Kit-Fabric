@@ -2,8 +2,8 @@
   "parent": "block/thin_block",
   "textures": {
     "particle": "#top",
-    "side": "redstone_kit::block/weather_detector_side",
-    "top": "redstone_kit::block/weather_detector_top"
+    "side": "redstone_kit:block/weather_detector_side",
+    "top": "redstone_kit:block/weather_detector_top"
 
   },
   "elements": [
