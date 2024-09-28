@@ -31,5 +31,29 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Blocks.STONE_SLAB), conditionsFromItem(Blocks.STONE_SLAB))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_INVERTER_BLOCK)
+                .input('r', Items.REDSTONE)
+                .input('R', Items.REDSTONE_TORCH)
+                .input('Q', Items.QUARTZ)
+                .input('S', Blocks.STONE)
+                .pattern("rQR")
+                .pattern("SSS")
+                .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
+                .criterion(hasItem(Items.REDSTONE_TORCH), conditionsFromItem(Items.REDSTONE_TORCH))
+                .criterion(hasItem(Items.QUARTZ), conditionsFromItem(Items.QUARTZ))
+                .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_TICKER_BLOCK)
+                .input('R', Items.REDSTONE_TORCH)
+                .input('E', Items.ENDER_EYE)
+                .input('S', Blocks.STONE)
+                .pattern(" R ")
+                .pattern("RER")
+                .pattern("SSS")
+                .criterion(hasItem(Items.REDSTONE_TORCH), conditionsFromItem(Items.REDSTONE_TORCH))
+                .criterion(hasItem(Items.ENDER_EYE), conditionsFromItem(Items.ENDER_EYE))
+                .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
+                .offerTo(exporter);
     }
 }

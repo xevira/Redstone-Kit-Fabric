@@ -1,0 +1,127 @@
+{
+  "variants": {
+    "facing=east,mode=digital,powered=false,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter",
+      "y": 270
+    },
+    "facing=east,mode=digital,powered=true,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter_on",
+      "y": 270
+    },
+    "facing=east,mode=analog,powered=false,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter_lit_analog",
+      "y": 270
+    },
+    "facing=east,mode=analog,powered=true,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter_on_analog",
+      "y": 270
+    },
+    "facing=east,mode=digital,powered=false,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter",
+      "y": 270
+    },
+    "facing=east,mode=digital,powered=true,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter_on",
+      "y": 270
+    },
+    "facing=east,mode=analog,powered=false,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter_lit_analog",
+      "y": 270
+    },
+    "facing=east,mode=analog,powered=true,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter_lit_on_analog",
+      "y": 270
+    },
+
+    "facing=north,mode=digital,powered=false,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter",
+      "y": 180
+    },
+    "facing=north,mode=digital,powered=true,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter_on",
+      "y": 180
+    },
+    "facing=north,mode=analog,powered=false,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter_lit_analog",
+      "y": 180
+    },
+    "facing=north,mode=analog,powered=true,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter_on_analog",
+      "y": 180
+    },
+    "facing=north,mode=digital,powered=false,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter",
+      "y": 180
+    },
+    "facing=north,mode=digital,powered=true,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter_on",
+      "y": 180
+    },
+    "facing=north,mode=analog,powered=false,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter_lit_analog",
+      "y": 180
+    },
+    "facing=north,mode=analog,powered=true,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter_lit_on_analog",
+      "y": 180
+    },
+
+    "facing=south,mode=digital,powered=false,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter"
+    },
+    "facing=south,mode=digital,powered=true,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter_on"
+    },
+    "facing=south,mode=analog,powered=false,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter_lit_analog"
+    },
+    "facing=south,mode=analog,powered=true,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter_on_analog"
+    },
+    "facing=south,mode=digital,powered=false,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter"
+    },
+    "facing=south,mode=digital,powered=true,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter_on"
+    },
+    "facing=south,mode=analog,powered=false,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter_lit_analog"
+    },
+    "facing=south,mode=analog,powered=true,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter_lit_on_analog"
+    },
+
+    "facing=west,mode=digital,powered=false,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter",
+      "y": 90
+    },
+    "facing=west,mode=digital,powered=true,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter_on",
+      "y": 90
+    },
+    "facing=west,mode=analog,powered=false,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter_lit_analog",
+      "y": 90
+    },
+    "facing=west,mode=analog,powered=true,lit=false": {
+      "model": "redstone_kit:block/redstone_inverter_on_analog",
+      "y": 90
+    },
+    "facing=west,mode=digital,powered=false,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter",
+      "y": 90
+    },
+    "facing=west,mode=digital,powered=true,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter_on",
+      "y": 90
+    },
+    "facing=west,mode=analog,powered=false,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter_lit_analog",
+      "y": 90
+    },
+    "facing=west,mode=analog,powered=true,lit=true": {
+      "model": "redstone_kit:block/redstone_inverter_lit_on_analog",
+      "y": 90
+    }
+  }
+}

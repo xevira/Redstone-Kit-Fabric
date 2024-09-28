@@ -1,0 +1,9 @@
+{
+  "redstone_inverter_click": {
+    "subtitle": "sound.redstone_kit.redstone_inverter_click",
+    "sounds": [
+      "redstone_kit:redstone_click"
+    ]
+  }
+
+}
