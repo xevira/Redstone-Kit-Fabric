@@ -1,7 +1,0 @@
-{
-  "block.redstone_kit.weather_detector": "Weather Detector",
-  "block.redstone_kit.redstone_inverter": "Redstone Inverter",
-  "block.redstone_kit.redstone_ticker": "Redstone Ticker",
-
-  "sound.redstone_kit.redstone_inverter_click": "Inverter clicks"
-}

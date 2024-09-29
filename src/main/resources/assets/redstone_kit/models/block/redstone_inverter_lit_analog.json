@@ -4,8 +4,7 @@
         "particle": "redstone_kit:block/redstone_inverter_analog",
         "slab": "minecraft:block/smooth_stone",
         "top": "redstone_kit:block/redstone_inverter_analog",
-        "unlit": "minecraft:block/redstone_torch_off",
-        "lit": "minecraft:block/redstone_torch"
+        "torch": "minecraft:block/redstone_torch"
     },
     "elements": [
         {   "from": [ 0, 0, 0 ],
@@ -19,15 +18,24 @@
                 "east":  { "uv": [ 0, 14, 16, 16 ], "texture": "#slab", "cullface": "east" }
             }
         },
-        {   "from": [ 7, 2, 2 ],
-            "to": [ 9, 4, 4 ],
+        {   "from": [ 7, 7, 2 ],
+            "to": [ 9, 7, 4 ],
             "faces": {
-                "down":  { "uv": [ 7, 13, 9, 15 ], "texture": "#lit" },
-                "up":    { "uv": [ 7,  6, 9,  8 ], "texture": "#lit" },
-                "north": { "uv": [ 7,  6, 9,  8 ], "texture": "#lit" },
-                "south": { "uv": [ 7,  6, 9,  8 ], "texture": "#lit" },
-                "west":  { "uv": [ 7,  6, 9,  8 ], "texture": "#lit" },
-                "east":  { "uv": [ 7,  6, 9,  8 ], "texture": "#lit" }
+                "up":   { "uv": [ 7, 6, 9, 8 ], "texture": "#torch" }
+            }
+        },
+        {   "from": [ 7, 2, 1 ],
+            "to": [ 9, 8, 5 ],
+            "faces": {
+                "west": { "uv": [ 6, 5, 10, 11 ], "texture": "#torch" },
+                "east": { "uv": [ 6, 5, 10, 11 ], "texture": "#torch" }
+            }
+        },
+        {   "from": [ 6, 2, 2 ],
+            "to": [ 10, 8, 4 ],
+            "faces": {
+                "north": { "uv": [ 6, 5, 10, 11 ], "texture": "#torch" },
+                "south": { "uv": [ 6, 5, 10, 11 ], "texture": "#torch" }
             }
         }
     ]

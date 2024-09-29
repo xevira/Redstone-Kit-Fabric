@@ -32,8 +32,6 @@ public class RedstoneTickerBlock extends AbstractRedstoneGateBlock implements Bl
     public static final MapCodec<RedstoneTickerBlock> CODEC = createCodec(RedstoneTickerBlock::new);
 
     public static final int FULL_POWER = 15;
-    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-    public static final BooleanProperty POWERED = Properties.POWERED;
     public static final BooleanProperty LIT = Properties.LIT;
 
     public RedstoneTickerBlock(Settings settings) {

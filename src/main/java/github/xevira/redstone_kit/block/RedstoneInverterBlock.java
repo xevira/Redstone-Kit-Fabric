@@ -7,14 +7,10 @@ import github.xevira.redstone_kit.util.BlockProperties;
 import github.xevira.redstone_kit.util.InverterMode;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.ComparatorBlockEntity;
-import net.minecraft.block.enums.ComparatorMode;
-import net.minecraft.entity.decoration.ItemFrameEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
@@ -32,7 +28,7 @@ import net.minecraft.world.tick.TickPriority;
 public class RedstoneInverterBlock extends AbstractRedstoneGateBlock implements BlockEntityProvider {
     public static final int FULL_POWER = 15;
     public static final MapCodec<RedstoneInverterBlock> CODEC = createCodec(RedstoneInverterBlock::new);
-    public static final EnumProperty<InverterMode> MODE = BlockProperties.INVERTOR_MODE;
+    public static final EnumProperty<InverterMode> MODE = BlockProperties.INVERTER_MODE;
     public static final BooleanProperty LIT = Properties.LIT;
 
     public RedstoneInverterBlock(Settings settings) {

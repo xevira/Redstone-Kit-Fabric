@@ -18,4 +18,9 @@ public class RedstoneKit implements ModInitializer {
 	public static Identifier id(String path) {
 		return Identifier.of(MOD_ID, path);
 	}
+
+	public static String textPath(String prefix, String path)
+	{
+		return prefix + "." + MOD_ID + "." + path;
+	}
 }
