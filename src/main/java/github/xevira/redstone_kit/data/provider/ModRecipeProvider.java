@@ -67,5 +67,18 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Items.CLOCK), conditionsFromItem(Items.CLOCK))
                 .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
                 .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_RSNORLATCH_BLOCK)
+                .input('R', Items.REDSTONE_TORCH)
+                .input('r', Items.REDSTONE)
+                .input('S', Blocks.STONE)
+                .pattern("rrR")
+                .pattern("Rrr")
+                .pattern("SSS")
+                .criterion(hasItem(Items.REDSTONE_TORCH), conditionsFromItem(Items.REDSTONE_TORCH))
+                .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
+                .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
+                .offerTo(exporter);
+
     }
 }

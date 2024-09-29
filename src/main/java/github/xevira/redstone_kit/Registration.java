@@ -1,9 +1,6 @@
 package github.xevira.redstone_kit;
 
-import github.xevira.redstone_kit.block.RedstoneInverterBlock;
-import github.xevira.redstone_kit.block.RedstoneTickerBlock;
-import github.xevira.redstone_kit.block.RedstoneTimerBlock;
-import github.xevira.redstone_kit.block.WeatherDetectorBlock;
+import github.xevira.redstone_kit.block.*;
 import github.xevira.redstone_kit.block.entity.RedstoneInverterBlockEntity;
 import github.xevira.redstone_kit.block.entity.RedstoneTickerBlockEntity;
 import github.xevira.redstone_kit.block.entity.RedstoneTimerBlockEntity;
@@ -61,11 +58,18 @@ public class Registration {
             AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.STONE).pistonBehavior(PistonBehavior.DESTROY)
     ));
 
+    public static final Block REDSTONE_RSNORLATCH_BLOCK = register("redstone_rsnorlatch", new RedstoneRSNorLatchBlock(
+            AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.STONE).pistonBehavior(PistonBehavior.DESTROY)
+    ));
+
     public static final BlockItem WEATHER_DETECTOR_ITEM = register("weather_detector",
             new BlockItem(WEATHER_DETECTOR_BLOCK, new Item.Settings()));
 
     public static final BlockItem REDSTONE_INVERTER_ITEM = register("redstone_inverter",
             new BlockItem(REDSTONE_INVERTER_BLOCK, new Item.Settings()));
+
+    public static final BlockItem REDSTONE_RSNORLATCH_ITEM = register("redstone_rsnorlatch",
+            new BlockItem(REDSTONE_RSNORLATCH_BLOCK, new Item.Settings()));
 
     public static final BlockItem REDSTONE_TICKER_ITEM = register("redstone_ticker",
             new BlockItem(REDSTONE_TICKER_BLOCK, new Item.Settings()));

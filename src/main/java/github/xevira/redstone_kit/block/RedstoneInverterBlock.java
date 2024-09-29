@@ -173,4 +173,9 @@ public class RedstoneInverterBlock extends AbstractRedstoneGateBlock implements 
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING, POWERED, LIT, MODE);
     }
+
+    @Override
+    protected boolean getSideInputFromGatesOnly() {
+        return true;
+    }
 }

@@ -2,6 +2,7 @@ package github.xevira.redstone_kit.data.provider;
 
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.RedstoneInverterBlock;
+import github.xevira.redstone_kit.block.RedstoneRSNorLatchBlock;
 import github.xevira.redstone_kit.block.RedstoneTickerBlock;
 import github.xevira.redstone_kit.block.RedstoneTimerBlock;
 import github.xevira.redstone_kit.util.InverterMode;
@@ -51,6 +52,17 @@ public class ModBlockModelProvider extends FabricModelProvider {
                             }
 
                             return BlockStateVariant.create().put(VariantSettings.MODEL, TextureMap.getSubId(Registration.REDSTONE_INVERTER_BLOCK, stringBuilder.toString()));
+                        }))
+                        .coordinate(createSouthDefaultHorizontalRotationStates())
+        );
+
+        blockStateModelGenerator.registerItemModel(Registration.REDSTONE_RSNORLATCH_ITEM);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.REDSTONE_RSNORLATCH_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(RedstoneRSNorLatchBlock.POWERED).register((powered) -> {
+                            StringBuilder stringBuilder = new StringBuilder().append(powered ? "_on" : "_off");
+
+                            return BlockStateVariant.create().put(VariantSettings.MODEL, TextureMap.getSubId(Registration.REDSTONE_RSNORLATCH_BLOCK, stringBuilder.toString()));
                         }))
                         .coordinate(createSouthDefaultHorizontalRotationStates())
         );

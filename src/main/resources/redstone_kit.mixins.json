@@ -3,6 +3,7 @@
 	"package": "github.xevira.redstone_kit.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
+		"RedstoneWireBlockMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -13,6 +13,7 @@ public class RedstoneKitClient implements ClientModInitializer {
 		// Render Layers
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
 				Registration.REDSTONE_INVERTER_BLOCK,
+				Registration.REDSTONE_RSNORLATCH_BLOCK,
 				Registration.REDSTONE_TICKER_BLOCK,
 				Registration.REDSTONE_TIMER_BLOCK);
 

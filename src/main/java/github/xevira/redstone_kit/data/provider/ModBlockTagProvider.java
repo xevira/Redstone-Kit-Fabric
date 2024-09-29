@@ -18,6 +18,8 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(Registration.WEATHER_DETECTOR_BLOCK)
                 .add(Registration.REDSTONE_INVERTER_BLOCK)
-                .add(Registration.REDSTONE_TICKER_BLOCK);
+                .add(Registration.REDSTONE_RSNORLATCH_BLOCK)
+                .add(Registration.REDSTONE_TICKER_BLOCK)
+                .add(Registration.REDSTONE_TIMER_BLOCK);
     }
 }
