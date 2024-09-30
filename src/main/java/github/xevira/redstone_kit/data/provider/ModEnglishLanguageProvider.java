@@ -37,6 +37,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
 
     @Override
     public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
+        translationBuilder.add(Registration.PLAYER_DETECTOR_BLOCK, "Player Detector");
         translationBuilder.add(Registration.REDSTONE_INVERTER_BLOCK, "Redstone Inverter");
         translationBuilder.add(Registration.REDSTONE_RSNORLATCH_BLOCK, "Redstone RS-NOR Latch");
         translationBuilder.add(Registration.REDSTONE_TICKER_BLOCK, "Redstone Ticker");

@@ -15,6 +15,7 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
     @Override
     public void generate() {
         addDrop(Registration.WEATHER_DETECTOR_BLOCK);
+        addDrop(Registration.PLAYER_DETECTOR_BLOCK);
         addDrop(Registration.REDSTONE_INVERTER_BLOCK);
         addDrop(Registration.REDSTONE_RSNORLATCH_BLOCK);
         addDrop(Registration.REDSTONE_TICKER_BLOCK);

@@ -1,10 +1,7 @@
 package github.xevira.redstone_kit;
 
 import github.xevira.redstone_kit.block.*;
-import github.xevira.redstone_kit.block.entity.RedstoneInverterBlockEntity;
-import github.xevira.redstone_kit.block.entity.RedstoneTickerBlockEntity;
-import github.xevira.redstone_kit.block.entity.RedstoneTimerBlockEntity;
-import github.xevira.redstone_kit.block.entity.WeatherDetectorBlockEntity;
+import github.xevira.redstone_kit.block.entity.*;
 import github.xevira.redstone_kit.network.BlockPosPayload;
 import github.xevira.redstone_kit.network.TimerSetRepeatPayload;
 import github.xevira.redstone_kit.network.TimerSetTimePayload;
@@ -62,6 +59,14 @@ public class Registration {
             AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.STONE).pistonBehavior(PistonBehavior.DESTROY)
     ));
 
+    public static final Block PLAYER_DETECTOR_BLOCK = register("player_detector", new PlayerDetectorBlock(
+            AbstractBlock.Settings.create().
+                    mapColor(MapColor.CYAN).
+                    instrument(NoteBlockInstrument.BELL).
+                    strength(0.2F).
+                    sounds(BlockSoundGroup.STONE)
+    ));
+
     public static final BlockItem WEATHER_DETECTOR_ITEM = register("weather_detector",
             new BlockItem(WEATHER_DETECTOR_BLOCK, new Item.Settings()));
 
@@ -77,6 +82,8 @@ public class Registration {
     public static final BlockItem REDSTONE_TIMER_ITEM = register("redstone_timer",
             new BlockItem(REDSTONE_TIMER_BLOCK, new Item.Settings()));
 
+    public static final BlockItem PLAYER_DETECTOR_ITEM = register("player_detector",
+            new BlockItem(PLAYER_DETECTOR_BLOCK, new Item.Settings()));
 
     public static final BlockEntityType<WeatherDetectorBlockEntity> WEATHER_DETECTOR_BLOCK_ENTITY = register("weather_detector",
             BlockEntityType.Builder.create(WeatherDetectorBlockEntity::new, Registration.WEATHER_DETECTOR_BLOCK)
@@ -92,6 +99,10 @@ public class Registration {
 
     public static final BlockEntityType<RedstoneTimerBlockEntity> REDSTONE_TIMER_BLOCK_ENTITY = register("redstone_timer",
             BlockEntityType.Builder.create(RedstoneTimerBlockEntity::new, Registration.REDSTONE_TIMER_BLOCK)
+                    .build());
+
+    public static final BlockEntityType<PlayerDetectorBlockEntity> PLAYER_DETECTOR_BLOCK_BLOCK_ENTITY = register("player_detector",
+            BlockEntityType.Builder.create(PlayerDetectorBlockEntity::new, Registration.PLAYER_DETECTOR_BLOCK)
                     .build());
 
     public static final SoundEvent REDSTONE_INVERTER_CLICK = register("redstone_inverter_click");

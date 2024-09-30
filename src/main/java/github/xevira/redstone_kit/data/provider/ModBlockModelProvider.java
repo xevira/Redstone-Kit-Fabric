@@ -21,6 +21,7 @@ public class ModBlockModelProvider extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
+        blockStateModelGenerator.registerSimpleState(Registration.PLAYER_DETECTOR_BLOCK);
         blockStateModelGenerator.registerSimpleState(Registration.WEATHER_DETECTOR_BLOCK);
 
         blockStateModelGenerator.registerItemModel(Registration.REDSTONE_INVERTER_ITEM);

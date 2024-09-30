@@ -1,5 +1,6 @@
 package github.xevira.redstone_kit.data.provider;
 
+import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -9,6 +10,7 @@ import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.RegistryWrapper;
+import org.apache.logging.log4j.core.pattern.AbstractStyleNameConverter;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -80,5 +82,21 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
                 .offerTo(exporter);
 
+        RedstoneKit.LOGGER.info("Generating Recipe for {}",Registration.PLAYER_DETECTOR_BLOCK);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.PLAYER_DETECTOR_BLOCK)
+                .input('E', Items.ENDER_EYE)
+                .input('r', Items.REDSTONE)
+                .input('c', Blocks.COBBLESTONE)
+                .input('Q', Items.QUARTZ)
+                .pattern("cQc")
+                .pattern("QEQ")
+                .pattern("crc")
+                .criterion(hasItem(Items.ENDER_EYE), conditionsFromItem(Items.ENDER_EYE))
+                .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
+                .criterion(hasItem(Items.QUARTZ), conditionsFromItem(Items.QUARTZ))
+                .criterion(hasItem(Blocks.COBBLESTONE), conditionsFromItem(Blocks.COBBLESTONE))
+                .offerTo(exporter);
+
+        RedstoneKit.LOGGER.info("Finished generating recipes.");
     }
 }
