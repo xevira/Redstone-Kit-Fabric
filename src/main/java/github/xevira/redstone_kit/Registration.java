@@ -53,6 +53,10 @@ public class Registration {
 
     public static final Block REDSTONE_OR_BLOCK = register("redstone_or", new RedstoneOrGateBlock(DEFAULT_GATE_SETTINGS));
 
+    public static final Block REDSTONE_AND_BLOCK = register("redstone_and", new RedstoneAndGateBlock(DEFAULT_GATE_SETTINGS));
+
+    public static final Block REDSTONE_XOR_BLOCK = register("redstone_xor", new RedstoneXorGateBlock(DEFAULT_GATE_SETTINGS));
+
     public static final Block REDSTONE_TICKER_BLOCK = register("redstone_ticker", new RedstoneTickerBlock(DEFAULT_GATE_SETTINGS));
 
     public static final Block REDSTONE_TIMER_BLOCK = register("redstone_timer", new RedstoneTimerBlock(DEFAULT_GATE_SETTINGS));
@@ -76,6 +80,12 @@ public class Registration {
 
     public static final BlockItem REDSTONE_OR_ITEM = register("redstone_or",
             new BlockItem(REDSTONE_OR_BLOCK, new Item.Settings()));
+
+    public static final BlockItem REDSTONE_AND_ITEM = register("redstone_and",
+            new BlockItem(REDSTONE_AND_BLOCK, new Item.Settings()));
+
+    public static final BlockItem REDSTONE_XOR_ITEM = register("redstone_xor",
+            new BlockItem(REDSTONE_XOR_BLOCK, new Item.Settings()));
 
     public static final BlockItem REDSTONE_RSNORLATCH_ITEM = register("redstone_rsnorlatch",
             new BlockItem(REDSTONE_RSNORLATCH_BLOCK, new Item.Settings()));
@@ -160,7 +170,9 @@ public class Registration {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> {
             entries.addAfter(Items.COMPARATOR,
                     Registration.REDSTONE_INVERTER_ITEM,
+                    Registration.REDSTONE_AND_ITEM,
                     Registration.REDSTONE_OR_ITEM,
+                    Registration.REDSTONE_XOR_ITEM,
                     Registration.REDSTONE_RSNORLATCH_ITEM,
                     Registration.REDSTONE_TICKER_ITEM,
                     Registration.REDSTONE_TIMER_ITEM);

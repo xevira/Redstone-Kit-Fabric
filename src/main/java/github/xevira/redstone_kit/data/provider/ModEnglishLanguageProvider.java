@@ -41,6 +41,8 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(Registration.PLAYER_DETECTOR_BLOCK, "Player Detector");
         translationBuilder.add(Registration.REDSTONE_INVERTER_BLOCK, "Redstone Inverter");
         translationBuilder.add(Registration.REDSTONE_OR_BLOCK, "Redstone OR Gate");
+        translationBuilder.add(Registration.REDSTONE_AND_BLOCK, "Redstone AND Gate");
+        translationBuilder.add(Registration.REDSTONE_XOR_BLOCK, "Redstone XOR Gate");
         translationBuilder.add(Registration.REDSTONE_RSNORLATCH_BLOCK, "Redstone RS-NOR Latch");
         translationBuilder.add(Registration.REDSTONE_TICKER_BLOCK, "Redstone Ticker");
         translationBuilder.add(Registration.REDSTONE_TIMER_BLOCK, "Redstone Timer");

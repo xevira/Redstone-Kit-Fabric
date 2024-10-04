@@ -13,10 +13,13 @@ public class RedstoneKitClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		// Render Layers
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
+				Registration.REDSTONE_AND_BLOCK,
 				Registration.REDSTONE_INVERTER_BLOCK,
+				Registration.REDSTONE_OR_BLOCK,
 				Registration.REDSTONE_RSNORLATCH_BLOCK,
 				Registration.REDSTONE_TICKER_BLOCK,
-				Registration.REDSTONE_TIMER_BLOCK);
+				Registration.REDSTONE_TIMER_BLOCK,
+				Registration.REDSTONE_XOR_BLOCK);
 
 		// Screen Handlers
 		HandledScreens.register(Registration.REDSTONE_TIMER_SCREEN_HANDLER, RedstoneTimerScreen::new);

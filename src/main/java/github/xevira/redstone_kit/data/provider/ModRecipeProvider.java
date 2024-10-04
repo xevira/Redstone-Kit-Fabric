@@ -44,6 +44,30 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_AND_BLOCK)
+                .input('R', Items.REDSTONE_TORCH)
+                .input('r', Items.REDSTONE)
+                .input('S', Blocks.STONE)
+                .pattern(" R ")
+                .pattern("RrR")
+                .pattern("SSS")
+                .criterion(hasItem(Items.REDSTONE_TORCH), conditionsFromItem(Items.REDSTONE_TORCH))
+                .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
+                .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_XOR_BLOCK)
+                .input('r', Items.REDSTONE)
+                .input('Q', Items.QUARTZ)
+                .input('S', Blocks.STONE)
+                .pattern(" r ")
+                .pattern("rQr")
+                .pattern("SSS")
+                .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
+                .criterion(hasItem(Items.QUARTZ), conditionsFromItem(Items.QUARTZ))
+                .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
+                .offerTo(exporter);
+
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_RSNORLATCH_BLOCK)
                 .input('R', Items.REDSTONE_TORCH)
                 .input('r', Items.REDSTONE)

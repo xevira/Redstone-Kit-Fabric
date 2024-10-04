@@ -196,6 +196,32 @@ public class ModBlockModelProvider extends FabricModelProvider {
                         }))
                         .coordinate(createSouthDefaultHorizontalRotationStates())
         );
+
+        blockStateModelGenerator.registerItemModel(Registration.REDSTONE_AND_ITEM);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.REDSTONE_AND_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(RedstoneAndGateBlock.LEFT, RedstoneAndGateBlock.RIGHT).register((left, right) -> {
+                            StringBuilder stringBuilder = new StringBuilder()
+                                    .append(left ? "_on" : "_off")
+                                    .append(right ? "_on" : "_off");
+
+                            return BlockStateVariant.create().put(VariantSettings.MODEL, TextureMap.getSubId(Registration.REDSTONE_AND_BLOCK, stringBuilder.toString()));
+                        }))
+                        .coordinate(createSouthDefaultHorizontalRotationStates())
+        );
+
+        blockStateModelGenerator.registerItemModel(Registration.REDSTONE_XOR_ITEM);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.REDSTONE_XOR_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(RedstoneXorGateBlock.LEFT, RedstoneXorGateBlock.RIGHT).register((left, right) -> {
+                            StringBuilder stringBuilder = new StringBuilder()
+                                    .append(left ? "_on" : "_off")
+                                    .append(right ? "_on" : "_off");
+
+                            return BlockStateVariant.create().put(VariantSettings.MODEL, TextureMap.getSubId(Registration.REDSTONE_XOR_BLOCK, stringBuilder.toString()));
+                        }))
+                        .coordinate(createSouthDefaultHorizontalRotationStates())
+        );
     }
 
 

@@ -20,6 +20,8 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .add(Registration.PLAYER_DETECTOR_BLOCK)
                 .add(Registration.REDSTONE_INVERTER_BLOCK)
                 .add(Registration.REDSTONE_OR_BLOCK)
+                .add(Registration.REDSTONE_AND_BLOCK)
+                .add(Registration.REDSTONE_XOR_BLOCK)
                 .add(Registration.REDSTONE_RSNORLATCH_BLOCK)
                 .add(Registration.REDSTONE_TICKER_BLOCK)
                 .add(Registration.REDSTONE_TIMER_BLOCK);
