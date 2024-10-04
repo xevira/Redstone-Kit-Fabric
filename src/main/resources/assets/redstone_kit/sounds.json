@@ -4,6 +4,12 @@
     "sounds": [
       "redstone_kit:redstone_click"
     ]
+  },
+  "redstone_rsnorlatch_click": {
+    "subtitle": "sound.redstone_kit.redstone_rsnorlatch_click",
+    "sounds": [
+      "redstone_kit:redstone_click"
+    ]
   }
 
 }

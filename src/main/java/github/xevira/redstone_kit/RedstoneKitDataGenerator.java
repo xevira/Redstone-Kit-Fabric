@@ -11,6 +11,7 @@ public class RedstoneKitDataGenerator implements DataGeneratorEntrypoint {
 
 		pack.addProvider(ModBlockModelProvider::new);
 		pack.addProvider(ModBlockTagProvider::new);
+		pack.addProvider(ModItemTagProvider::new);
 		pack.addProvider(ModBlockLootTableProvider::new);
 		pack.addProvider(ModRecipeProvider::new);
 		pack.addProvider(ModEnglishLanguageProvider::new);

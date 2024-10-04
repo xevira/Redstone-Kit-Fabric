@@ -122,23 +122,23 @@ public class RedstoneTimerScreen extends HandledScreen<RedstoneTimerScreenHandle
 
     @Override
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
-        context.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 4210752, false);
+        context.drawText(this.textRenderer, this.title, this.titleX, this.titleY, ScreenColors.DEFAULT, false);
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        context.drawText(this.textRenderer, TOTAL_TIME_TEXT, this.x + 10, this.y + 20, 0x404040, false);
-        context.drawText(this.textRenderer, IN_SECONDS_TEXT, this.x + 65, this.y + 32, 0x404040, false);
+        context.drawText(this.textRenderer, TOTAL_TIME_TEXT, this.x + 10, this.y + 20, ScreenColors.DEFAULT, false);
+        context.drawText(this.textRenderer, IN_SECONDS_TEXT, this.x + 65, this.y + 32, ScreenColors.DEFAULT, false);
         this.timerTextWidget.render(context, mouseX, mouseY, delta);
         this.timerButtonWidget.render(context, mouseX, mouseY, delta);
         this.repeatButtonWidget.render(context, mouseX, mouseY, delta);
         int ticks = this.handler.getTicksRemaining();
 
         if (ticks < 1 && !this.handler.getRepeats())
-            context.drawText(this.textRenderer, WAITING_TEXT, this.x + 10, this.y + 47, 0xA00000, false);
+            context.drawText(this.textRenderer, WAITING_TEXT, this.x + 10, this.y + 47, ScreenColors.ERROR, false);
         else
-            context.drawText(this.textRenderer, getRemaining(ticks / 20), this.x + 10, this.y + 47, 0x404040, false);
+            context.drawText(this.textRenderer, getRemaining(ticks / 20), this.x + 10, this.y + 47, ScreenColors.DEFAULT, false);
 
         /*
         Text tickText = Text.literal(String.valueOf(ticks));

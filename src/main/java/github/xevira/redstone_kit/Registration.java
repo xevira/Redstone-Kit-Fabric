@@ -2,9 +2,8 @@ package github.xevira.redstone_kit;
 
 import github.xevira.redstone_kit.block.*;
 import github.xevira.redstone_kit.block.entity.*;
-import github.xevira.redstone_kit.network.BlockPosPayload;
-import github.xevira.redstone_kit.network.TimerSetRepeatPayload;
-import github.xevira.redstone_kit.network.TimerSetTimePayload;
+import github.xevira.redstone_kit.network.*;
+import github.xevira.redstone_kit.screenhandler.PlayerDetectorScreenHandler;
 import github.xevira.redstone_kit.screenhandler.RedstoneTimerScreenHandler;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -12,6 +11,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -27,6 +27,8 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.BlockSoundGroup;
@@ -60,11 +62,12 @@ public class Registration {
     ));
 
     public static final Block PLAYER_DETECTOR_BLOCK = register("player_detector", new PlayerDetectorBlock(
-            AbstractBlock.Settings.create().
-                    mapColor(MapColor.CYAN).
-                    instrument(NoteBlockInstrument.BELL).
-                    strength(0.2F).
-                    sounds(BlockSoundGroup.STONE)
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.CYAN)
+                    .instrument(NoteBlockInstrument.BELL)
+                    .strength(-1.0F, 3600000.0F)
+                    .sounds(BlockSoundGroup.STONE)
+                    .allowsSpawning(Blocks::never)
     ));
 
     public static final BlockItem WEATHER_DETECTOR_ITEM = register("weather_detector",
@@ -106,8 +109,12 @@ public class Registration {
                     .build());
 
     public static final SoundEvent REDSTONE_INVERTER_CLICK = register("redstone_inverter_click");
+    public static final SoundEvent REDSTONE_RSNORLATCH_CLICK = register("redstone_rsnorlatch_click");
 
     public static final ScreenHandlerType<RedstoneTimerScreenHandler> REDSTONE_TIMER_SCREEN_HANDLER = register("redstone_timer", RedstoneTimerScreenHandler::new, BlockPosPayload.PACKET_CODEC);
+    public static final ScreenHandlerType<PlayerDetectorScreenHandler> PLAYER_DETECTOR_SCREEN_HANDLER = register("player_detector", PlayerDetectorScreenHandler::new, BlockPosPayload.PACKET_CODEC);
+
+    public static final TagKey<Item> PLAYER_DETECTOR_OFFERINGS_TAG = registerItemTag("player_detector_offering");
 
     // Registration Functions
     public static <T extends Block> T register(String name, T block) {
@@ -143,6 +150,10 @@ public class Registration {
         return Registry.register(Registries.SCREEN_HANDLER, RedstoneKit.id(name), new ExtendedScreenHandlerType<>(factory, codec));
     }
 
+    public static TagKey<Item> registerItemTag(String name) {
+        return TagKey.of(RegistryKeys.ITEM, RedstoneKit.id(name));
+    }
+
     public static void load() {
         // Creative Tab items
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> {
@@ -154,6 +165,9 @@ public class Registration {
 
         PayloadTypeRegistry.playC2S().register(TimerSetTimePayload.ID, TimerSetTimePayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(TimerSetRepeatPayload.ID, TimerSetRepeatPayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(PlayerDetectorSetPlayerPayload.ID, PlayerDetectorSetPlayerPayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(PlayerDetectorClearPlayerPayload.ID, PlayerDetectorClearPlayerPayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(PlayerDetectorSetVisionPayload.ID, PlayerDetectorSetVisionPayload.PACKET_CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(TimerSetTimePayload.ID, (payload, context) -> {
             if( context.player().currentScreenHandler instanceof RedstoneTimerScreenHandler handler)
@@ -176,6 +190,46 @@ public class Registration {
                     return;
                 }
                 handler.getBlockEntity().setRepeats(payload.repeat());
+            }
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(PlayerDetectorSetPlayerPayload.ID, (payload, context) -> {
+           if (context.player().currentScreenHandler instanceof PlayerDetectorScreenHandler handler)
+           {
+               if (!handler.canUse(context.player()))
+               {
+                   RedstoneKit.LOGGER.debug("Player {} interacted with invalid menu {} for PlayerDetectorScreenHandler", context.player(), handler);
+                   return;
+               }
+
+               handler.setPlayer(payload.uuid(), payload.name());
+           }
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(PlayerDetectorClearPlayerPayload.ID, (payload, context) -> {
+            if (context.player().currentScreenHandler instanceof PlayerDetectorScreenHandler handler)
+            {
+                if (!handler.canUse(context.player()))
+                {
+                    RedstoneKit.LOGGER.debug("Player {} interacted with invalid menu {} for PlayerDetectorScreenHandler", context.player(), handler);
+                    return;
+                }
+
+                // This can do it directly as it's clearing it
+                handler.getBlockEntity().setPlayer(null, "");
+            }
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(PlayerDetectorSetVisionPayload.ID, (payload, context) -> {
+            if (context.player().currentScreenHandler instanceof PlayerDetectorScreenHandler handler)
+            {
+                if (!handler.canUse(context.player()))
+                {
+                    RedstoneKit.LOGGER.debug("Player {} interacted with invalid menu {} for PlayerDetectorScreenHandler", context.player(), handler);
+                    return;
+                }
+
+                handler.getBlockEntity().setVision(payload.north(), payload.south(), payload.east(), payload.west(), payload.up(), payload.down());
             }
         });
     }

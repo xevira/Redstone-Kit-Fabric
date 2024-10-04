@@ -2,15 +2,22 @@ package github.xevira.redstone_kit.block;
 
 import com.mojang.serialization.MapCodec;
 import github.xevira.redstone_kit.RedstoneKit;
+import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.util.BlockProperties;
+import github.xevira.redstone_kit.util.InverterMode;
 import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
+import net.minecraft.state.property.Properties;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -25,11 +32,14 @@ import java.util.Map;
 public class RedstoneRSNorLatchBlock extends AbstractRedstoneGateBlock {
     public static final MapCodec<RedstoneRSNorLatchBlock> CODEC = createCodec(RedstoneRSNorLatchBlock::new);
 
+    public static final BooleanProperty INVERTED = Properties.INVERTED;
+
     public RedstoneRSNorLatchBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(FACING, Direction.NORTH)
                 .with(POWERED, false)
+                .with(INVERTED, false)
         );
     }
 
@@ -57,6 +67,19 @@ public class RedstoneRSNorLatchBlock extends AbstractRedstoneGateBlock {
         return this.getDefaultState().with(FACING, facing).with(POWERED, powered);
     }
 
+    @Override
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+        if (!player.getAbilities().allowModifyWorld) {
+            return ActionResult.PASS;
+        } else {
+            state = state.cycle(INVERTED);
+            float f = state.get(INVERTED) ? 1.1F : 1.0F;
+            world.playSound(player, pos, Registration.REDSTONE_RSNORLATCH_CLICK, SoundCategory.BLOCKS, 1.2F, f);
+            world.setBlockState(pos, state, Block.NOTIFY_LISTENERS);
+            this.updateTarget(world, pos, state);
+            return ActionResult.success(world.isClient);
+        }
+    }
 
     @Override
     protected int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
@@ -89,9 +112,9 @@ public class RedstoneRSNorLatchBlock extends AbstractRedstoneGateBlock {
         BlockPos backPos = pos.offset(back);
         BlockPos frontPos = pos.offset(front);
         world.updateNeighbor(backPos, this, pos);
-        //world.updateNeighborsExcept(backPos, this, back);
+        world.updateNeighborsExcept(backPos, this, back);
         world.updateNeighbor(frontPos, this, pos);
-        //world.updateNeighborsExcept(frontPos, this, front);
+        world.updateNeighborsExcept(frontPos, this, front);
     }
 
     @Override
@@ -101,8 +124,16 @@ public class RedstoneRSNorLatchBlock extends AbstractRedstoneGateBlock {
 
     @Override
     protected void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        Direction reset = state.get(FACING).rotateYClockwise();
-        Direction set = state.get(FACING).rotateYCounterclockwise();
+        Direction reset;
+        Direction set;
+
+        if (state.get(INVERTED)) {
+            set = state.get(FACING).rotateYClockwise();
+            reset = state.get(FACING).rotateYCounterclockwise();
+        } else {
+            reset = state.get(FACING).rotateYClockwise();
+            set = state.get(FACING).rotateYCounterclockwise();
+        }
 
         int resetPower = getPower(world, pos, reset);
         int setPower = getPower(world, pos, set);
@@ -126,8 +157,16 @@ public class RedstoneRSNorLatchBlock extends AbstractRedstoneGateBlock {
 
     @Override
     protected void updatePowered(World world, BlockPos pos, BlockState state) {
-        Direction reset = state.get(FACING).rotateYClockwise();
-        Direction set = state.get(FACING).rotateYCounterclockwise();
+        Direction reset;
+        Direction set;
+
+        if (state.get(INVERTED)) {
+            set = state.get(FACING).rotateYClockwise();
+            reset = state.get(FACING).rotateYCounterclockwise();
+        } else {
+            reset = state.get(FACING).rotateYClockwise();
+            set = state.get(FACING).rotateYCounterclockwise();
+        }
 
         int resetPower = getPower(world, pos, reset);
         int setPower = getPower(world, pos, set);
@@ -155,13 +194,17 @@ public class RedstoneRSNorLatchBlock extends AbstractRedstoneGateBlock {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(FACING, POWERED);
+        builder.add(FACING, POWERED, INVERTED);
     }
 
     private static final Map<Direction, Vec3d> TORCH_ON_OFFSETS = new HashMap<>();
     private static final Map<Direction, Vec3d> TORCH_OFF_OFFSETS = new HashMap<>();
     private static final Map<Direction, Vec3d> WIRE_ON_OFFSETS = new HashMap<>();
     private static final Map<Direction, Vec3d> WIRE_OFF_OFFSETS = new HashMap<>();
+    private static final Map<Direction, Vec3d> TORCH_ON_INV_OFFSETS = new HashMap<>();
+    private static final Map<Direction, Vec3d> TORCH_OFF_INV_OFFSETS = new HashMap<>();
+    private static final Map<Direction, Vec3d> WIRE_ON_INV_OFFSETS = new HashMap<>();
+    private static final Map<Direction, Vec3d> WIRE_OFF_INV_OFFSETS = new HashMap<>();
 
     static {
         TORCH_ON_OFFSETS.put(Direction.NORTH, new Vec3d(-4, 0, 4));
@@ -169,20 +212,40 @@ public class RedstoneRSNorLatchBlock extends AbstractRedstoneGateBlock {
         TORCH_ON_OFFSETS.put(Direction.EAST, new Vec3d(-4, 0, -4));
         TORCH_ON_OFFSETS.put(Direction.WEST, new Vec3d(4, 0, 4));
 
+        TORCH_ON_INV_OFFSETS.put(Direction.NORTH, new Vec3d(4, 0, 4));
+        TORCH_ON_INV_OFFSETS.put(Direction.SOUTH, new Vec3d(-4, 0, -4));
+        TORCH_ON_INV_OFFSETS.put(Direction.EAST, new Vec3d(-4, 0, 4));
+        TORCH_ON_INV_OFFSETS.put(Direction.WEST, new Vec3d(4, 0, -4));
+
         WIRE_OFF_OFFSETS.put(Direction.NORTH, new Vec3d(-4, 0, -4));
         WIRE_OFF_OFFSETS.put(Direction.SOUTH, new Vec3d(4, 0, 4));
         WIRE_OFF_OFFSETS.put(Direction.EAST, new Vec3d(4, 0, -4));
         WIRE_OFF_OFFSETS.put(Direction.WEST, new Vec3d(-4, 0, 4));
+
+        WIRE_OFF_INV_OFFSETS.put(Direction.NORTH, new Vec3d(4, 0, -4));
+        WIRE_OFF_INV_OFFSETS.put(Direction.SOUTH, new Vec3d(-4, 0, 4));
+        WIRE_OFF_INV_OFFSETS.put(Direction.EAST, new Vec3d(4, 0, 4));
+        WIRE_OFF_INV_OFFSETS.put(Direction.WEST, new Vec3d(-4, 0, -4));
 
         TORCH_OFF_OFFSETS.put(Direction.NORTH, new Vec3d(4, 0, -4));
         TORCH_OFF_OFFSETS.put(Direction.SOUTH, new Vec3d(-4, 0, 4));
         TORCH_OFF_OFFSETS.put(Direction.EAST, new Vec3d(4, 0, 4));
         TORCH_OFF_OFFSETS.put(Direction.WEST, new Vec3d(-4, 0, -4));
 
+        TORCH_OFF_INV_OFFSETS.put(Direction.NORTH, new Vec3d(-4, 0, -4));
+        TORCH_OFF_INV_OFFSETS.put(Direction.SOUTH, new Vec3d(4, 0, 4));
+        TORCH_OFF_INV_OFFSETS.put(Direction.EAST, new Vec3d(4, 0, -4));
+        TORCH_OFF_INV_OFFSETS.put(Direction.WEST, new Vec3d(-4, 0, 4));
+
         WIRE_ON_OFFSETS.put(Direction.NORTH, new Vec3d(4, 0, 4));
         WIRE_ON_OFFSETS.put(Direction.SOUTH, new Vec3d(-4, 0, -4));
         WIRE_ON_OFFSETS.put(Direction.EAST, new Vec3d(-4, 0, 4));
         WIRE_ON_OFFSETS.put(Direction.WEST, new Vec3d(4, 0, -4));
+
+        WIRE_ON_INV_OFFSETS.put(Direction.NORTH, new Vec3d(-4, 0, 4));
+        WIRE_ON_INV_OFFSETS.put(Direction.SOUTH, new Vec3d(4, 0, -4));
+        WIRE_ON_INV_OFFSETS.put(Direction.EAST, new Vec3d(-4, 0, -4));
+        WIRE_ON_INV_OFFSETS.put(Direction.WEST, new Vec3d(4, 0, 4));
     }
 
 
@@ -190,17 +253,25 @@ public class RedstoneRSNorLatchBlock extends AbstractRedstoneGateBlock {
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         Vec3d t, w;
 
-
+        boolean inverted = state.get(INVERTED);
         Direction direction = state.get(FACING);
-        if (state.get(POWERED))
-        {
-            t = TORCH_ON_OFFSETS.get(direction);
-            w = WIRE_OFF_OFFSETS.get(direction);
+        if (inverted) {
+            if (state.get(POWERED)) {
+                t = TORCH_ON_INV_OFFSETS.get(direction);
+                w = WIRE_OFF_INV_OFFSETS.get(direction);
+            } else {
+                t = TORCH_OFF_INV_OFFSETS.get(direction);
+                w = WIRE_ON_INV_OFFSETS.get(direction);
+            }
         }
-        else
-        {
-            t = TORCH_OFF_OFFSETS.get(direction);
-            w = WIRE_ON_OFFSETS.get(direction);
+        else {
+            if (state.get(POWERED)) {
+                t = TORCH_ON_OFFSETS.get(direction);
+                w = WIRE_OFF_OFFSETS.get(direction);
+            } else {
+                t = TORCH_OFF_OFFSETS.get(direction);
+                w = WIRE_ON_OFFSETS.get(direction);
+            }
         }
         double x = (double)pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.2;
         double y = (double)pos.getY() + 0.4 + (random.nextDouble() - 0.5) * 0.2;

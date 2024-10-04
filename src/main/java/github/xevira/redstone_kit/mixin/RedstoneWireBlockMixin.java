@@ -3,7 +3,7 @@ package github.xevira.redstone_kit.mixin;
 import github.xevira.redstone_kit.Registration;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.RedstoneWireBlock;
-import net.minecraft.block.RepeaterBlock;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,7 +21,7 @@ public class RedstoneWireBlockMixin {
             state.isOf(Registration.REDSTONE_TICKER_BLOCK) ||
             state.isOf(Registration.REDSTONE_TIMER_BLOCK))
         {
-            Direction direction = state.get(RepeaterBlock.FACING);
+            Direction direction = state.get(Properties.FACING);
             clr.setReturnValue(direction == dir || direction.getOpposite() == dir);
         }
     }

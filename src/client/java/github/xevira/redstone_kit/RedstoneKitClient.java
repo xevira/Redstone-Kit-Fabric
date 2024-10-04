@@ -1,5 +1,6 @@
 package github.xevira.redstone_kit;
 
+import github.xevira.redstone_kit.screen.PlayerDetectorScreen;
 import github.xevira.redstone_kit.screen.RedstoneTimerScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -19,6 +20,7 @@ public class RedstoneKitClient implements ClientModInitializer {
 
 		// Screen Handlers
 		HandledScreens.register(Registration.REDSTONE_TIMER_SCREEN_HANDLER, RedstoneTimerScreen::new);
+		HandledScreens.register(Registration.PLAYER_DETECTOR_SCREEN_HANDLER, PlayerDetectorScreen::new);
 
 	}
 }
