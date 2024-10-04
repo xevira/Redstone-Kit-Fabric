@@ -37,6 +37,10 @@ import net.minecraft.util.Identifier;
 
 public class Registration {
 
+    public static final AbstractBlock.Settings DEFAULT_GATE_SETTINGS =
+            AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.STONE).pistonBehavior(PistonBehavior.DESTROY);
+
+
     public static final Block WEATHER_DETECTOR_BLOCK = register("weather_detector", new WeatherDetectorBlock(
             AbstractBlock.Settings.create().
                     mapColor(MapColor.LIGHT_BLUE_GRAY).
@@ -45,21 +49,15 @@ public class Registration {
                     sounds(BlockSoundGroup.STONE)
     ));
 
-    public static final Block REDSTONE_INVERTER_BLOCK = register("redstone_inverter", new RedstoneInverterBlock(
-            AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.STONE).pistonBehavior(PistonBehavior.DESTROY)
-    ));
+    public static final Block REDSTONE_INVERTER_BLOCK = register("redstone_inverter", new RedstoneInverterBlock(DEFAULT_GATE_SETTINGS));
 
-    public static final Block REDSTONE_TICKER_BLOCK = register("redstone_ticker", new RedstoneTickerBlock(
-            AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.STONE).pistonBehavior(PistonBehavior.DESTROY)
-    ));
+    public static final Block REDSTONE_OR_BLOCK = register("redstone_or", new RedstoneOrGateBlock(DEFAULT_GATE_SETTINGS));
 
-    public static final Block REDSTONE_TIMER_BLOCK = register("redstone_timer", new RedstoneTimerBlock(
-            AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.STONE).pistonBehavior(PistonBehavior.DESTROY)
-    ));
+    public static final Block REDSTONE_TICKER_BLOCK = register("redstone_ticker", new RedstoneTickerBlock(DEFAULT_GATE_SETTINGS));
 
-    public static final Block REDSTONE_RSNORLATCH_BLOCK = register("redstone_rsnorlatch", new RedstoneRSNorLatchBlock(
-            AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.STONE).pistonBehavior(PistonBehavior.DESTROY)
-    ));
+    public static final Block REDSTONE_TIMER_BLOCK = register("redstone_timer", new RedstoneTimerBlock(DEFAULT_GATE_SETTINGS));
+
+    public static final Block REDSTONE_RSNORLATCH_BLOCK = register("redstone_rsnorlatch", new RedstoneRSNorLatchBlock(DEFAULT_GATE_SETTINGS));
 
     public static final Block PLAYER_DETECTOR_BLOCK = register("player_detector", new PlayerDetectorBlock(
             AbstractBlock.Settings.create()
@@ -75,6 +73,9 @@ public class Registration {
 
     public static final BlockItem REDSTONE_INVERTER_ITEM = register("redstone_inverter",
             new BlockItem(REDSTONE_INVERTER_BLOCK, new Item.Settings()));
+
+    public static final BlockItem REDSTONE_OR_ITEM = register("redstone_or",
+            new BlockItem(REDSTONE_OR_BLOCK, new Item.Settings()));
 
     public static final BlockItem REDSTONE_RSNORLATCH_ITEM = register("redstone_rsnorlatch",
             new BlockItem(REDSTONE_RSNORLATCH_BLOCK, new Item.Settings()));
@@ -157,18 +158,28 @@ public class Registration {
     public static void load() {
         // Creative Tab items
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> {
-            entries.addAfter(Items.REPEATER, Registration.REDSTONE_INVERTER_BLOCK.asItem());
-            entries.addAfter(Items.DAYLIGHT_DETECTOR, Registration.WEATHER_DETECTOR_BLOCK.asItem());
-            entries.addAfter(Registration.REDSTONE_INVERTER_BLOCK, Registration.REDSTONE_TICKER_BLOCK.asItem());
-            entries.addAfter(Registration.REDSTONE_TICKER_BLOCK, Registration.REDSTONE_TIMER_BLOCK.asItem());
+            entries.addAfter(Items.COMPARATOR,
+                    Registration.REDSTONE_INVERTER_ITEM,
+                    Registration.REDSTONE_OR_ITEM,
+                    Registration.REDSTONE_RSNORLATCH_ITEM,
+                    Registration.REDSTONE_TICKER_ITEM,
+                    Registration.REDSTONE_TIMER_ITEM);
+
+            entries.addAfter(Items.DAYLIGHT_DETECTOR,
+                    Registration.WEATHER_DETECTOR_ITEM,
+                    Registration.PLAYER_DETECTOR_ITEM);
         });
 
+        // Packet Registration
+        // - Client -> Server
         PayloadTypeRegistry.playC2S().register(TimerSetTimePayload.ID, TimerSetTimePayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(TimerSetRepeatPayload.ID, TimerSetRepeatPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(PlayerDetectorSetPlayerPayload.ID, PlayerDetectorSetPlayerPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(PlayerDetectorClearPlayerPayload.ID, PlayerDetectorClearPlayerPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(PlayerDetectorSetVisionPayload.ID, PlayerDetectorSetVisionPayload.PACKET_CODEC);
 
+        // Packet Handlers
+        // - Server Side
         ServerPlayNetworking.registerGlobalReceiver(TimerSetTimePayload.ID, (payload, context) -> {
             if( context.player().currentScreenHandler instanceof RedstoneTimerScreenHandler handler)
             {

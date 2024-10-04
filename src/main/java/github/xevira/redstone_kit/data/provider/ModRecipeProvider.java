@@ -21,18 +21,6 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
     @Override
     public void generate(RecipeExporter exporter) {
-        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.WEATHER_DETECTOR_BLOCK)
-                .input('G', Blocks.LIGHT_BLUE_STAINED_GLASS)
-                .input('Q', Items.QUARTZ)
-                .input('S', Blocks.STONE_SLAB)
-                .pattern("GGG")
-                .pattern("QQQ")
-                .pattern("SSS")
-                .criterion(hasItem(Blocks.LIGHT_BLUE_STAINED_GLASS), conditionsFromItem(Blocks.LIGHT_BLUE_STAINED_GLASS))
-                .criterion(hasItem(Items.QUARTZ), conditionsFromItem(Items.QUARTZ))
-                .criterion(hasItem(Blocks.STONE_SLAB), conditionsFromItem(Blocks.STONE_SLAB))
-                .offerTo(exporter);
-
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_INVERTER_BLOCK)
                 .input('r', Items.REDSTONE)
                 .input('R', Items.REDSTONE_TORCH)
@@ -43,6 +31,28 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
                 .criterion(hasItem(Items.REDSTONE_TORCH), conditionsFromItem(Items.REDSTONE_TORCH))
                 .criterion(hasItem(Items.QUARTZ), conditionsFromItem(Items.QUARTZ))
+                .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_OR_BLOCK)
+                .input('r', Items.REDSTONE)
+                .input('S', Blocks.STONE)
+                .pattern(" r ")
+                .pattern("rrr")
+                .pattern("SSS")
+                .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
+                .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_RSNORLATCH_BLOCK)
+                .input('R', Items.REDSTONE_TORCH)
+                .input('r', Items.REDSTONE)
+                .input('S', Blocks.STONE)
+                .pattern("rrR")
+                .pattern("Rrr")
+                .pattern("SSS")
+                .criterion(hasItem(Items.REDSTONE_TORCH), conditionsFromItem(Items.REDSTONE_TORCH))
+                .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
                 .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
                 .offerTo(exporter);
 
@@ -70,31 +80,31 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
                 .offerTo(exporter);
 
-        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_RSNORLATCH_BLOCK)
-                .input('R', Items.REDSTONE_TORCH)
-                .input('r', Items.REDSTONE)
-                .input('S', Blocks.STONE)
-                .pattern("rrR")
-                .pattern("Rrr")
-                .pattern("SSS")
-                .criterion(hasItem(Items.REDSTONE_TORCH), conditionsFromItem(Items.REDSTONE_TORCH))
-                .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
-                .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
-                .offerTo(exporter);
-
         RedstoneKit.LOGGER.info("Generating Recipe for {}",Registration.PLAYER_DETECTOR_BLOCK);
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.PLAYER_DETECTOR_BLOCK)
                 .input('E', Items.ENDER_EYE)
                 .input('r', Items.REDSTONE)
-                .input('c', Blocks.COBBLESTONE)
+                .input('d', Blocks.DIORITE)
                 .input('Q', Items.QUARTZ)
-                .pattern("cQc")
+                .pattern("dQd")
                 .pattern("QEQ")
-                .pattern("crc")
+                .pattern("drd")
                 .criterion(hasItem(Items.ENDER_EYE), conditionsFromItem(Items.ENDER_EYE))
                 .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
                 .criterion(hasItem(Items.QUARTZ), conditionsFromItem(Items.QUARTZ))
-                .criterion(hasItem(Blocks.COBBLESTONE), conditionsFromItem(Blocks.COBBLESTONE))
+                .criterion(hasItem(Blocks.DIORITE), conditionsFromItem(Blocks.DIORITE))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.WEATHER_DETECTOR_BLOCK)
+                .input('G', Blocks.LIGHT_BLUE_STAINED_GLASS)
+                .input('Q', Items.QUARTZ)
+                .input('S', Blocks.STONE_SLAB)
+                .pattern("GGG")
+                .pattern("QQQ")
+                .pattern("SSS")
+                .criterion(hasItem(Blocks.LIGHT_BLUE_STAINED_GLASS), conditionsFromItem(Blocks.LIGHT_BLUE_STAINED_GLASS))
+                .criterion(hasItem(Items.QUARTZ), conditionsFromItem(Items.QUARTZ))
+                .criterion(hasItem(Blocks.STONE_SLAB), conditionsFromItem(Blocks.STONE_SLAB))
                 .offerTo(exporter);
 
         RedstoneKit.LOGGER.info("Finished generating recipes.");

@@ -183,7 +183,21 @@ public class ModBlockModelProvider extends FabricModelProvider {
                         }))
                         .coordinate(createSouthDefaultHorizontalRotationStates())
         );
+
+        blockStateModelGenerator.registerItemModel(Registration.REDSTONE_OR_ITEM);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.REDSTONE_OR_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(RedstoneOrGateBlock.LEFT, RedstoneOrGateBlock.RIGHT).register((left, right) -> {
+                            StringBuilder stringBuilder = new StringBuilder()
+                                    .append(left ? "_on" : "_off")
+                                    .append(right ? "_on" : "_off");
+
+                            return BlockStateVariant.create().put(VariantSettings.MODEL, TextureMap.getSubId(Registration.REDSTONE_OR_BLOCK, stringBuilder.toString()));
+                        }))
+                        .coordinate(createSouthDefaultHorizontalRotationStates())
+        );
     }
+
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {

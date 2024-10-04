@@ -17,6 +17,7 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(Registration.WEATHER_DETECTOR_BLOCK);
         addDrop(Registration.PLAYER_DETECTOR_BLOCK);
         addDrop(Registration.REDSTONE_INVERTER_BLOCK);
+        addDrop(Registration.REDSTONE_OR_BLOCK);
         addDrop(Registration.REDSTONE_RSNORLATCH_BLOCK);
         addDrop(Registration.REDSTONE_TICKER_BLOCK);
         addDrop(Registration.REDSTONE_TIMER_BLOCK);
