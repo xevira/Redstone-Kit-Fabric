@@ -44,9 +44,11 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(Registration.REDSTONE_AND_BLOCK, "Redstone AND Gate");
         translationBuilder.add(Registration.REDSTONE_XOR_BLOCK, "Redstone XOR Gate");
         translationBuilder.add(Registration.REDSTONE_RSNORLATCH_BLOCK, "Redstone RS-NOR Latch");
+        translationBuilder.add(Registration.REDSTONE_MEMORY_BLOCK, "Redstone Memory Cell");
         translationBuilder.add(Registration.REDSTONE_TICKER_BLOCK, "Redstone Ticker");
         translationBuilder.add(Registration.REDSTONE_TIMER_BLOCK, "Redstone Timer");
         translationBuilder.add(Registration.WEATHER_DETECTOR_BLOCK, "Weather Detector");
+        translationBuilder.add(Registration.TELEPORTER_BLOCK, "Teleporter");
         translationBuilder.add(Registration.PLAYER_DETECTOR_OFFERINGS_TAG, "Player Detector Offerings");
         addText(translationBuilder, RedstoneTimerBlockEntity.TITLE, "Redstone Timer");
         addText(translationBuilder, PlayerDetectorBlockEntity.TITLE, "Player Detector");
@@ -85,5 +87,9 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         addText(translationBuilder, "tooltip", "toggle_west_off", "Click to turn WEST vision ON.");
         addText(translationBuilder, "tooltip", "toggle_up_off", "Click to turn UP vision ON.");
         addText(translationBuilder, "tooltip", "toggle_down_off", "Click to turn DOWN vision ON.");
+
+        translationBuilder.add(Registration.RESONATOR_ITEM, "Resonator");
+        addText(translationBuilder, "tooltip", "resonator", "Press §eShift§r for more Information!");
+        addText(translationBuilder, "tooltip", "resonator.shift_down", "Links teleporters and breaks certain blocks.");
     }
 }

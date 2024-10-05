@@ -19,14 +19,17 @@ public class RedstoneWireBlockMixin {
     {
         if (state.isOf(Registration.REDSTONE_INVERTER_BLOCK) ||
             state.isOf(Registration.REDSTONE_TICKER_BLOCK) ||
-            state.isOf(Registration.REDSTONE_TIMER_BLOCK))
+            state.isOf(Registration.REDSTONE_TIMER_BLOCK) ||
+            state.isOf(Registration.REDSTONE_MEMORY_BLOCK))
         {
             Direction direction = state.get(Properties.HORIZONTAL_FACING);
             clr.setReturnValue(direction == dir || direction.getOpposite() == dir);
         }
 
         // Add the AND, OR and XOR gates to ignore the back side
-        if (state.isOf(Registration.REDSTONE_OR_BLOCK))
+        if (state.isOf(Registration.REDSTONE_OR_BLOCK) ||
+            state.isOf(Registration.REDSTONE_AND_BLOCK) ||
+            state.isOf(Registration.REDSTONE_XOR_BLOCK))
         {
             Direction direction = state.get(Properties.HORIZONTAL_FACING);
             clr.setReturnValue(direction.getOpposite() != dir);   // Back side should not connect

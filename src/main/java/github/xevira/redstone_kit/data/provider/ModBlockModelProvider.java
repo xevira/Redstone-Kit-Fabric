@@ -222,11 +222,27 @@ public class ModBlockModelProvider extends FabricModelProvider {
                         }))
                         .coordinate(createSouthDefaultHorizontalRotationStates())
         );
+
+        blockStateModelGenerator.registerParentedItemModel(Registration.REDSTONE_MEMORY_ITEM, RedstoneKit.id("block/redstone_memory"));
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.REDSTONE_MEMORY_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(RedstoneMemoryBlock.POWER).register((power) -> {
+                            StringBuilder stringBuilder = new StringBuilder()
+                                    .append("_")
+                                    .append(Integer.toString(power, 16).toLowerCase());
+
+                            return BlockStateVariant.create().put(VariantSettings.MODEL, TextureMap.getSubId(Registration.REDSTONE_MEMORY_BLOCK, stringBuilder.toString()));
+                        }))
+                        .coordinate(createSouthDefaultHorizontalRotationStates())
+        );
+
+        blockStateModelGenerator.registerSimpleState(Registration.TELEPORTER_BLOCK);;
     }
 
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
+        itemModelGenerator.register(Registration.RESONATOR_ITEM, Models.HANDHELD);
     }
 
 }

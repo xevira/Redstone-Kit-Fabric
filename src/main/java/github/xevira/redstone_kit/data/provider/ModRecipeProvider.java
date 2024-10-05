@@ -131,6 +131,31 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Blocks.STONE_SLAB), conditionsFromItem(Blocks.STONE_SLAB))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_MEMORY_BLOCK)
+                .input('R', Items.REDSTONE_TORCH)
+                .input('L', Registration.REDSTONE_MEMORY_ITEM)
+                .input('S', Blocks.STONE)
+                .pattern(" R ")
+                .pattern("RLR")
+                .pattern("SSS")
+                .criterion(hasItem(Items.REDSTONE_TORCH), conditionsFromItem(Items.REDSTONE_TORCH))
+                .criterion(hasItem(Registration.REDSTONE_MEMORY_ITEM), conditionsFromItem(Registration.REDSTONE_MEMORY_ITEM))
+                .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.RESONATOR_ITEM)
+                .input('c', Items.COPPER_INGOT)
+                .input('q', Items.QUARTZ)
+                .input('a', Items.AMETHYST_SHARD)
+                .pattern(" qa")
+                .pattern(" cq")
+                .pattern("c  ")
+                .criterion(hasItem(Items.COPPER_INGOT), conditionsFromItem(Items.COPPER_INGOT))
+                .criterion(hasItem(Items.QUARTZ), conditionsFromItem(Items.QUARTZ))
+                .criterion(hasItem(Items.AMETHYST_SHARD), conditionsFromItem(Items.AMETHYST_SHARD))
+                .offerTo(exporter);
+
+
         RedstoneKit.LOGGER.info("Finished generating recipes.");
     }
 }

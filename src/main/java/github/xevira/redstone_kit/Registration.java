@@ -2,6 +2,7 @@ package github.xevira.redstone_kit;
 
 import github.xevira.redstone_kit.block.*;
 import github.xevira.redstone_kit.block.entity.*;
+import github.xevira.redstone_kit.item.ResonatorItem;
 import github.xevira.redstone_kit.network.*;
 import github.xevira.redstone_kit.screenhandler.PlayerDetectorScreenHandler;
 import github.xevira.redstone_kit.screenhandler.RedstoneTimerScreenHandler;
@@ -17,6 +18,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.component.ComponentType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
@@ -34,12 +36,18 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Rarity;
+import net.minecraft.util.math.BlockPos;
+
+import java.util.function.UnaryOperator;
 
 public class Registration {
 
     public static final AbstractBlock.Settings DEFAULT_GATE_SETTINGS =
             AbstractBlock.Settings.create().breakInstantly().sounds(BlockSoundGroup.STONE).pistonBehavior(PistonBehavior.DESTROY);
 
+    public static final ComponentType<BlockPos> COORDINATES =
+            registerComponent("coordinates", builder -> builder.codec(BlockPos.CODEC));
 
     public static final Block WEATHER_DETECTOR_BLOCK = register("weather_detector", new WeatherDetectorBlock(
             AbstractBlock.Settings.create().
@@ -49,19 +57,21 @@ public class Registration {
                     sounds(BlockSoundGroup.STONE)
     ));
 
+    public static final Block REDSTONE_AND_BLOCK = register("redstone_and", new RedstoneAndGateBlock(DEFAULT_GATE_SETTINGS));
+
     public static final Block REDSTONE_INVERTER_BLOCK = register("redstone_inverter", new RedstoneInverterBlock(DEFAULT_GATE_SETTINGS));
+
+    public static final Block REDSTONE_MEMORY_BLOCK = register("redstone_memory", new RedstoneMemoryBlock(DEFAULT_GATE_SETTINGS));
 
     public static final Block REDSTONE_OR_BLOCK = register("redstone_or", new RedstoneOrGateBlock(DEFAULT_GATE_SETTINGS));
 
-    public static final Block REDSTONE_AND_BLOCK = register("redstone_and", new RedstoneAndGateBlock(DEFAULT_GATE_SETTINGS));
-
-    public static final Block REDSTONE_XOR_BLOCK = register("redstone_xor", new RedstoneXorGateBlock(DEFAULT_GATE_SETTINGS));
+    public static final Block REDSTONE_RSNORLATCH_BLOCK = register("redstone_rsnorlatch", new RedstoneRSNorLatchBlock(DEFAULT_GATE_SETTINGS));
 
     public static final Block REDSTONE_TICKER_BLOCK = register("redstone_ticker", new RedstoneTickerBlock(DEFAULT_GATE_SETTINGS));
 
     public static final Block REDSTONE_TIMER_BLOCK = register("redstone_timer", new RedstoneTimerBlock(DEFAULT_GATE_SETTINGS));
 
-    public static final Block REDSTONE_RSNORLATCH_BLOCK = register("redstone_rsnorlatch", new RedstoneRSNorLatchBlock(DEFAULT_GATE_SETTINGS));
+    public static final Block REDSTONE_XOR_BLOCK = register("redstone_xor", new RedstoneXorGateBlock(DEFAULT_GATE_SETTINGS));
 
     public static final Block PLAYER_DETECTOR_BLOCK = register("player_detector", new PlayerDetectorBlock(
             AbstractBlock.Settings.create()
@@ -72,20 +82,29 @@ public class Registration {
                     .allowsSpawning(Blocks::never)
     ));
 
-    public static final BlockItem WEATHER_DETECTOR_ITEM = register("weather_detector",
-            new BlockItem(WEATHER_DETECTOR_BLOCK, new Item.Settings()));
+    public static final Block TELEPORTER_BLOCK = register("teleporter", new TeleporterBlock(
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.BLACK)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .strength(-1.0F, 3600000.0F)
+                    .sounds(BlockSoundGroup.STONE)
+    ));
 
-    public static final BlockItem REDSTONE_INVERTER_ITEM = register("redstone_inverter",
-            new BlockItem(REDSTONE_INVERTER_BLOCK, new Item.Settings()));
 
-    public static final BlockItem REDSTONE_OR_ITEM = register("redstone_or",
-            new BlockItem(REDSTONE_OR_BLOCK, new Item.Settings()));
+    public static final BlockItem PLAYER_DETECTOR_ITEM = register("player_detector",
+            new BlockItem(PLAYER_DETECTOR_BLOCK, new Item.Settings()));
 
     public static final BlockItem REDSTONE_AND_ITEM = register("redstone_and",
             new BlockItem(REDSTONE_AND_BLOCK, new Item.Settings()));
 
-    public static final BlockItem REDSTONE_XOR_ITEM = register("redstone_xor",
-            new BlockItem(REDSTONE_XOR_BLOCK, new Item.Settings()));
+    public static final BlockItem REDSTONE_INVERTER_ITEM = register("redstone_inverter",
+            new BlockItem(REDSTONE_INVERTER_BLOCK, new Item.Settings()));
+
+    public static final BlockItem REDSTONE_MEMORY_ITEM = register("redstone_memory",
+            new BlockItem(REDSTONE_MEMORY_BLOCK, new Item.Settings()));
+
+    public static final BlockItem REDSTONE_OR_ITEM = register("redstone_or",
+            new BlockItem(REDSTONE_OR_BLOCK, new Item.Settings()));
 
     public static final BlockItem REDSTONE_RSNORLATCH_ITEM = register("redstone_rsnorlatch",
             new BlockItem(REDSTONE_RSNORLATCH_BLOCK, new Item.Settings()));
@@ -96,11 +115,19 @@ public class Registration {
     public static final BlockItem REDSTONE_TIMER_ITEM = register("redstone_timer",
             new BlockItem(REDSTONE_TIMER_BLOCK, new Item.Settings()));
 
-    public static final BlockItem PLAYER_DETECTOR_ITEM = register("player_detector",
-            new BlockItem(PLAYER_DETECTOR_BLOCK, new Item.Settings()));
+    public static final BlockItem REDSTONE_XOR_ITEM = register("redstone_xor",
+            new BlockItem(REDSTONE_XOR_BLOCK, new Item.Settings()));
 
-    public static final BlockEntityType<WeatherDetectorBlockEntity> WEATHER_DETECTOR_BLOCK_ENTITY = register("weather_detector",
-            BlockEntityType.Builder.create(WeatherDetectorBlockEntity::new, Registration.WEATHER_DETECTOR_BLOCK)
+    public static final BlockItem WEATHER_DETECTOR_ITEM = register("weather_detector",
+            new BlockItem(WEATHER_DETECTOR_BLOCK, new Item.Settings()));
+
+    public static final BlockItem TELEPORTER_ITEM = register("teleporter",
+            new BlockItem(TELEPORTER_BLOCK, new Item.Settings()));
+
+    public static final Item RESONATOR_ITEM = register("resonator", new ResonatorItem(new Item.Settings().maxCount(1).rarity(Rarity.COMMON)));
+
+    public static final BlockEntityType<PlayerDetectorBlockEntity> PLAYER_DETECTOR_BLOCK_BLOCK_ENTITY = register("player_detector",
+            BlockEntityType.Builder.create(PlayerDetectorBlockEntity::new, Registration.PLAYER_DETECTOR_BLOCK)
                     .build());
 
     public static final BlockEntityType<RedstoneInverterBlockEntity> REDSTONE_INVERTER_BLOCK_ENTITY = register("redstone_inverter",
@@ -115,8 +142,12 @@ public class Registration {
             BlockEntityType.Builder.create(RedstoneTimerBlockEntity::new, Registration.REDSTONE_TIMER_BLOCK)
                     .build());
 
-    public static final BlockEntityType<PlayerDetectorBlockEntity> PLAYER_DETECTOR_BLOCK_BLOCK_ENTITY = register("player_detector",
-            BlockEntityType.Builder.create(PlayerDetectorBlockEntity::new, Registration.PLAYER_DETECTOR_BLOCK)
+    public static final BlockEntityType<TeleporterBlockEntity> TELEPORTER_BLOCK_ENTITY = register("teleporter",
+            BlockEntityType.Builder.create(TeleporterBlockEntity::new, Registration.TELEPORTER_BLOCK)
+                    .build());
+
+    public static final BlockEntityType<WeatherDetectorBlockEntity> WEATHER_DETECTOR_BLOCK_ENTITY = register("weather_detector",
+            BlockEntityType.Builder.create(WeatherDetectorBlockEntity::new, Registration.WEATHER_DETECTOR_BLOCK)
                     .build());
 
     public static final SoundEvent REDSTONE_INVERTER_CLICK = register("redstone_inverter_click");
@@ -165,6 +196,11 @@ public class Registration {
         return TagKey.of(RegistryKeys.ITEM, RedstoneKit.id(name));
     }
 
+    public static <T> ComponentType<T> registerComponent(String name, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
+        return Registry.register(Registries.DATA_COMPONENT_TYPE, RedstoneKit.id(name),
+                builderOperator.apply(ComponentType.builder()).build());
+    }
+
     public static void load() {
         // Creative Tab items
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> {
@@ -174,6 +210,7 @@ public class Registration {
                     Registration.REDSTONE_OR_ITEM,
                     Registration.REDSTONE_XOR_ITEM,
                     Registration.REDSTONE_RSNORLATCH_ITEM,
+                    Registration.REDSTONE_MEMORY_ITEM,
                     Registration.REDSTONE_TICKER_ITEM,
                     Registration.REDSTONE_TIMER_ITEM);
 
