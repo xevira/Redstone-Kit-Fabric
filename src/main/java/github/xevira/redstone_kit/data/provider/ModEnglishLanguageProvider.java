@@ -91,5 +91,21 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(Registration.RESONATOR_ITEM, "Resonator");
         addText(translationBuilder, "tooltip", "resonator", "Press §eShift§r for more Information!");
         addText(translationBuilder, "tooltip", "resonator.shift_down", "Links teleporters and breaks certain blocks.");
+        addText(translationBuilder, "tooltip", "resonator.pending", "Pending linkage to §e(%s, %s, %s)§r.");
+        addText(translationBuilder, "text", "resonator.linked", "The teleporter has been linked to §e(%s, %s, %s)§r.");
+        addText(translationBuilder, "text", "resonator.unlinked", "The teleporter has been unlinked.");
+        addText(translationBuilder, "text", "resonator.not_linked", "The teleporter is currently not linked.");
+        addText(translationBuilder, "text", "resonator.source_already_linked", "This teleporter has already been linked.");
+        addText(translationBuilder, "text", "resonator.target_already_linked", "Teleporter at §e(%s, %s, %s)§r has already been linked.");
+        addText(translationBuilder, "text", "resonator.wrong_dimension", "Teleporters must be in the same dimension to be linked.");
+        addText(translationBuilder, "text", "resonator.linked_different_dimension", "§cResonator is currently linked to a different dimension.§r");
+
+        addText(translationBuilder, "text", "teleporter.linked.pearl", "The teleporter is linked to §e(%s, %s, %s)§r.  It will cost 1 Ender Pearls to teleport.");
+        addText(translationBuilder, "text", "teleporter.linked.pearls", "The teleporter is linked to §e(%s, %s, %s)§r.  It will cost %s Ender Pearls to teleport.");
+        addText(translationBuilder, "text", "teleporter.linked.xp", "The teleporter is linked to §e(%s, %s, %s)§r.  It will cost 1 Experience Point to teleport.");
+        addText(translationBuilder, "text", "teleporter.linked.xps", "The teleporter is linked to §e(%s, %s, %s)§r.  It will cost %s Experience Points to teleport.");
+        addText(translationBuilder, "text", "teleporter.not_linked", "The teleporter has not been linked.");
+        addText(translationBuilder, "text", "teleporter.not_enough_fuel.pearls", "Not enough §aEnder Pearls§r for teleport.  (%s needed in total)");
+        addText(translationBuilder, "text", "teleporter.not_enough_fuel.xp", "Not enough §aExperience Points§r for teleport.  (%s needed in total)");
     }
 }

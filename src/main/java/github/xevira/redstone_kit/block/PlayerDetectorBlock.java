@@ -3,6 +3,7 @@ package github.xevira.redstone_kit.block;
 import com.mojang.serialization.MapCodec;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.entity.PlayerDetectorBlockEntity;
+import github.xevira.redstone_kit.item.ResonatorItem;
 import github.xevira.redstone_kit.util.ServerTickableBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -68,7 +69,7 @@ public class PlayerDetectorBlock extends Block implements BlockEntityProvider {
 
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (stack.isEmpty() || !(stack.getItem() instanceof PickaxeItem))
+        if (stack.isEmpty() || !(stack.getItem() instanceof ResonatorItem))
             return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
         if (!world.isClient) {
@@ -76,8 +77,10 @@ public class PlayerDetectorBlock extends Block implements BlockEntityProvider {
             if (blockEntity instanceof PlayerDetectorBlockEntity detector)
             {
                 UUID uuid = detector.getPlayerUUID();
-                if (uuid == null || uuid.equals(player.getUuid()) || player.isCreativeLevelTwoOp()) {
+                if (uuid == null || uuid.equals(player.getUuid())) {
                     world.breakBlock(pos, true);
+                } else if (player.isCreativeLevelTwoOp()) {
+                    world.breakBlock(pos, false);
                 }
             }
         }

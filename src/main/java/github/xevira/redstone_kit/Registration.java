@@ -23,7 +23,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
-import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
@@ -38,6 +37,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.function.UnaryOperator;
 
@@ -48,6 +48,9 @@ public class Registration {
 
     public static final ComponentType<BlockPos> COORDINATES =
             registerComponent("coordinates", builder -> builder.codec(BlockPos.CODEC));
+
+    public static final ComponentType<Identifier> WORLD_ID =
+            registerComponent("world_id", builder -> builder.codec(Identifier.CODEC));
 
     public static final Block WEATHER_DETECTOR_BLOCK = register("weather_detector", new WeatherDetectorBlock(
             AbstractBlock.Settings.create().
@@ -86,8 +89,8 @@ public class Registration {
             AbstractBlock.Settings.create()
                     .mapColor(MapColor.BLACK)
                     .instrument(NoteBlockInstrument.BASEDRUM)
-                    .strength(-1.0F, 3600000.0F)
-                    .sounds(BlockSoundGroup.STONE)
+                    .requiresTool()
+                    .strength(50.0F, 1200.0F)
     ));
 
 
@@ -216,7 +219,10 @@ public class Registration {
 
             entries.addAfter(Items.DAYLIGHT_DETECTOR,
                     Registration.WEATHER_DETECTOR_ITEM,
-                    Registration.PLAYER_DETECTOR_ITEM);
+                    Registration.PLAYER_DETECTOR_ITEM,
+                    Registration.TELEPORTER_ITEM);
+
+            entries.add(Registration.RESONATOR_ITEM);
         });
 
         // Packet Registration
@@ -226,6 +232,7 @@ public class Registration {
         PayloadTypeRegistry.playC2S().register(PlayerDetectorSetPlayerPayload.ID, PlayerDetectorSetPlayerPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(PlayerDetectorClearPlayerPayload.ID, PlayerDetectorClearPlayerPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(PlayerDetectorSetVisionPayload.ID, PlayerDetectorSetVisionPayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(TeleporterTeleportPlayerPayload.ID, TeleporterTeleportPlayerPayload.PACKET_CODEC);
 
         // Packet Handlers
         // - Server Side
@@ -292,6 +299,15 @@ public class Registration {
                 handler.getBlockEntity().setVision(payload.north(), payload.south(), payload.east(), payload.west(), payload.up(), payload.down());
             }
         });
+
+        ServerPlayNetworking.registerGlobalReceiver(TeleporterTeleportPlayerPayload.ID, (payload, context) -> {
+            World world = context.player().getWorld();
+            if (world.getBlockEntity(payload.pos()) instanceof TeleporterBlockEntity teleporter)
+            {
+                teleporter.teleportEntity(context.player());
+            }
+        });
+
     }
 
 }

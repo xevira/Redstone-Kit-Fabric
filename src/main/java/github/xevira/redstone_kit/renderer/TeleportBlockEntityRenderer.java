@@ -9,6 +9,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 import org.joml.Matrix4f;
 
 public class TeleportBlockEntityRenderer implements BlockEntityRenderer<TeleporterBlockEntity> {
@@ -18,13 +19,17 @@ public class TeleportBlockEntityRenderer implements BlockEntityRenderer<Teleport
 
     @Override
     public void render(TeleporterBlockEntity entity, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay) {
-        if (!entity.isLinked() || !entity.isActive()) return;
+        if (!entity.isLinked()) return;
 
         float y = 2.0f / 16.0f;
 
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(this.getLayer());
 
-        this.renderSide(entity, matrices.peek().getPositionMatrix(), vertexConsumer, 0.25F, 0.75F, y, y, 0.75F, 0.75F, 0.25F, 0.25F, Direction.UP);
+        double percent = entity.getCooldownPercentage();
+        int value = (int)MathHelper.map(percent, 0.0, 1.0, 0, 255);
+        int color = value * 0x010101;
+
+        this.renderSide(entity, matrices.peek().getPositionMatrix(), vertexConsumer, 0.25F, 0.75F, y, y, 0.75F, 0.75F, 0.25F, 0.25F, color);
         //drawQuad(vertexConsumer, matrices.peek(), 0.25f, 0.25f, 0.25f, 0.75f, 0.25f, 0.75f, 0.25f, 0.25f, 0.75f, 0.75f, 0xFFFFFF, light, overlay);
     }
 
@@ -33,12 +38,12 @@ public class TeleportBlockEntityRenderer implements BlockEntityRenderer<Teleport
     }
 
     private void renderSide(
-            TeleporterBlockEntity entity, Matrix4f model, VertexConsumer vertices, float x1, float x2, float y1, float y2, float z1, float z2, float z3, float z4, Direction side
+            TeleporterBlockEntity entity, Matrix4f model, VertexConsumer vertices, float x1, float x2, float y1, float y2, float z1, float z2, float z3, float z4, int color
     ) {
-        vertices.vertex(model, x1, y1, z1);
-        vertices.vertex(model, x2, y1, z2);
-        vertices.vertex(model, x2, y2, z3);
-        vertices.vertex(model, x1, y2, z4);
+        vertices.vertex(model, x1, y1, z1).color(color);
+        vertices.vertex(model, x2, y1, z2).color(color);
+        vertices.vertex(model, x2, y2, z3).color(color);
+        vertices.vertex(model, x1, y2, z4).color(color);
     }
 
     private static void drawQuad(VertexConsumer vertexConsumer,
