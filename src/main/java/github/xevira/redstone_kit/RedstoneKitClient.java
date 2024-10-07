@@ -4,6 +4,7 @@ import github.xevira.redstone_kit.block.TeleporterBlock;
 import github.xevira.redstone_kit.renderer.TeleportBlockEntityRenderer;
 import github.xevira.redstone_kit.screen.PlayerDetectorScreen;
 import github.xevira.redstone_kit.screen.RedstoneTimerScreen;
+import github.xevira.redstone_kit.screen.TeleporterScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -18,6 +19,7 @@ public class RedstoneKitClient implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(TeleporterBlock.TeleportHandler::handleInput);
 
 		// Render Layers
+		// Cutout - Where parts of the textures need to be transparent, but NOT translucent (use Translucent for that)
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
 				Registration.REDSTONE_AND_BLOCK,
 				Registration.REDSTONE_INVERTER_BLOCK,
@@ -32,6 +34,7 @@ public class RedstoneKitClient implements ClientModInitializer {
 		// Screen Handlers
 		HandledScreens.register(Registration.REDSTONE_TIMER_SCREEN_HANDLER, RedstoneTimerScreen::new);
 		HandledScreens.register(Registration.PLAYER_DETECTOR_SCREEN_HANDLER, PlayerDetectorScreen::new);
+		HandledScreens.register(Registration.TELEPORTER_SCREEN_HANDLER, TeleporterScreen::new);
 
 		// Block Entity Renderers
 		BlockEntityRendererFactories.register(Registration.TELEPORTER_BLOCK_ENTITY, TeleportBlockEntityRenderer::new);

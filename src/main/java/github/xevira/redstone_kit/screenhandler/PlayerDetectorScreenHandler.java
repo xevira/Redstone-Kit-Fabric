@@ -37,7 +37,7 @@ public class PlayerDetectorScreenHandler extends ScreenHandler {
         }
     };
 
-    private final PlayerDetectorScreenHandler.PaymentSlot paymentSlot;
+    private final PaymentSlot paymentSlot;
 
     public PlayerDetectorScreenHandler(int syncId, PlayerInventory playerInventory, BlockPosPayload payload)
     {
@@ -49,7 +49,7 @@ public class PlayerDetectorScreenHandler extends ScreenHandler {
 
         this.blockEntity = playerDetectorBlockEntity;
         this.context = ScreenHandlerContext.create(this.blockEntity.getWorld(), this.blockEntity.getPos());
-        this.paymentSlot = new PlayerDetectorScreenHandler.PaymentSlot(this.payment, 0, 62, 31);
+        this.paymentSlot = new PaymentSlot(Registration.PLAYER_DETECTOR_OFFERINGS_TAG, this.payment, 0, 62, 31);
         this.addSlot(this.paymentSlot);
 
         for (int r = 0; r < 3; r++) {
@@ -171,22 +171,5 @@ public class PlayerDetectorScreenHandler extends ScreenHandler {
     public boolean getVision(BooleanProperty side)
     {
         return this.blockEntity.getVision(side);
-    }
-
-    public static class PaymentSlot extends Slot {
-
-        public PaymentSlot(final Inventory inventory, final int index, final int x, final int y) {
-            super(inventory, index, x, y);
-        }
-
-        @Override
-        public boolean canInsert(ItemStack stack) {
-            return stack.isIn(Registration.PLAYER_DETECTOR_OFFERINGS_TAG);
-        }
-
-        @Override
-        public int getMaxItemCount() {
-            return 1;
-        }
     }
 }

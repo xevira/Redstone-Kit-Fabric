@@ -16,15 +16,18 @@ public class ServerConfig {
     private static final String CONFIG_PATH = "config/" + RedstoneKit.MOD_ID + ".json";
     private static final String BACKUP_PATH = "config/" + RedstoneKit.MOD_ID + ".json.bak";
 
-    private static final String TELEPORT_USE_XP_FIELD = "teleportUseXP";
+    private static final String USE_XP_TO_LOCK_FIELD = "useXPtoLock";
+    private static final String XP_LOCK_LEVELS_FIELD = "xpLockLevels";
 
     private static ServerConfig currentConfig;
 
-    private boolean teleportUseXP;
+    private boolean useXPtoLock;
+    private int xpLockLevels;
 
     public ServerConfig()
     {
-        this.teleportUseXP = false;
+        this.useXPtoLock = false;
+        this.xpLockLevels = 1;
     }
 
     public static void onServerLoad(MinecraftServer server) {
@@ -96,20 +99,20 @@ public class ServerConfig {
     private JsonObject serialize() {
         JsonObject json = new JsonObject();
 
-        json.add(TELEPORT_USE_XP_FIELD, new JsonPrimitive(this.teleportUseXP));
+        json.add(USE_XP_TO_LOCK_FIELD, new JsonPrimitive(this.useXPtoLock));
+        json.add(XP_LOCK_LEVELS_FIELD, new JsonPrimitive(this.xpLockLevels));
 
         return json;
     }
 
     private void deserialize(JsonObject json) {
-
-        this.teleportUseXP = json.getAsJsonPrimitive(TELEPORT_USE_XP_FIELD).getAsBoolean();
-
+        this.useXPtoLock = json.getAsJsonPrimitive(USE_XP_TO_LOCK_FIELD).getAsBoolean();
+        this.xpLockLevels = json.getAsJsonPrimitive(XP_LOCK_LEVELS_FIELD).getAsInt();
     }
 
-    // Properties
-    public boolean getTeleportUseXP()
-    {
-        return this.teleportUseXP;
-    }
+
+    // Getters
+    public boolean useXPtoLock() { return this.useXPtoLock; }
+    public int xpLockLevels() { return this.xpLockLevels; }
+
 }

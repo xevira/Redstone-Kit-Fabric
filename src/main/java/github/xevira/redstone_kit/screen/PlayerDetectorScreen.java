@@ -302,8 +302,6 @@ public class PlayerDetectorScreen extends HandledScreen<PlayerDetectorScreenHand
 
         @Override
         public void onPress() {
-            RedstoneKit.LOGGER.info("onPress({}) called", this.side.getName());
-
             this.onPress.onPress(this);
         }
 

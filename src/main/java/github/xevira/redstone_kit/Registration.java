@@ -1,11 +1,13 @@
 package github.xevira.redstone_kit;
 
+import com.mojang.datafixers.util.Pair;
 import github.xevira.redstone_kit.block.*;
 import github.xevira.redstone_kit.block.entity.*;
 import github.xevira.redstone_kit.item.ResonatorItem;
 import github.xevira.redstone_kit.network.*;
 import github.xevira.redstone_kit.screenhandler.PlayerDetectorScreenHandler;
 import github.xevira.redstone_kit.screenhandler.RedstoneTimerScreenHandler;
+import github.xevira.redstone_kit.screenhandler.TeleporterScreenHandler;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -29,6 +31,7 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
@@ -40,6 +43,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 public class Registration {
 
@@ -158,8 +162,12 @@ public class Registration {
 
     public static final ScreenHandlerType<RedstoneTimerScreenHandler> REDSTONE_TIMER_SCREEN_HANDLER = register("redstone_timer", RedstoneTimerScreenHandler::new, BlockPosPayload.PACKET_CODEC);
     public static final ScreenHandlerType<PlayerDetectorScreenHandler> PLAYER_DETECTOR_SCREEN_HANDLER = register("player_detector", PlayerDetectorScreenHandler::new, BlockPosPayload.PACKET_CODEC);
+    public static final ScreenHandlerType<TeleporterScreenHandler> TELEPORTER_SCREEN_HANDLER = register("teleporter", TeleporterScreenHandler::new, TeleporterScreenPayload.PACKET_CODEC);
+
+    public static final TagKey<Item> PURPUR_BLOCKS_TAG = registerItemTag("purpur_blocks");
 
     public static final TagKey<Item> PLAYER_DETECTOR_OFFERINGS_TAG = registerItemTag("player_detector_offering");
+    public static final TagKey<Item> TELEPORTER_OFFERINGS_TAG = registerItemTag("teleporter_offering");
 
     // Registration Functions
     public static <T extends Block> T register(String name, T block) {
@@ -195,6 +203,10 @@ public class Registration {
         return Registry.register(Registries.SCREEN_HANDLER, RedstoneKit.id(name), new ExtendedScreenHandlerType<>(factory, codec));
     }
 
+    public static TagKey<Block> registerBlockTag(String name) {
+        return TagKey.of(RegistryKeys.BLOCK, RedstoneKit.id(name));
+    }
+
     public static TagKey<Item> registerItemTag(String name) {
         return TagKey.of(RegistryKeys.ITEM, RedstoneKit.id(name));
     }
@@ -202,6 +214,11 @@ public class Registration {
     public static <T> ComponentType<T> registerComponent(String name, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
         return Registry.register(Registries.DATA_COMPONENT_TYPE, RedstoneKit.id(name),
                 builderOperator.apply(ComponentType.builder()).build());
+    }
+
+    public static <T> long getTagCount(Registry<T> registry, TagKey<T> tag)
+    {
+        return registry.streamTagsAndEntries().filter((p) -> p.getFirst().equals(tag)).count();
     }
 
     public static void load() {
@@ -225,89 +242,7 @@ public class Registration {
             entries.add(Registration.RESONATOR_ITEM);
         });
 
-        // Packet Registration
-        // - Client -> Server
-        PayloadTypeRegistry.playC2S().register(TimerSetTimePayload.ID, TimerSetTimePayload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(TimerSetRepeatPayload.ID, TimerSetRepeatPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(PlayerDetectorSetPlayerPayload.ID, PlayerDetectorSetPlayerPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(PlayerDetectorClearPlayerPayload.ID, PlayerDetectorClearPlayerPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(PlayerDetectorSetVisionPayload.ID, PlayerDetectorSetVisionPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(TeleporterTeleportPlayerPayload.ID, TeleporterTeleportPlayerPayload.PACKET_CODEC);
-
-        // Packet Handlers
-        // - Server Side
-        ServerPlayNetworking.registerGlobalReceiver(TimerSetTimePayload.ID, (payload, context) -> {
-            if( context.player().currentScreenHandler instanceof RedstoneTimerScreenHandler handler)
-            {
-                if (!handler.canUse(context.player()))
-                {
-                    RedstoneKit.LOGGER.debug("Player {} interacted with invalid menu {} for RedstoneTimerScreenHandler", context.player(), handler);
-                    return;
-                }
-                handler.getBlockEntity().setTicksTotal(payload.time());
-            }
-        });
-
-        ServerPlayNetworking.registerGlobalReceiver(TimerSetRepeatPayload.ID, (payload, context) -> {
-            if( context.player().currentScreenHandler instanceof RedstoneTimerScreenHandler handler)
-            {
-                if (!handler.canUse(context.player()))
-                {
-                    RedstoneKit.LOGGER.debug("Player {} interacted with invalid menu {} for RedstoneTimerScreenHandler", context.player(), handler);
-                    return;
-                }
-                handler.getBlockEntity().setRepeats(payload.repeat());
-            }
-        });
-
-        ServerPlayNetworking.registerGlobalReceiver(PlayerDetectorSetPlayerPayload.ID, (payload, context) -> {
-           if (context.player().currentScreenHandler instanceof PlayerDetectorScreenHandler handler)
-           {
-               if (!handler.canUse(context.player()))
-               {
-                   RedstoneKit.LOGGER.debug("Player {} interacted with invalid menu {} for PlayerDetectorScreenHandler", context.player(), handler);
-                   return;
-               }
-
-               handler.setPlayer(payload.uuid(), payload.name());
-           }
-        });
-
-        ServerPlayNetworking.registerGlobalReceiver(PlayerDetectorClearPlayerPayload.ID, (payload, context) -> {
-            if (context.player().currentScreenHandler instanceof PlayerDetectorScreenHandler handler)
-            {
-                if (!handler.canUse(context.player()))
-                {
-                    RedstoneKit.LOGGER.debug("Player {} interacted with invalid menu {} for PlayerDetectorScreenHandler", context.player(), handler);
-                    return;
-                }
-
-                // This can do it directly as it's clearing it
-                handler.getBlockEntity().setPlayer(null, "");
-            }
-        });
-
-        ServerPlayNetworking.registerGlobalReceiver(PlayerDetectorSetVisionPayload.ID, (payload, context) -> {
-            if (context.player().currentScreenHandler instanceof PlayerDetectorScreenHandler handler)
-            {
-                if (!handler.canUse(context.player()))
-                {
-                    RedstoneKit.LOGGER.debug("Player {} interacted with invalid menu {} for PlayerDetectorScreenHandler", context.player(), handler);
-                    return;
-                }
-
-                handler.getBlockEntity().setVision(payload.north(), payload.south(), payload.east(), payload.west(), payload.up(), payload.down());
-            }
-        });
-
-        ServerPlayNetworking.registerGlobalReceiver(TeleporterTeleportPlayerPayload.ID, (payload, context) -> {
-            World world = context.player().getWorld();
-            if (world.getBlockEntity(payload.pos()) instanceof TeleporterBlockEntity teleporter)
-            {
-                teleporter.teleportEntity(context.player());
-            }
-        });
-
+        // All packet and handler registration
+        Networking.register();
     }
-
 }

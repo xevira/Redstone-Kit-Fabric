@@ -1,13 +1,19 @@
 package github.xevira.redstone_kit.block;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.entity.PlayerDetectorBlockEntity;
 import github.xevira.redstone_kit.block.entity.TeleporterBlockEntity;
 import github.xevira.redstone_kit.config.ServerConfig;
+import github.xevira.redstone_kit.item.ResonatorItem;
 import github.xevira.redstone_kit.network.TeleporterTeleportPlayerPayload;
+import github.xevira.redstone_kit.screen.PlayerDetectorScreen;
+import github.xevira.redstone_kit.screen.TeleporterScreen;
 import github.xevira.redstone_kit.util.ServerTickableBlockEntity;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -18,8 +24,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
 import net.minecraft.state.StateManager;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -31,16 +40,17 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.core.pattern.AbstractStyleNameConverter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 public class TeleporterBlock extends BlockWithEntity {
-    public static final String LINKED_PEARL_MSG = RedstoneKit.textPath("text", "teleporter.linked.pearl");
-    public static final String LINKED_PEARLS_MSG = RedstoneKit.textPath("text", "teleporter.linked.pearls");
-    public static final String LINKED_XP_MSG = RedstoneKit.textPath("text", "teleporter.linked.xp");
-    public static final String LINKED_XPS_MSG = RedstoneKit.textPath("text", "teleporter.linked.xps");
-    public static final Text NOT_LINKED_TEXT = Text.translatable(RedstoneKit.textPath("text", "teleporter.not_linked"));
+    //public static final String LINKED_PEARL_MSG = RedstoneKit.textPath("text", "teleporter.linked.pearl");
+    //public static final String LINKED_PEARLS_MSG = RedstoneKit.textPath("text", "teleporter.linked.pearls");
+    //public static final String LINKED_XP_MSG = RedstoneKit.textPath("text", "teleporter.linked.xp");
+    //public static final String LINKED_XPS_MSG = RedstoneKit.textPath("text", "teleporter.linked.xps");
+    //public static final Text NOT_LINKED_TEXT = Text.translatable(RedstoneKit.textPath("text", "teleporter.not_linked"));
 
     protected static final VoxelShape SHAPE = VoxelShapes.union(
             VoxelShapes.cuboid(0.0000, 0.0000, 0.0000, 1.0000, 0.0625, 1.0000),
@@ -84,18 +94,35 @@ public class TeleporterBlock extends BlockWithEntity {
     }
 
     @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+
+        if (!world.isClient) {
+            RedstoneKit.LOGGER.info("Teleporter.onPlaced - called on server");
+            if (placer instanceof PlayerEntity player) {
+                if (world.getBlockEntity(pos) instanceof TeleporterBlockEntity teleporter) {
+                    RedstoneKit.LOGGER.info("Teleporter.onPlaced: owner = {}", player.getUuid());
+                    teleporter.setOwner(player.getUuid());
+                }
+            }
+        }
+    }
+
+    @Override
     protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         ItemStack stack = player.getStackInHand(Hand.MAIN_HAND);
-        if (!stack.isEmpty())
+        if (!stack.isEmpty() && stack.getItem() instanceof ResonatorItem)
             return ActionResult.PASS;
 
         if(!world.isClient)
         {
-            if (world.getBlockEntity(pos) instanceof TeleporterBlockEntity teleporter) {
+            if (world.getBlockEntity(pos) instanceof TeleporterBlockEntity teleporter && teleporter.canConfigureTeleporter(player)) {
+                player.openHandledScreen(teleporter);
+                /*
                 if (teleporter.isLinked())
                 {
                     BlockPos targetPos = teleporter.getLinkedTeleporter();
-                    if (ServerConfig.getConfig().getTeleportUseXP())
+                    if (teleporter.usesXP())
                     {
                         int cost = teleporter.getTeleportXPCost();
 
@@ -118,6 +145,8 @@ public class TeleporterBlock extends BlockWithEntity {
                 {
                     player.sendMessage(NOT_LINKED_TEXT);
                 }
+
+                 */
             }
         }
         return ActionResult.success(world.isClient);

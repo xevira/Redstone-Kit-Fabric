@@ -3,6 +3,7 @@ package github.xevira.redstone_kit.data.provider;
 import github.xevira.redstone_kit.Registration;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.minecraft.block.Blocks;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
 
@@ -29,6 +30,7 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .add(Registration.TELEPORTER_BLOCK);
 
         getOrCreateTagBuilder(BlockTags.NEEDS_DIAMOND_TOOL)
-                .add(Registration.TELEPORTER_BLOCK);;
+                .add(Registration.TELEPORTER_BLOCK);
+
     }
 }

@@ -133,14 +133,28 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_MEMORY_BLOCK)
                 .input('R', Items.REDSTONE_TORCH)
-                .input('L', Registration.REDSTONE_MEMORY_ITEM)
+                .input('L', Registration.REDSTONE_RSNORLATCH_BLOCK)
                 .input('S', Blocks.STONE)
                 .pattern(" R ")
                 .pattern("RLR")
                 .pattern("SSS")
                 .criterion(hasItem(Items.REDSTONE_TORCH), conditionsFromItem(Items.REDSTONE_TORCH))
-                .criterion(hasItem(Registration.REDSTONE_MEMORY_ITEM), conditionsFromItem(Registration.REDSTONE_MEMORY_ITEM))
+                .criterion(hasItem(Registration.REDSTONE_RSNORLATCH_BLOCK), conditionsFromItem(Registration.REDSTONE_RSNORLATCH_BLOCK))
                 .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.TELEPORTER_BLOCK)
+                .input('P', Registration.PURPUR_BLOCKS_TAG)
+                .input('E', Items.ENDER_PEARL)
+                .input('Q', Items.QUARTZ)
+                .input('O', Blocks.OBSIDIAN)
+                .pattern("PQP")
+                .pattern("QEQ")
+                .pattern("OOO")
+                .criterion("has_purpur_blocks", conditionsFromTag(Registration.PURPUR_BLOCKS_TAG))
+                .criterion(hasItem(Items.ENDER_PEARL), conditionsFromItem(Items.ENDER_PEARL))
+                .criterion(hasItem(Items.QUARTZ), conditionsFromItem(Items.QUARTZ))
+                .criterion(hasItem(Blocks.OBSIDIAN), conditionsFromItem(Blocks.OBSIDIAN))
                 .offerTo(exporter);
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.RESONATOR_ITEM)

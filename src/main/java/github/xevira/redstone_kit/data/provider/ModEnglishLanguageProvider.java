@@ -4,6 +4,8 @@ import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.entity.PlayerDetectorBlockEntity;
 import github.xevira.redstone_kit.block.entity.RedstoneTimerBlockEntity;
+import github.xevira.redstone_kit.block.entity.TeleporterBlockEntity;
+import github.xevira.redstone_kit.screen.TeleporterScreen;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.registry.RegistryWrapper;
@@ -19,6 +21,15 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
     }
 
     private static void addText(@NotNull TranslationBuilder builder, @NotNull Text text, @NotNull String value) {
+        if (text.getContent() instanceof TranslatableTextContent translatableTextContent) {
+            builder.add(translatableTextContent.getKey(), value);
+        } else {
+            RedstoneKit.LOGGER.warn("Failed to add translation for text: {}", text.getString());
+        }
+    }
+
+    private static void addText(@NotNull TranslationBuilder builder, @NotNull String path, @NotNull String value) {
+        Text text = Text.translatable(path);
         if (text.getContent() instanceof TranslatableTextContent translatableTextContent) {
             builder.add(translatableTextContent.getKey(), value);
         } else {
@@ -49,9 +60,14 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(Registration.REDSTONE_TIMER_BLOCK, "Redstone Timer");
         translationBuilder.add(Registration.WEATHER_DETECTOR_BLOCK, "Weather Detector");
         translationBuilder.add(Registration.TELEPORTER_BLOCK, "Teleporter");
+
         translationBuilder.add(Registration.PLAYER_DETECTOR_OFFERINGS_TAG, "Player Detector Offerings");
+        translationBuilder.add(Registration.TELEPORTER_OFFERINGS_TAG, "Teleporter Offerings");
+
         addText(translationBuilder, RedstoneTimerBlockEntity.TITLE, "Redstone Timer");
         addText(translationBuilder, PlayerDetectorBlockEntity.TITLE, "Player Detector");
+        addText(translationBuilder, TeleporterBlockEntity.TITLE, "Teleporter");
+
         addText(translationBuilder, "sound","redstone_inverter_click", "Inverter clicks");
         addText(translationBuilder, "sound","redstone_rsnorlatch_click", "Latch clicks");
 
@@ -68,7 +84,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         addText(translationBuilder, "text", "off", "OFF");
         addText(translationBuilder, "text", "in_seconds", "(in seconds)");
         addText(translationBuilder, "text", "total_time", "Total Time");
-        addText(translationBuilder, "text", "set", "Set");
+        addText(translationBuilder, "button", "set", "Set");
 
         addText(translationBuilder, "button", "lock_player", "Lock");
         addText(translationBuilder, "button", "unlock_player", "Unlock");
@@ -107,5 +123,20 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         addText(translationBuilder, "text", "teleporter.not_linked", "The teleporter has not been linked.");
         addText(translationBuilder, "text", "teleporter.not_enough_fuel.pearls", "Not enough §aEnder Pearls§r for teleport.  (%s needed in total)");
         addText(translationBuilder, "text", "teleporter.not_enough_fuel.xp", "Not enough §aExperience Points§r for teleport.  (%s needed in total)");
+        addText(translationBuilder, "tooltip", "teleporter.use_xp.off", "Click to use Experience to travel.");
+        addText(translationBuilder, "tooltip", "teleporter.use_xp.on", "Click to use Ender Pearls to travel.");
+        addText(translationBuilder, "label", "teleporter.no_owner", "NO OWNER");
+        addText(translationBuilder, "label", "teleporter.use_xp", "Use Experience for travel.");
+        addText(translationBuilder, "label", "teleporter.pearl_cost", "Pearl Cost:");
+        addText(translationBuilder, "label", "teleporter.xp_cost", "XP Cost:");
+        addText(translationBuilder, "label", "teleporter.target", "Target:");
+        addText(translationBuilder, "label", "teleporter.target.unlinked", "Unlinked");
+        addText(translationBuilder, "label", "teleporter.target.position", "(%s, %s, %s) ~%s blocks away");
+        addText(translationBuilder, "label", "teleporter.lock_levels", "%s levels to lock.");
+        addText(translationBuilder, "label", "teleporter.lock_level", "1 level to lock.");
+        addText(translationBuilder, "tooltip", "teleporter.pearl_cost", "Number of Ender Pearls used per block traveled.");
+        addText(translationBuilder, "tooltip", "teleporter.xp_cost", "Number of Experience points used per block traveled.");
+        addText(translationBuilder, "tooltip", "teleporter.pearl_cost.set", "Click to set the Ender Pearl cost per block.");
+        addText(translationBuilder, "tooltip", "teleporter.xp_cost.set", "Click to set the Experience cost per block.");
     }
 }

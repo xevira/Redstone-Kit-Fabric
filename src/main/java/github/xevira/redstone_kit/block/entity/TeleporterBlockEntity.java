@@ -3,8 +3,12 @@ package github.xevira.redstone_kit.block.entity;
 import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.config.ServerConfig;
+import github.xevira.redstone_kit.network.BlockPosPayload;
+import github.xevira.redstone_kit.network.TeleporterScreenPayload;
+import github.xevira.redstone_kit.screenhandler.TeleporterScreenHandler;
 import github.xevira.redstone_kit.util.ServerTickableBlockEntity;
 import github.xevira.redstone_kit.util.XPHelper;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
@@ -12,6 +16,7 @@ import net.minecraft.block.InventoryProvider;
 import net.minecraft.block.entity.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
@@ -22,13 +27,20 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class TeleporterBlockEntity extends BlockEntity implements ServerTickableBlockEntity {
+import java.util.UUID;
+
+public class TeleporterBlockEntity extends BlockEntity implements ServerTickableBlockEntity, ExtendedScreenHandlerFactory<TeleporterScreenPayload> {
+    public static final Text TITLE = Text.translatable(RedstoneKit.textPath("gui","teleporter.title"));
 
     private static final String NOT_ENOUGH_PEARLS_MSG = RedstoneKit.textPath("text", "teleporter.not_enough_fuel.pearls");
     private static final String NOT_ENOUGH_XP_MSG = RedstoneKit.textPath("text", "teleporter.not_enough_fuel.xp");
@@ -39,17 +51,61 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
 
     private static final String LINKED_NBT = "linked_teleporter";
     private static final String COOLDOWN_NBT = "teleport_cooldown";
+    private static final String OWNER_NBT = "teleport_owner";
 
+    private static final String OPTIONS_NBT = "teleport_options";
+    private static final String LOCKED_NBT = "locked";
+    private static final String USE_XP_NBT = "use_xp";
+    private static final String PEARL_COST_NBT = "pearl_cost";
+    private static final String XP_COST_NBT = "xp_cost";
+
+    @Nullable
+    private UUID owner;
     private BlockPos linked_teleporter;
     private int cooldown;
+
+    // Configuration options
+    private boolean useXP;
+    private boolean locked;
+    private double pearlPerBlock;
+    private double xpPerBlock;
+
+    protected final PropertyDelegate propertyDelegate;
 
     private static final int[][] AVAILABLE_SLOTS_CACHE = new int[54][];
 
     public TeleporterBlockEntity(BlockPos pos, BlockState state) {
         super(Registration.TELEPORTER_BLOCK_ENTITY, pos, state);
 
+        this.owner = null;
         this.linked_teleporter = this.pos.mutableCopy();
         this.cooldown = 0;
+
+        this.useXP = false;
+        this.locked = false;
+        this.pearlPerBlock = 0.0;
+        this.xpPerBlock = 0.0;
+
+        this.propertyDelegate = new PropertyDelegate() {
+            @Override
+            public int get(int index) {
+                return switch(index) {
+                    case 0 -> ServerConfig.getConfig().useXPtoLock() ? 255 : 0;
+                    case 1 -> ServerConfig.getConfig().xpLockLevels();
+                    default -> 0;
+                };
+            }
+
+            @Override
+            public void set(int index, int value) {
+                // Read-only
+            }
+
+            @Override
+            public int size() {
+                return 2;
+            }
+        };
     }
 
     public void clearLinkedTeleporter()
@@ -74,11 +130,6 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
         return !this.linked_teleporter.equals(this.pos);
     }
 
-    public boolean isActive()
-    {
-        return true;    // TODO: Add inventory usage for ENDER PEARL fuel
-    }
-
     public int getCooldown()
     {
         return this.cooldown;
@@ -92,6 +143,75 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
     public boolean hasCooldown()
     {
         return this.cooldown > 0;
+    }
+
+    @Nullable
+    public UUID getOwner()
+    {
+        return this.owner;
+    }
+
+    public boolean isOwner(LivingEntity entity)
+    {
+        return this.owner != null && this.owner.equals(entity.getUuid());
+    }
+
+    // Either be OP 2 in Creative or be the owner of the teleporter
+    public boolean canConfigureTeleporter(PlayerEntity player)
+    {
+        if (player.isCreativeLevelTwoOp()) return true;
+
+        return this.owner != null && this.owner.equals(player.getUuid());
+    }
+
+    public void setOwner(@Nullable UUID owner)
+    {
+        this.owner = owner;
+        markDirty();
+    }
+
+    public boolean usesXP()
+    {
+        return this.useXP;
+    }
+
+    public void setUsesXP(boolean value)
+    {
+        this.useXP = value;
+        markDirty();
+    }
+
+    public boolean isLocked()
+    {
+        return this.locked;
+    }
+
+    public void setLocked(boolean value)
+    {
+        this.locked = value;
+        markDirty();
+    }
+
+    public double getPearlPerBlock()
+    {
+        return this.pearlPerBlock;
+    }
+
+    public void setPearlPerBlock(double cost)
+    {
+        this.pearlPerBlock = Math.max(0, cost);
+        markDirty();
+    }
+
+    public double getXpPerBlock()
+    {
+        return this.xpPerBlock;
+    }
+
+    public void setXpPerBlock(double cost)
+    {
+        this.xpPerBlock = Math.max(0, cost);
+        markDirty();
     }
 
     public void teleportEntity(LivingEntity entity)
@@ -109,7 +229,7 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
         {
             if (!hasFuel(entity))
             {
-                if (ServerConfig.getConfig().getTeleportUseXP()) {
+                if (this.useXP) {
                     int cost = getTeleportXPCost();
 
                     if (entity instanceof PlayerEntity player)
@@ -180,9 +300,28 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
             markDirty();
     }
 
+    protected void readOptionsNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        if (nbt.contains(USE_XP_NBT, NbtElement.BYTE_TYPE))
+            this.useXP = nbt.getByte(USE_XP_NBT) != 0;
+
+        if (nbt.contains(LOCKED_NBT, NbtElement.BYTE_TYPE))
+            this.locked = nbt.getByte(LOCKED_NBT) != 0;
+
+        if (nbt.contains(PEARL_COST_NBT, NbtElement.DOUBLE_TYPE))
+            this.pearlPerBlock = nbt.getDouble(PEARL_COST_NBT);
+
+        if (nbt.contains(XP_COST_NBT, NbtElement.DOUBLE_TYPE))
+            this.xpPerBlock = nbt.getDouble(XP_COST_NBT);
+    }
+
     @Override
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.readNbt(nbt, registryLookup);
+
+        if (nbt.containsUuid(OWNER_NBT))
+            this.owner = nbt.getUuid(OWNER_NBT);
+        else
+            this.owner = null;
 
         if (nbt.contains(LINKED_NBT, NbtElement.LONG_TYPE))
             this.linked_teleporter = BlockPos.fromLong(nbt.getLong(LINKED_NBT));
@@ -193,14 +332,29 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
             this.cooldown = nbt.getInt(COOLDOWN_NBT);
         else
             this.cooldown = 0;
+
+        if (nbt.contains(OPTIONS_NBT, NbtElement.COMPOUND_TYPE))
+            readOptionsNbt(nbt.getCompound(OPTIONS_NBT), registryLookup);
+    }
+
+    protected void writeOptionsNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        nbt.putBoolean(LOCKED_NBT, this.locked);
+        nbt.putBoolean(USE_XP_NBT, this.useXP);
+        nbt.putDouble(PEARL_COST_NBT, this.pearlPerBlock);
+        nbt.putDouble(XP_COST_NBT, this.xpPerBlock);
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
 
+        if (this.owner != null) nbt.putUuid(OWNER_NBT, this.owner);
         nbt.putLong(LINKED_NBT, this.linked_teleporter.asLong());
         nbt.putInt(COOLDOWN_NBT, this.cooldown);
+
+        NbtCompound options = new NbtCompound();
+        writeOptionsNbt(options, registryLookup);
+        nbt.put(OPTIONS_NBT, options);
     }
 
     @Override
@@ -228,7 +382,7 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
 
         if (dist <= 0.0) return -1;
 
-        return (int) Math.ceil(Math.log(Math.sqrt(dist)) / LOG_2) + 1;
+        return (int) Math.ceil(this.pearlPerBlock * Math.sqrt(dist));
     }
 
     public int getTeleportXPCost()
@@ -237,7 +391,7 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
 
         if (dist <= 0.0) return -1;
 
-        return (int) Math.ceil(50 * Math.log(Math.sqrt(dist)) / LOG_2) + 1;
+        return (int) Math.ceil(this.xpPerBlock * Math.sqrt(dist));
     }
 
     private boolean hasFuel(LivingEntity entity)
@@ -246,18 +400,16 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
 
         if (!isLinked()) return false;
 
-        if (ServerConfig.getConfig().getTeleportUseXP()) {
-            if (entity instanceof PlayerEntity player)
-            {
-                if (player.isCreative()) return true;
-
-                int cost = getTeleportXPCost();
-                if (cost < 0) return false;
-
-                return player.totalExperience >= cost;
-            }
-
+        if (!(entity instanceof PlayerEntity player))
             return false;
+
+        if (isOwner(player) && isLocked()) return true;
+
+        if (this.useXP) {
+            int cost = getTeleportXPCost();
+            if (cost < 0) return false;
+
+            return player.totalExperience >= cost;
         } else {
             BlockPos invPos = this.pos.down();
 
@@ -290,10 +442,15 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
 
         if (!isLinked()) return;
 
-        if (ServerConfig.getConfig().getTeleportUseXP()) {
+        if (!(entity instanceof PlayerEntity player))
+            return;
+
+        if (isOwner(player) && isLocked()) return;
+
+        if (this.useXP) {
             int xp = getTeleportXPCost();
 
-            if (xp > 0 && entity instanceof PlayerEntity player) {
+            if (xp > 0) {
                 if (player.isCreative()) return;
 
                 int cost = getTeleportXPCost();
@@ -310,7 +467,7 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
 
             int pearls = getTeleportPearlCost();
             if (pearls > 0) {
-                for (int i : getAvailableSlots(inventory, Direction.UP)) {
+                for (int i : getAvailableSlots(inventory)) {
                     ItemStack stack = inventory.getStack(i);
                     if (stack.isOf(Items.ENDER_PEARL)) {
                         if (stack.getCount() > pearls) {
@@ -327,9 +484,9 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
         }
     }
 
-    private static int[] getAvailableSlots(Inventory inventory, Direction side) {
+    private static int[] getAvailableSlots(Inventory inventory) {
         if (inventory instanceof SidedInventory sidedInventory) {
-            return sidedInventory.getAvailableSlots(side);
+            return sidedInventory.getAvailableSlots(Direction.UP);
         } else {
             int i = inventory.size();
             if (i < AVAILABLE_SLOTS_CACHE.length) {
@@ -374,5 +531,18 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
         }
     }
 
+    @Override
+    public TeleporterScreenPayload getScreenOpeningData(ServerPlayerEntity player) {
+        return new TeleporterScreenPayload(this.pos, ServerConfig.getConfig().useXPtoLock());
+    }
 
+    @Override
+    public Text getDisplayName() {
+        return TITLE;
+    }
+
+    @Override
+    public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+        return new TeleporterScreenHandler(syncId, playerInventory, this, this.propertyDelegate, ServerConfig.getConfig().useXPtoLock());
+    }
 }

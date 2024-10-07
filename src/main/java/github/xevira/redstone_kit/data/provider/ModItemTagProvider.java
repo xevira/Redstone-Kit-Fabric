@@ -24,5 +24,15 @@ public class ModItemTagProvider extends FabricTagProvider<Item> {
                 .add(Items.DIAMOND)
                 .add(Items.GOLD_INGOT)
                 .add(Items.NETHERITE_INGOT);
+
+        getOrCreateTagBuilder(Registration.TELEPORTER_OFFERINGS_TAG)
+                .add(Items.NETHERITE_INGOT)
+                .add(Items.EMERALD)
+                .add(Items.DIAMOND)
+                .add(Items.GOLD_INGOT);
+
+        getOrCreateTagBuilder(Registration.PURPUR_BLOCKS_TAG)
+                .add(Items.PURPUR_BLOCK)
+                .add(Items.PURPUR_PILLAR);
     }
 }

@@ -19,7 +19,7 @@ public class RedstoneTimerScreen extends HandledScreen<RedstoneTimerScreenHandle
 
     public static final Text IN_SECONDS_TEXT = Text.translatable(RedstoneKit.textPath("text", "in_seconds"));
     public static final Text TOTAL_TIME_TEXT = Text.translatable(RedstoneKit.textPath("text", "total_time"));
-    public static final Text SET_TEXT = Text.translatable(RedstoneKit.textPath("text", "set"));
+    public static final Text SET_TEXT = Text.translatable(RedstoneKit.textPath("button", "set"));
     public static final Text REPEAT_TEXT = Text.translatable(RedstoneKit.textPath("text", "repeat"));
     public static final Text ON_TEXT = Text.translatable(RedstoneKit.textPath("text", "on"));
     public static final Text OFF_TEXT = Text.translatable(RedstoneKit.textPath("text", "off"));
