@@ -1,21 +1,16 @@
 package github.xevira.redstone_kit.screenhandler;
 
-import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.entity.PlayerDetectorBlockEntity;
-import github.xevira.redstone_kit.block.entity.RedstoneTimerBlockEntity;
 import github.xevira.redstone_kit.network.BlockPosPayload;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.screen.*;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -121,11 +116,8 @@ public class PlayerDetectorScreenHandler extends ScreenHandler {
 
     @Override
     public boolean canUse(PlayerEntity player) {
-        UUID uuid = this.blockEntity.getPlayerUUID();
-        if (uuid != null && !uuid.equals(player.getUuid()) && !player.isCreativeLevelTwoOp())
-        {
+        if (!this.blockEntity.canConfigure(player))
             return false;
-        }
 
         return canUse(this.context, player, Registration.PLAYER_DETECTOR_BLOCK);
     }
@@ -139,20 +131,25 @@ public class PlayerDetectorScreenHandler extends ScreenHandler {
         return this.blockEntity;
     }
 
-    public UUID getPlayerUUID()
+    public @Nullable UUID getOwnerUUID()
     {
-        return this.blockEntity.getPlayerUUID();
+        return this.blockEntity.getOwner();
     }
 
-    public String getPlayerName()
+    public String getOwnerName()
     {
-        return this.blockEntity.getPlayerName();
+        return this.blockEntity.getOwnerName();
     }
 
-    public void setPlayer(@Nullable UUID uuid, String name)
+    public boolean isLocked()
+    {
+        return this.blockEntity.isLocked();
+    }
+
+    public void lockDetector()
     {
         if (this.paymentSlot.hasStack()) {
-            this.blockEntity.setPlayer(uuid, name);
+            this.blockEntity.setLocked(true);
             this.paymentSlot.takeStack(1);
             this.context.run(World::markDirty);
         }

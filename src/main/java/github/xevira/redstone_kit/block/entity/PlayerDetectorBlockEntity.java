@@ -5,11 +5,13 @@ import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.PlayerDetectorBlock;
 import github.xevira.redstone_kit.network.BlockPosPayload;
 import github.xevira.redstone_kit.screenhandler.PlayerDetectorScreenHandler;
+import github.xevira.redstone_kit.util.OwnedBlockEntity;
 import github.xevira.redstone_kit.util.ServerTickableBlockEntity;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.NbtCompound;
@@ -31,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class PlayerDetectorBlockEntity extends BlockEntity implements ServerTickableBlockEntity, ExtendedScreenHandlerFactory<BlockPosPayload> {
+public class PlayerDetectorBlockEntity extends BlockEntity implements ServerTickableBlockEntity, ExtendedScreenHandlerFactory<BlockPosPayload>, OwnedBlockEntity {
     public static final Text TITLE = Text.translatable(RedstoneKit.textPath("gui","player_detector.title"));
 
     public static final double MAX_RANGE = 16.0;
@@ -44,6 +46,7 @@ public class PlayerDetectorBlockEntity extends BlockEntity implements ServerTick
     private static final String RANGE_SQ_NBT = "current_range_sq";
     private static final String OWNER_UUID_NBT = "owner_uuid";
     private static final String OWNER_NAME_NBT = "owner_name";
+    private static final String LOCKED_NBT = "owner_locked";
 
     private double current_range = MAX_RANGE;
     private double current_range_sq = current_range * current_range;
@@ -51,18 +54,61 @@ public class PlayerDetectorBlockEntity extends BlockEntity implements ServerTick
     private double nearest_distance = -1.0;
     private UUID player_uuid = null;
     private String player_name = "";
+    private boolean locked = false;
 
     public PlayerDetectorBlockEntity(BlockPos pos, BlockState state) {
         super(Registration.PLAYER_DETECTOR_BLOCK_BLOCK_ENTITY, pos, state);
     }
 
-    public void setPlayer(@Nullable UUID uuid, String name)
+    @Override
+    public @Nullable UUID getOwner() {
+        return this.player_uuid;
+    }
+
+    public String getOwnerName()
     {
-        this.player_uuid = uuid;
-        this.player_name = name;
+        return this.player_name;
+    }
+
+    @Override
+    public void setOwner(@Nullable PlayerEntity player) {
+        if (player != null) {
+            this.player_uuid = player.getUuid();
+            this.player_name = player.getName().getString();
+        }
+        else
+        {
+            this.player_uuid = null;
+            this.player_name = "";
+        }
         this.nearest_distance = -1.0;
         this.nearest_distance_sq = -1.0;
 
+        if (this.world != null && !this.world.isClient)
+            markDirty();
+    }
+
+    @Override
+    public boolean isOwner(PlayerEntity player) {
+        return this.player_uuid != null && this.player_uuid.equals(player.getUuid());
+    }
+
+    @Override
+    public boolean canConfigure(PlayerEntity player)
+    {
+        if (player.isCreativeLevelTwoOp()) return true;
+
+        return isOwner(player);
+    }
+
+    public boolean isLocked()
+    {
+        return this.locked;
+    }
+
+    public void setLocked(boolean value)
+    {
+        this.locked = value;
         if (this.world != null && !this.world.isClient)
             markDirty();
     }
@@ -100,7 +146,7 @@ public class PlayerDetectorBlockEntity extends BlockEntity implements ServerTick
     }
 
     @Override
-    public void tick() {
+    public void serverTick() {
         if (this.world == null || this.world.isClient) return;
 
         // Only run every half second
@@ -211,7 +257,7 @@ public class PlayerDetectorBlockEntity extends BlockEntity implements ServerTick
         BlockState state = this.world.getBlockState(this.pos);
 
         for (PlayerEntity playerEntity : this.world.getPlayers()) {
-            if (this.player_uuid == null || this.player_uuid.equals(playerEntity.getUuid())) {
+            if (this.player_uuid == null || (this.locked && this.player_uuid.equals(playerEntity.getUuid()))) {
                 if (EntityPredicates.EXCEPT_SPECTATOR.test(playerEntity) && EntityPredicates.VALID_LIVING_ENTITY.test(playerEntity)) {
                     if (isPlayerWithinVision(playerEntity, state)) {
                         double d = playerEntity.squaredDistanceTo(x, y, z);
@@ -254,6 +300,9 @@ public class PlayerDetectorBlockEntity extends BlockEntity implements ServerTick
         else
             this.player_name = "";
 
+        if (nbt.contains(LOCKED_NBT, NbtElement.BYTE_TYPE))
+            this.locked = nbt.getBoolean(LOCKED_NBT);
+
         if (nbt.contains(RANGE_NBT, NbtElement.DOUBLE_TYPE))
             this.current_range = nbt.getDouble(RANGE_NBT);
 
@@ -275,6 +324,8 @@ public class PlayerDetectorBlockEntity extends BlockEntity implements ServerTick
             nbt.putUuid(OWNER_UUID_NBT, this.player_uuid);
 
         nbt.putString(OWNER_NAME_NBT, this.player_name);
+
+        nbt.putBoolean(LOCKED_NBT, this.locked);
 
         nbt.putDouble(RANGE_NBT, this.current_range);
         nbt.putDouble(RANGE_SQ_NBT, this.current_range_sq);
@@ -304,16 +355,6 @@ public class PlayerDetectorBlockEntity extends BlockEntity implements ServerTick
         return this.nearest_distance;
     }
 
-    public UUID getPlayerUUID()
-    {
-        return this.player_uuid;
-    }
-
-    public String getPlayerName()
-    {
-        return this.player_name;
-    }
-
     public boolean getVision(BooleanProperty side)
     {
         if (this.world == null) return false;
@@ -335,4 +376,5 @@ public class PlayerDetectorBlockEntity extends BlockEntity implements ServerTick
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
         return new PlayerDetectorScreenHandler(syncId, playerInventory, this);
     }
+
 }

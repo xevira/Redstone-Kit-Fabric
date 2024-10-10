@@ -1,30 +1,21 @@
 package github.xevira.redstone_kit.screen;
 
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import github.xevira.redstone_kit.RedstoneKit;
-import github.xevira.redstone_kit.network.PlayerDetectorClearPlayerPayload;
-import github.xevira.redstone_kit.network.PlayerDetectorSetPlayerPayload;
+import github.xevira.redstone_kit.network.PlayerDetectorUnlockDetectorPayload;
+import github.xevira.redstone_kit.network.PlayerDetectorLockDetectorPayload;
 import github.xevira.redstone_kit.network.PlayerDetectorSetVisionPayload;
 import github.xevira.redstone_kit.screenhandler.PlayerDetectorScreenHandler;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ButtonTextures;
-import net.minecraft.client.gui.screen.ingame.BeaconScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.LockButtonWidget;
-import net.minecraft.client.gui.widget.PlayerSkinWidget;
 import net.minecraft.client.gui.widget.PressableWidget;
-import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -40,6 +31,8 @@ import java.util.UUID;
 
 public class PlayerDetectorScreen extends HandledScreen<PlayerDetectorScreenHandler> {
     public static final Identifier TEXTURE = RedstoneKit.id("textures/gui/container/player_detector_screen.png");
+
+    private static final Text NO_OWNER_TEXT = Text.translatable(RedstoneKit.textPath("label", "no_owner"));
 
     private static final Text LOCK_TEXT = Text.translatable(RedstoneKit.textPath("button", "lock_player"));
     private static final Text UNLOCK_TEXT = Text.translatable(RedstoneKit.textPath("button", "unlock_player"));
@@ -64,8 +57,8 @@ public class PlayerDetectorScreen extends HandledScreen<PlayerDetectorScreenHand
     private static final Identifier BUTTON_HIGHLIGHTED_TEXTURE = RedstoneKit.id("button_highlight");
     private static final Identifier BUTTON_TEXTURE = RedstoneKit.id("button");
 
-    private UUID playerUUID;
-    private String playerName;
+    private UUID ownerUUID;
+    private String ownerName;
 
     private ButtonWidget lockPlayerButtonWidget;
     private ButtonWidget unlockPlayerButtonWidget;
@@ -91,8 +84,8 @@ public class PlayerDetectorScreen extends HandledScreen<PlayerDetectorScreenHand
     protected void init() {
         super.init();
 
-        this.playerUUID = this.handler.getPlayerUUID();
-        this.playerName = this.handler.getPlayerName();
+        this.ownerUUID = this.handler.getOwnerUUID();
+        this.ownerName = this.handler.getOwnerName();
 
         boolean north = this.handler.getVision(Properties.NORTH);
         boolean south = this.handler.getVision(Properties.SOUTH);
@@ -103,31 +96,30 @@ public class PlayerDetectorScreen extends HandledScreen<PlayerDetectorScreenHand
 
         this.lockPlayerButtonWidget = ButtonWidget.builder(LOCK_TEXT, (button) -> {
                     if (this.client != null && this.client.world != null && this.client.player != null) {
-                        PlayerDetectorScreen.this.playerUUID = this.client.player.getUuid();
-                        PlayerDetectorScreen.this.playerName = this.client.player.getName().getString();
+                        PlayerDetectorScreen.this.ownerUUID = this.client.player.getUuid();
+                        PlayerDetectorScreen.this.ownerName = this.client.player.getName().getString();
                         //PlayerDetectorScreen.this.handler.setPlayer(PlayerDetectorScreen.this.playerUUID, PlayerDetectorScreen.this.playerName);
                         PlayerDetectorScreen.this.lockPlayerButtonWidget.visible = false;
                         PlayerDetectorScreen.this.unlockPlayerButtonWidget.visible = true;
 
-                        ClientPlayNetworking.send(new PlayerDetectorSetPlayerPayload(PlayerDetectorScreen.this.playerUUID, PlayerDetectorScreen.this.playerName));
+                        ClientPlayNetworking.send(new PlayerDetectorLockDetectorPayload());
                     }
                 })
                 .dimensions(this.x + 10, this.y + 30, 50, 18).build();
-        this.lockPlayerButtonWidget.visible = (this.playerUUID == null);
+        this.lockPlayerButtonWidget.visible = !this.handler.isLocked();
         this.lockPlayerButtonWidget.active = false;
         this.addSelectableChild(this.lockPlayerButtonWidget);
 
         this.unlockPlayerButtonWidget = ButtonWidget.builder(UNLOCK_TEXT, (button) -> {
-                    PlayerDetectorScreen.this.playerUUID = null;
-                    PlayerDetectorScreen.this.playerName = "";
-                    //PlayerDetectorScreen.this.handler.getBlockEntity().setPlayer(null, "");
+                    PlayerDetectorScreen.this.ownerUUID = null;
+                    PlayerDetectorScreen.this.ownerName = "";
                     PlayerDetectorScreen.this.lockPlayerButtonWidget.visible = true;
                     PlayerDetectorScreen.this.unlockPlayerButtonWidget.visible = false;
 
-                    ClientPlayNetworking.send(new PlayerDetectorClearPlayerPayload());
+                    ClientPlayNetworking.send(new PlayerDetectorUnlockDetectorPayload());
                 })
                 .dimensions(this.x + 10, this.y + 30, 50, 18).build();
-        this.unlockPlayerButtonWidget.visible = (this.playerUUID != null);
+        this.unlockPlayerButtonWidget.visible = this.handler.isLocked();
         this.addSelectableChild(this.unlockPlayerButtonWidget);
 
         this.northVisionButtonWidget = this.addSidedButton(new DirectionToggleButtonWidget(Properties.NORTH,
@@ -175,19 +167,12 @@ public class PlayerDetectorScreen extends HandledScreen<PlayerDetectorScreenHand
     protected void handledScreenTick() {
         super.handledScreenTick();
 
-        this.lockPlayerButtonWidget.active = this.handler.hasPayment();
+        this.lockPlayerButtonWidget.active = this.handler.hasPayment() && this.ownerUUID != null;
     }
 
     @Override
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
         context.drawTexture(TEXTURE, this.x, this.y, 0, 0, this.backgroundWidth, this.backgroundHeight);
-
-        /*
-        if (this.playerEntity != null)
-        {
-            InventoryScreen.drawEntity(context, this.x + 10, this.y + 30, this.x + 59, this.y + 100, 30, 0.0625f, mouseX, mouseY, this.playerEntity);
-        }
-         */
 
         context.getMatrices().push();
         context.getMatrices().translate(0.0F, 0.0F, 100.0F);
@@ -204,8 +189,21 @@ public class PlayerDetectorScreen extends HandledScreen<PlayerDetectorScreenHand
         context.drawText(this.textRenderer, this.title, this.titleX, this.titleY, ScreenColors.DEFAULT, false);
         context.drawText(this.textRenderer, this.playerInventoryTitle, this.playerInventoryTitleX, this.playerInventoryTitleY, ScreenColors.DEFAULT, false);
 
-        if (this.playerUUID != null)
-            context.drawText(this.textRenderer, Text.literal(this.playerName), 10, 20, ScreenColors.DEFAULT, false);
+        // Show who the owner is
+        if (this.client != null && this.client.player != null && this.client.player.isCreativeLevelTwoOp()) {
+            if (this.ownerUUID == null || this.ownerName.isBlank()) {
+                int w = this.textRenderer.getWidth(NO_OWNER_TEXT);
+                context.drawText(this.textRenderer, NO_OWNER_TEXT, this.backgroundWidth - this.titleX - w, this.titleY, ScreenColors.ERROR, false);
+            }
+            else {
+                Text name = Text.literal(this.ownerName);
+                int w = this.textRenderer.getWidth(name);
+                context.drawText(this.textRenderer, name, this.backgroundWidth - this.titleX - w, this.titleY, ScreenColors.DEFAULT, false);
+            }
+        }
+
+        if (this.ownerUUID != null)
+            context.drawText(this.textRenderer, Text.literal(this.ownerName), 10, 20, ScreenColors.DEFAULT, false);
         else {
             context.drawText(this.textRenderer, UNBOUND_TEXT, 10, 20, ScreenColors.ERROR, false);
         }

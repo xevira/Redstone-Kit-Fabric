@@ -3,6 +3,7 @@ package github.xevira.redstone_kit.config;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import github.xevira.redstone_kit.RedstoneKit;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.WorldSavePath;
 
@@ -18,16 +19,19 @@ public class ServerConfig {
 
     private static final String USE_XP_TO_LOCK_FIELD = "useXPtoLock";
     private static final String XP_LOCK_LEVELS_FIELD = "xpLockLevels";
+    private static final String INHIBITOR_COST_FIELD = "inhibitorCost";
 
     private static ServerConfig currentConfig;
 
     private boolean useXPtoLock;
     private int xpLockLevels;
+    private long inhibitorCost;
 
     public ServerConfig()
     {
         this.useXPtoLock = false;
         this.xpLockLevels = 1;
+        this.inhibitorCost = FluidConstants.NUGGET;
     }
 
     public static void onServerLoad(MinecraftServer server) {
@@ -35,6 +39,9 @@ public class ServerConfig {
     }
 
     public static void onServerSave(MinecraftServer server) {
+        if (currentConfig == null)
+            currentConfig = new ServerConfig();
+
         writeConfig(currentConfig, server);
     }
 
@@ -101,6 +108,7 @@ public class ServerConfig {
 
         json.add(USE_XP_TO_LOCK_FIELD, new JsonPrimitive(this.useXPtoLock));
         json.add(XP_LOCK_LEVELS_FIELD, new JsonPrimitive(this.xpLockLevels));
+        json.add(INHIBITOR_COST_FIELD, new JsonPrimitive(this.inhibitorCost));
 
         return json;
     }
@@ -108,11 +116,13 @@ public class ServerConfig {
     private void deserialize(JsonObject json) {
         this.useXPtoLock = json.getAsJsonPrimitive(USE_XP_TO_LOCK_FIELD).getAsBoolean();
         this.xpLockLevels = json.getAsJsonPrimitive(XP_LOCK_LEVELS_FIELD).getAsInt();
+        this.inhibitorCost = json.getAsJsonPrimitive(INHIBITOR_COST_FIELD).getAsLong();
     }
 
 
     // Getters
     public boolean useXPtoLock() { return this.useXPtoLock; }
     public int xpLockLevels() { return this.xpLockLevels; }
+    public long inhibitorCost() { return this.inhibitorCost; }
 
 }

@@ -3,6 +3,7 @@ package github.xevira.redstone_kit;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import github.xevira.redstone_kit.config.ServerConfig;
+import github.xevira.redstone_kit.poi.POILoader;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
@@ -20,8 +21,12 @@ public class RedstoneKit implements ModInitializer {
 		Registration.load();
 
 		ServerWorldEvents.LOAD.register((server, world) -> ServerConfig.onServerLoad(server));
+		ServerWorldEvents.LOAD.register((server, world) -> POILoader.onServerWorldLoad(server, world));
 		ServerWorldEvents.UNLOAD.register((server, world) -> ServerConfig.onServerSave(server));
+		ServerWorldEvents.UNLOAD.register((server, world) -> POILoader.onServerWorldSave(server, world));
 
+		//PlayerBlockBreakEvents.BEFORE.register(OwnerBlockBreaker.INSTANCE);
+		//PlayerBlockBreakEvents.CANCELED.register(OwnerBlockBreaker.INSTANCE);
 	}
 
 	public static Identifier id(String path) {

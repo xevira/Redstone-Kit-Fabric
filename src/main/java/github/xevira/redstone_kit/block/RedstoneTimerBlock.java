@@ -4,6 +4,8 @@ import com.mojang.serialization.MapCodec;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.entity.RedstoneTimerBlockEntity;
 import github.xevira.redstone_kit.util.BlockProperties;
+import github.xevira.redstone_kit.util.RedstoneConnect;
+import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import github.xevira.redstone_kit.util.ServerTickableBlockEntity;
 import net.minecraft.block.AbstractRedstoneGateBlock;
 import net.minecraft.block.Block;
@@ -27,7 +29,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class RedstoneTimerBlock extends AbstractRedstoneGateBlock implements BlockEntityProvider {
+public class RedstoneTimerBlock extends AbstractRedstoneGateBlock implements BlockEntityProvider, RedstoneConnect {
     public static final int MAX_SECONDS = 86400;
     public static final int MAX_TIMER = 16;
     public static final MapCodec<RedstoneTimerBlock> CODEC = createCodec(RedstoneTimerBlock::new);
@@ -92,5 +94,10 @@ public class RedstoneTimerBlock extends AbstractRedstoneGateBlock implements Blo
                 player.openHandledScreen(blockEntity);
         }
         return ActionResult.success(world.isClient);
+    }
+
+    @Override
+    public RedstoneConnectEnum getRedstoneConnect() {
+        return RedstoneConnectEnum.AXIS;
     }
 }

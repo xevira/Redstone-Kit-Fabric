@@ -16,8 +16,8 @@ public class Networking {
         // - Client -> Server
         PayloadTypeRegistry.playC2S().register(TimerSetTimePayload.ID, TimerSetTimePayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(TimerSetRepeatPayload.ID, TimerSetRepeatPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(PlayerDetectorSetPlayerPayload.ID, PlayerDetectorSetPlayerPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(PlayerDetectorClearPlayerPayload.ID, PlayerDetectorClearPlayerPayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(PlayerDetectorLockDetectorPayload.ID, PlayerDetectorLockDetectorPayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(PlayerDetectorUnlockDetectorPayload.ID, PlayerDetectorUnlockDetectorPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(PlayerDetectorSetVisionPayload.ID, PlayerDetectorSetVisionPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(TeleporterTeleportPlayerPayload.ID, TeleporterTeleportPlayerPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(TeleporterSetUseXPPayload.ID, TeleporterSetUseXPPayload.PACKET_CODEC);
@@ -50,7 +50,7 @@ public class Networking {
             }
         });
 
-        ServerPlayNetworking.registerGlobalReceiver(PlayerDetectorSetPlayerPayload.ID, (payload, context) -> {
+        ServerPlayNetworking.registerGlobalReceiver(PlayerDetectorLockDetectorPayload.ID, (payload, context) -> {
             if (context.player().currentScreenHandler instanceof PlayerDetectorScreenHandler handler)
             {
                 if (!handler.canUse(context.player()))
@@ -59,11 +59,11 @@ public class Networking {
                     return;
                 }
 
-                handler.setPlayer(payload.uuid(), payload.name());
+                handler.lockDetector();
             }
         });
 
-        ServerPlayNetworking.registerGlobalReceiver(PlayerDetectorClearPlayerPayload.ID, (payload, context) -> {
+        ServerPlayNetworking.registerGlobalReceiver(PlayerDetectorUnlockDetectorPayload.ID, (payload, context) -> {
             if (context.player().currentScreenHandler instanceof PlayerDetectorScreenHandler handler)
             {
                 if (!handler.canUse(context.player()))
@@ -72,8 +72,8 @@ public class Networking {
                     return;
                 }
 
-                // This can do it directly as it's clearing it
-                handler.getBlockEntity().setPlayer(null, "");
+                // This can do it directly as it's unlocking it
+                handler.getBlockEntity().setLocked(false);
             }
         });
 

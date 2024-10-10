@@ -1,6 +1,7 @@
 package github.xevira.redstone_kit.mixin;
 
 import github.xevira.redstone_kit.Registration;
+import github.xevira.redstone_kit.util.RedstoneConnect;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.state.property.Properties;
@@ -17,22 +18,22 @@ public class RedstoneWireBlockMixin {
     @Inject(method = "connectsTo(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/Direction;)Z", at = @At("HEAD"), cancellable = true)
     private static void connectsToMixin(BlockState state, @Nullable Direction dir, CallbackInfoReturnable<Boolean> clr)
     {
-        if (state.isOf(Registration.REDSTONE_INVERTER_BLOCK) ||
-            state.isOf(Registration.REDSTONE_TICKER_BLOCK) ||
-            state.isOf(Registration.REDSTONE_TIMER_BLOCK) ||
-            state.isOf(Registration.REDSTONE_MEMORY_BLOCK))
+        if (state.getBlock() instanceof RedstoneConnect connecter)
         {
-            Direction direction = state.get(Properties.HORIZONTAL_FACING);
-            clr.setReturnValue(direction == dir || direction.getOpposite() == dir);
-        }
-
-        // Add the AND, OR and XOR gates to ignore the back side
-        if (state.isOf(Registration.REDSTONE_OR_BLOCK) ||
-            state.isOf(Registration.REDSTONE_AND_BLOCK) ||
-            state.isOf(Registration.REDSTONE_XOR_BLOCK))
-        {
-            Direction direction = state.get(Properties.HORIZONTAL_FACING);
-            clr.setReturnValue(direction.getOpposite() != dir);   // Back side should not connect
+            switch(connecter.getRedstoneConnect())
+            {
+                case ALWAYS -> clr.setReturnValue(true);
+                case AXIS -> {
+                    // Only allow along the axis of the FACING direction
+                    Direction direction = state.get(Properties.HORIZONTAL_FACING);
+                    clr.setReturnValue(direction == dir || direction.getOpposite() == dir);
+                }
+                case NOT_FACING -> {
+                    // Any direction other than FACING.
+                    Direction direction = state.get(Properties.HORIZONTAL_FACING);
+                    clr.setReturnValue(direction.getOpposite() != dir);   // Back side should not connect
+                }
+            }
         }
     }
 }

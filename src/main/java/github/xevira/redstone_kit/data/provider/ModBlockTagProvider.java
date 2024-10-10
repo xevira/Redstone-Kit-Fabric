@@ -27,9 +27,11 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .add(Registration.REDSTONE_RSNORLATCH_BLOCK)
                 .add(Registration.REDSTONE_TICKER_BLOCK)
                 .add(Registration.REDSTONE_TIMER_BLOCK)
+                .add(Registration.TELEPORT_INHIBITOR_BLOCK)
                 .add(Registration.TELEPORTER_BLOCK);
 
         getOrCreateTagBuilder(BlockTags.NEEDS_DIAMOND_TOOL)
+                .add(Registration.TELEPORT_INHIBITOR_BLOCK)
                 .add(Registration.TELEPORTER_BLOCK);
 
     }

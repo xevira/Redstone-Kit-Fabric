@@ -5,12 +5,12 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.world.World;
 
 public interface ServerTickableBlockEntity {
-    void tick();
+    void serverTick();
 
     static <T extends BlockEntity> BlockEntityTicker<T> getTicker(World pWorld) {
         return pWorld.isClient ? null : (world, pos, state, blockEntity) -> {
             if (blockEntity instanceof ServerTickableBlockEntity tickableBlockEntity) {
-                tickableBlockEntity.tick();
+                tickableBlockEntity.serverTick();
             }
         };
     }

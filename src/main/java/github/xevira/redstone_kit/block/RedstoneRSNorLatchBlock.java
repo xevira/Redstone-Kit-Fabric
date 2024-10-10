@@ -5,6 +5,8 @@ import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.util.BlockProperties;
 import github.xevira.redstone_kit.util.InverterMode;
+import github.xevira.redstone_kit.util.RedstoneConnect;
+import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,7 +31,7 @@ import net.minecraft.world.tick.TickPriority;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RedstoneRSNorLatchBlock extends AbstractRedstoneGateBlock {
+public class RedstoneRSNorLatchBlock extends AbstractRedstoneGateBlock implements RedstoneConnect {
     public static final MapCodec<RedstoneRSNorLatchBlock> CODEC = createCodec(RedstoneRSNorLatchBlock::new);
 
     public static final BooleanProperty INVERTED = Properties.INVERTED;
@@ -289,5 +291,10 @@ public class RedstoneRSNorLatchBlock extends AbstractRedstoneGateBlock {
         }
 
         world.addParticle(DustParticleEffect.DEFAULT, x, y, z, 0.0, 0.0, 0.0);
+    }
+
+    @Override
+    public RedstoneConnectEnum getRedstoneConnect() {
+        return RedstoneConnectEnum.ALWAYS;
     }
 }

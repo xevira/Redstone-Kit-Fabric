@@ -236,6 +236,8 @@ public class ModBlockModelProvider extends FabricModelProvider {
                         .coordinate(createSouthDefaultHorizontalRotationStates())
         );
 
+        blockStateModelGenerator.registerSimpleState(Registration.TELEPORT_INHIBITOR_BLOCK);
+
         blockStateModelGenerator.registerSimpleState(Registration.TELEPORTER_BLOCK);;
     }
 

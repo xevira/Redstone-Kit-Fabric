@@ -5,6 +5,8 @@ import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.entity.RedstoneTickerBlockEntity;
 import github.xevira.redstone_kit.block.entity.WeatherDetectorBlockEntity;
+import github.xevira.redstone_kit.util.RedstoneConnect;
+import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -27,7 +29,7 @@ import net.minecraft.world.WorldView;
 import net.minecraft.world.tick.TickPriority;
 import org.jetbrains.annotations.Nullable;
 
-public class RedstoneTickerBlock extends AbstractRedstoneGateBlock implements BlockEntityProvider {
+public class RedstoneTickerBlock extends AbstractRedstoneGateBlock implements BlockEntityProvider, RedstoneConnect {
     private static final Random random = Random.create();
     public static final MapCodec<RedstoneTickerBlock> CODEC = createCodec(RedstoneTickerBlock::new);
 
@@ -239,4 +241,8 @@ public class RedstoneTickerBlock extends AbstractRedstoneGateBlock implements Bl
         }
     }
 
+    @Override
+    public RedstoneConnectEnum getRedstoneConnect() {
+        return RedstoneConnectEnum.AXIS;
+    }
 }

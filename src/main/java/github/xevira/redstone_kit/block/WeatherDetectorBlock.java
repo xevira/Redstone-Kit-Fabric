@@ -3,6 +3,8 @@ package github.xevira.redstone_kit.block;
 import com.mojang.serialization.MapCodec;
 import github.xevira.redstone_kit.block.entity.WeatherDetectorBlockEntity;
 import github.xevira.redstone_kit.Registration;
+import github.xevira.redstone_kit.util.RedstoneConnect;
+import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -22,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 // 1 = clear
 // 2 = raining/snowing
 // 3 = thundering/blizzard
-public class WeatherDetectorBlock extends BlockWithEntity {
+public class WeatherDetectorBlock extends BlockWithEntity implements RedstoneConnect {
     public static final MapCodec<WeatherDetectorBlock> CODEC = createCodec(WeatherDetectorBlock::new);
     public static final IntProperty POWER;
     protected static final VoxelShape SHAPE;
@@ -97,6 +99,11 @@ public class WeatherDetectorBlock extends BlockWithEntity {
 
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(POWER);
+    }
+
+    @Override
+    public RedstoneConnectEnum getRedstoneConnect() {
+        return RedstoneConnectEnum.ALWAYS;
     }
 
     static {

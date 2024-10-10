@@ -3,9 +3,9 @@ package github.xevira.redstone_kit.block.entity;
 import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.config.ServerConfig;
-import github.xevira.redstone_kit.network.BlockPosPayload;
 import github.xevira.redstone_kit.network.TeleporterScreenPayload;
 import github.xevira.redstone_kit.screenhandler.TeleporterScreenHandler;
+import github.xevira.redstone_kit.util.OwnedBlockEntity;
 import github.xevira.redstone_kit.util.ServerTickableBlockEntity;
 import github.xevira.redstone_kit.util.XPHelper;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
@@ -33,13 +33,12 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class TeleporterBlockEntity extends BlockEntity implements ServerTickableBlockEntity, ExtendedScreenHandlerFactory<TeleporterScreenPayload> {
+public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEntity, ServerTickableBlockEntity, ExtendedScreenHandlerFactory<TeleporterScreenPayload> {
     public static final Text TITLE = Text.translatable(RedstoneKit.textPath("gui","teleporter.title"));
 
     private static final String NOT_ENOUGH_PEARLS_MSG = RedstoneKit.textPath("text", "teleporter.not_enough_fuel.pearls");
@@ -52,6 +51,7 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
     private static final String LINKED_NBT = "linked_teleporter";
     private static final String COOLDOWN_NBT = "teleport_cooldown";
     private static final String OWNER_NBT = "teleport_owner";
+    private static final String OWNER_NAME_NBT = "teleport_owner_name";
 
     private static final String OPTIONS_NBT = "teleport_options";
     private static final String LOCKED_NBT = "locked";
@@ -61,6 +61,7 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
 
     @Nullable
     private UUID owner;
+    private String owner_name;
     private BlockPos linked_teleporter;
     private int cooldown;
 
@@ -78,6 +79,7 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
         super(Registration.TELEPORTER_BLOCK_ENTITY, pos, state);
 
         this.owner = null;
+        this.owner_name = "";
         this.linked_teleporter = this.pos.mutableCopy();
         this.cooldown = 0;
 
@@ -151,22 +153,36 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
         return this.owner;
     }
 
-    public boolean isOwner(LivingEntity entity)
+    public String getOwnerName()
     {
-        return this.owner != null && this.owner.equals(entity.getUuid());
+        return this.owner_name;
     }
 
-    // Either be OP 2 in Creative or be the owner of the teleporter
-    public boolean canConfigureTeleporter(PlayerEntity player)
+    public boolean isOwner(PlayerEntity player)
     {
-        if (player.isCreativeLevelTwoOp()) return true;
-
         return this.owner != null && this.owner.equals(player.getUuid());
     }
 
-    public void setOwner(@Nullable UUID owner)
+    // Either be OP 2 in Creative or be the owner of the teleporter
+    public boolean canConfigure(PlayerEntity player)
     {
-        this.owner = owner;
+        if (player.isCreativeLevelTwoOp()) return true;
+
+        return isOwner(player);
+    }
+
+    public void setOwner(@Nullable PlayerEntity player)
+    {
+        if (player != null)
+        {
+            this.owner = player.getUuid();
+            this.owner_name = player.getName().getString();
+        }
+        else
+        {
+            this.owner = null;
+            this.owner_name = "";
+        }
         markDirty();
     }
 
@@ -265,7 +281,7 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
             world.updateListeners(this.pos, getCachedState(), getCachedState(), 3);
     }
 
-    public void tick()
+    public void serverTick()
     {
         if (this.world == null || this.world.isClient) return;
 
@@ -323,6 +339,11 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
         else
             this.owner = null;
 
+        if (nbt.contains(OWNER_NAME_NBT, NbtElement.STRING_TYPE))
+            this.owner_name = nbt.getString(OWNER_NAME_NBT);
+        else
+            this.owner_name = "";
+
         if (nbt.contains(LINKED_NBT, NbtElement.LONG_TYPE))
             this.linked_teleporter = BlockPos.fromLong(nbt.getLong(LINKED_NBT));
         else
@@ -348,7 +369,11 @@ public class TeleporterBlockEntity extends BlockEntity implements ServerTickable
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
 
-        if (this.owner != null) nbt.putUuid(OWNER_NBT, this.owner);
+        if (this.owner != null) {
+            nbt.putUuid(OWNER_NBT, this.owner);
+            nbt.putString(OWNER_NAME_NBT, this.owner_name);
+        }
+
         nbt.putLong(LINKED_NBT, this.linked_teleporter.asLong());
         nbt.putInt(COOLDOWN_NBT, this.cooldown);
 

@@ -1,16 +1,14 @@
 package github.xevira.redstone_kit;
 
-import com.mojang.datafixers.util.Pair;
 import github.xevira.redstone_kit.block.*;
 import github.xevira.redstone_kit.block.entity.*;
 import github.xevira.redstone_kit.item.ResonatorItem;
 import github.xevira.redstone_kit.network.*;
 import github.xevira.redstone_kit.screenhandler.PlayerDetectorScreenHandler;
 import github.xevira.redstone_kit.screenhandler.RedstoneTimerScreenHandler;
+import github.xevira.redstone_kit.screenhandler.TeleportInhibitorScreenHandler;
 import github.xevira.redstone_kit.screenhandler.TeleporterScreenHandler;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -31,7 +29,6 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
@@ -40,10 +37,8 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
 
 public class Registration {
 
@@ -82,11 +77,19 @@ public class Registration {
 
     public static final Block PLAYER_DETECTOR_BLOCK = register("player_detector", new PlayerDetectorBlock(
             AbstractBlock.Settings.create()
-                    .mapColor(MapColor.CYAN)
+                    .mapColor(MapColor.OFF_WHITE)
                     .instrument(NoteBlockInstrument.BELL)
-                    .strength(-1.0F, 3600000.0F)
+                    .strength(1.5f, 3600000.0F)
                     .sounds(BlockSoundGroup.STONE)
                     .allowsSpawning(Blocks::never)
+    ));
+
+    public static final Block TELEPORT_INHIBITOR_BLOCK = register( "teleport_inhibitor", new TeleportInhibitorBlock(
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.BLACK)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresTool()
+                    .strength(50.0F, 1200.0F)
     ));
 
     public static final Block TELEPORTER_BLOCK = register("teleporter", new TeleporterBlock(
@@ -128,6 +131,9 @@ public class Registration {
     public static final BlockItem WEATHER_DETECTOR_ITEM = register("weather_detector",
             new BlockItem(WEATHER_DETECTOR_BLOCK, new Item.Settings()));
 
+    public static final BlockItem TELEPORT_INHIBITOR_ITEM = register("teleport_inhibitor",
+            new BlockItem(TELEPORT_INHIBITOR_BLOCK, new Item.Settings()));
+
     public static final BlockItem TELEPORTER_ITEM = register("teleporter",
             new BlockItem(TELEPORTER_BLOCK, new Item.Settings()));
 
@@ -149,6 +155,10 @@ public class Registration {
             BlockEntityType.Builder.create(RedstoneTimerBlockEntity::new, Registration.REDSTONE_TIMER_BLOCK)
                     .build());
 
+    public static final BlockEntityType<TeleportInhibitorBlockEntity> TELEPORT_INHIBITOR_BLOCK_ENTITY = register("teleporter_inhibitor",
+            BlockEntityType.Builder.create(TeleportInhibitorBlockEntity::new, Registration.TELEPORT_INHIBITOR_BLOCK)
+                    .build());
+
     public static final BlockEntityType<TeleporterBlockEntity> TELEPORTER_BLOCK_ENTITY = register("teleporter",
             BlockEntityType.Builder.create(TeleporterBlockEntity::new, Registration.TELEPORTER_BLOCK)
                     .build());
@@ -162,6 +172,7 @@ public class Registration {
 
     public static final ScreenHandlerType<RedstoneTimerScreenHandler> REDSTONE_TIMER_SCREEN_HANDLER = register("redstone_timer", RedstoneTimerScreenHandler::new, BlockPosPayload.PACKET_CODEC);
     public static final ScreenHandlerType<PlayerDetectorScreenHandler> PLAYER_DETECTOR_SCREEN_HANDLER = register("player_detector", PlayerDetectorScreenHandler::new, BlockPosPayload.PACKET_CODEC);
+    public static final ScreenHandlerType<TeleportInhibitorScreenHandler> TELEPORT_INHIBITOR_SCREEN_HANDLER = register("teleport_inhibitor",TeleportInhibitorScreenHandler::new, BlockPosPayload.PACKET_CODEC);
     public static final ScreenHandlerType<TeleporterScreenHandler> TELEPORTER_SCREEN_HANDLER = register("teleporter", TeleporterScreenHandler::new, TeleporterScreenPayload.PACKET_CODEC);
 
     public static final TagKey<Item> PURPUR_BLOCKS_TAG = registerItemTag("purpur_blocks");

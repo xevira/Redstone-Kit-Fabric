@@ -157,6 +157,22 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Blocks.OBSIDIAN), conditionsFromItem(Blocks.OBSIDIAN))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.TELEPORT_INHIBITOR_BLOCK)
+                .input('q', Items.QUARTZ_STAIRS)
+                .input('E', Items.ENDER_EYE)
+                .input('L', Items.LIGHTNING_ROD)
+                .input('C', Items.CAULDRON)
+                .input('O', Items.OBSIDIAN)
+                .pattern("qEq")
+                .pattern(" L ")
+                .pattern("OCO")
+                .criterion(hasItem(Items.QUARTZ_STAIRS), conditionsFromItem(Items.QUARTZ_STAIRS))
+                .criterion(hasItem(Items.ENDER_EYE), conditionsFromItem(Items.ENDER_EYE))
+                .criterion(hasItem(Items.LIGHTNING_ROD), conditionsFromItem(Items.LIGHTNING_ROD))
+                .criterion(hasItem(Items.CAULDRON), conditionsFromItem(Items.CAULDRON))
+                .criterion(hasItem(Items.OBSIDIAN), conditionsFromItem(Items.OBSIDIAN))
+                .offerTo(exporter);
+
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.RESONATOR_ITEM)
                 .input('c', Items.COPPER_INGOT)
                 .input('q', Items.QUARTZ)
@@ -168,7 +184,6 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Items.QUARTZ), conditionsFromItem(Items.QUARTZ))
                 .criterion(hasItem(Items.AMETHYST_SHARD), conditionsFromItem(Items.AMETHYST_SHARD))
                 .offerTo(exporter);
-
 
         RedstoneKit.LOGGER.info("Finished generating recipes.");
     }

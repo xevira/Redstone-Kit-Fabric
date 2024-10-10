@@ -1,10 +1,7 @@
 package github.xevira.redstone_kit.screenhandler;
 
-import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
-import github.xevira.redstone_kit.block.entity.PlayerDetectorBlockEntity;
 import github.xevira.redstone_kit.block.entity.TeleporterBlockEntity;
-import github.xevira.redstone_kit.network.BlockPosPayload;
 import github.xevira.redstone_kit.network.TeleporterScreenPayload;
 import github.xevira.redstone_kit.util.XPHelper;
 import net.minecraft.entity.player.PlayerEntity;
@@ -140,8 +137,7 @@ public class TeleporterScreenHandler extends ScreenHandler {
 
     @Override
     public boolean canUse(PlayerEntity player) {
-
-        if (!this.blockEntity.canConfigureTeleporter(player))
+        if (!this.blockEntity.canConfigure(player))
             return false;
 
         return canUse(this.context, player, Registration.TELEPORTER_BLOCK);
@@ -155,6 +151,11 @@ public class TeleporterScreenHandler extends ScreenHandler {
     public UUID getOwner()
     {
         return this.blockEntity.getOwner();
+    }
+
+    public String getOwnerName()
+    {
+        return this.blockEntity.getOwnerName();
     }
 
     public BlockPos getBlockPos()

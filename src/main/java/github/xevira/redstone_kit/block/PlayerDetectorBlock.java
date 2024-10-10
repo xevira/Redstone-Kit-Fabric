@@ -3,12 +3,17 @@ package github.xevira.redstone_kit.block;
 import com.mojang.serialization.MapCodec;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.entity.PlayerDetectorBlockEntity;
+import github.xevira.redstone_kit.block.entity.TeleporterBlockEntity;
 import github.xevira.redstone_kit.item.ResonatorItem;
+import github.xevira.redstone_kit.util.OwnedBlock;
+import github.xevira.redstone_kit.util.RedstoneConnect;
+import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import github.xevira.redstone_kit.util.ServerTickableBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;
@@ -25,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class PlayerDetectorBlock extends Block implements BlockEntityProvider {
+public class PlayerDetectorBlock extends Block implements BlockEntityProvider, RedstoneConnect, OwnedBlock {
     public static final MapCodec<PlayerDetectorBlock> CODEC = createCodec(PlayerDetectorBlock::new);
     public static final BooleanProperty POWERED = Properties.POWERED;
     public static final BooleanProperty NORTH = Properties.NORTH;
@@ -57,9 +62,7 @@ public class PlayerDetectorBlock extends Block implements BlockEntityProvider {
         if(!world.isClient)
         {
             if (world.getBlockEntity(pos) instanceof PlayerDetectorBlockEntity blockEntity) {
-                UUID uuid = blockEntity.getPlayerUUID();
-
-                if (uuid == null || uuid.equals(player.getUuid()) || player.isCreativeLevelTwoOp()) {
+                if (blockEntity.canConfigure(player)) {
                     player.openHandledScreen(blockEntity);
                 }
             }
@@ -68,29 +71,22 @@ public class PlayerDetectorBlock extends Block implements BlockEntityProvider {
     }
 
     @Override
-    protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (stack.isEmpty() || !(stack.getItem() instanceof ResonatorItem))
-            return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-
-        if (!world.isClient) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof PlayerDetectorBlockEntity detector)
-            {
-                UUID uuid = detector.getPlayerUUID();
-                if (uuid == null || uuid.equals(player.getUuid())) {
-                    world.breakBlock(pos, true);
-                } else if (player.isCreativeLevelTwoOp()) {
-                    world.breakBlock(pos, false);
-                }
-            }
-        }
-        return ItemActionResult.SUCCESS;
-    }
-
-    @Override
     protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         if (!oldState.isOf(state.getBlock())) {
             this.updatePowered(world, pos, state);
+        }
+    }
+
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+
+        if (!world.isClient) {
+            if (placer instanceof PlayerEntity player) {
+                if (world.getBlockEntity(pos) instanceof PlayerDetectorBlockEntity detector) {
+                    detector.setOwner(player);
+                }
+            }
         }
     }
 
@@ -133,5 +129,10 @@ public class PlayerDetectorBlock extends Block implements BlockEntityProvider {
         }
 
         return 0;
+    }
+
+    @Override
+    public RedstoneConnectEnum getRedstoneConnect() {
+        return RedstoneConnectEnum.ALWAYS;
     }
 }

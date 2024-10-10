@@ -1,6 +1,8 @@
 package github.xevira.redstone_kit.block;
 
 import com.mojang.serialization.MapCodec;
+import github.xevira.redstone_kit.util.RedstoneConnect;
+import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import net.minecraft.block.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
@@ -12,7 +14,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.tick.TickPriority;
 
-public class RedstoneXorGateBlock extends AbstractRedstoneGateBlock {
+public class RedstoneXorGateBlock extends AbstractRedstoneGateBlock implements RedstoneConnect {
     public static final MapCodec<RedstoneXorGateBlock> CODEC = createCodec(RedstoneXorGateBlock::new);
 
     public static final BooleanProperty LEFT = BooleanProperty.of("left");
@@ -102,5 +104,10 @@ public class RedstoneXorGateBlock extends AbstractRedstoneGateBlock {
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING, LEFT, RIGHT);
+    }
+
+    @Override
+    public RedstoneConnectEnum getRedstoneConnect() {
+        return RedstoneConnectEnum.NOT_FACING;
     }
 }

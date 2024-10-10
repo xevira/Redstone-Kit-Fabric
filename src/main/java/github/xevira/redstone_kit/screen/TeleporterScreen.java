@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 public class TeleporterScreen extends HandledScreen<TeleporterScreenHandler> {
     public static final Identifier TEXTURE = RedstoneKit.id("textures/gui/container/teleporter_screen.png");
 
-    private static final Text NO_OWNER_TEXT = Text.translatable(RedstoneKit.textPath("label", "teleporter.no_owner"));
+    private static final Text NO_OWNER_TEXT = Text.translatable(RedstoneKit.textPath("label", "no_owner"));
 
     private static final Text LOCK_TEXT = Text.translatable(RedstoneKit.textPath("button", "lock_player"));
     private static final Text UNLOCK_TEXT = Text.translatable(RedstoneKit.textPath("button", "unlock_player"));
@@ -317,10 +317,16 @@ public class TeleporterScreen extends HandledScreen<TeleporterScreenHandler> {
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
         super.drawForeground(context, mouseX, mouseY);
 
-        if (this.handler.getOwner() == null && this.client != null && this.client.player != null && this.client.player.isCreativeLevelTwoOp())
-        {
-            int w = this.textRenderer.getWidth(NO_OWNER_TEXT);
-            context.drawText(this.textRenderer, NO_OWNER_TEXT, this.backgroundWidth - this.titleX - w, this.titleY, ScreenColors.ERROR, false);
+        if (this.client != null && this.client.player != null && this.client.player.isCreativeLevelTwoOp()) {
+            if (this.handler.getOwner() == null || this.handler.getOwnerName().isBlank()) {
+                int w = this.textRenderer.getWidth(NO_OWNER_TEXT);
+                context.drawText(this.textRenderer, NO_OWNER_TEXT, this.backgroundWidth - this.titleX - w, this.titleY, ScreenColors.ERROR, false);
+            }
+            else {
+                Text name = Text.literal(this.handler.getOwnerName());
+                int w = this.textRenderer.getWidth(name);
+                context.drawText(this.textRenderer, name, this.backgroundWidth - this.titleX - w, this.titleY, ScreenColors.DEFAULT, false);
+            }
         }
 
         context.drawText(this.textRenderer, USE_XP_TEXT, 23, 41, ScreenColors.DEFAULT, false);

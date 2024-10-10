@@ -2,6 +2,8 @@ package github.xevira.redstone_kit.block;
 
 import com.mojang.serialization.MapCodec;
 import github.xevira.redstone_kit.block.entity.RedstoneInverterBlockEntity;
+import github.xevira.redstone_kit.util.RedstoneConnect;
+import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ComparatorBlockEntity;
@@ -21,7 +23,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.tick.TickPriority;
 
-public class RedstoneMemoryBlock extends AbstractRedstoneGateBlock {
+public class RedstoneMemoryBlock extends AbstractRedstoneGateBlock implements RedstoneConnect {
     public static final MapCodec<RedstoneMemoryBlock> CODEC = createCodec(RedstoneMemoryBlock::new);
 
     public static final IntProperty POWER = Properties.POWER;
@@ -125,5 +127,10 @@ public class RedstoneMemoryBlock extends AbstractRedstoneGateBlock {
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING, POWER);
+    }
+
+    @Override
+    public RedstoneConnectEnum getRedstoneConnect() {
+        return RedstoneConnectEnum.AXIS;
     }
 }

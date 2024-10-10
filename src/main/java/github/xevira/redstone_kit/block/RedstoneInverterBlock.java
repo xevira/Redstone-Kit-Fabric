@@ -5,6 +5,8 @@ import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.entity.RedstoneInverterBlockEntity;
 import github.xevira.redstone_kit.util.BlockProperties;
 import github.xevira.redstone_kit.util.InverterMode;
+import github.xevira.redstone_kit.util.RedstoneConnect;
+import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,7 +27,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.tick.TickPriority;
 
-public class RedstoneInverterBlock extends AbstractRedstoneGateBlock implements BlockEntityProvider {
+public class RedstoneInverterBlock extends AbstractRedstoneGateBlock implements BlockEntityProvider, RedstoneConnect {
     public static final int FULL_POWER = 15;
     public static final MapCodec<RedstoneInverterBlock> CODEC = createCodec(RedstoneInverterBlock::new);
     public static final EnumProperty<InverterMode> MODE = BlockProperties.INVERTER_MODE;
@@ -177,5 +179,10 @@ public class RedstoneInverterBlock extends AbstractRedstoneGateBlock implements 
     @Override
     protected boolean getSideInputFromGatesOnly() {
         return true;
+    }
+
+    @Override
+    public RedstoneConnectEnum getRedstoneConnect() {
+        return RedstoneConnectEnum.AXIS;
     }
 }

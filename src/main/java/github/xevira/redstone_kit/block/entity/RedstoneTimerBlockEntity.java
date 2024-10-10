@@ -117,7 +117,7 @@ public class RedstoneTimerBlockEntity extends BlockEntity implements ServerTicka
 
     @Override
     // Server Side only: !world.isClient
-    public void tick() {
+    public void serverTick() {
         if(this.world == null || this.ticksTotal <= 0) return;
 
         BlockState state = this.world.getBlockState(pos);
