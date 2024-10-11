@@ -51,6 +51,8 @@ public class Registration {
     public static final ComponentType<Identifier> WORLD_ID =
             registerComponent("world_id", builder -> builder.codec(Identifier.CODEC));
 
+    public static final Block EQUATOR_BLOCK = register("equator", new EquatorBlock(DEFAULT_GATE_SETTINGS));
+
     public static final Block WEATHER_DETECTOR_BLOCK = register("weather_detector", new WeatherDetectorBlock(
             AbstractBlock.Settings.create().
                     mapColor(MapColor.LIGHT_BLUE_GRAY).
@@ -102,6 +104,8 @@ public class Registration {
                     .strength(50.0F, 1200.0F)
     ));
 
+    public static final BlockItem EQUATOR_ITEM = register("equator",
+            new BlockItem(EQUATOR_BLOCK, new Item.Settings()));
 
     public static final BlockItem PLAYER_DETECTOR_ITEM = register("player_detector",
             new BlockItem(PLAYER_DETECTOR_BLOCK, new Item.Settings()));
@@ -144,6 +148,10 @@ public class Registration {
 
     public static final Item RESONATOR_ITEM = register("resonator", new ResonatorItem(new Item.Settings().maxCount(1).rarity(Rarity.COMMON)));
 
+    public static final BlockEntityType<EquatorBlockEntity> EQUATOR_BLOCK_ENTITY = register("equator",
+            BlockEntityType.Builder.create(EquatorBlockEntity::new, Registration.EQUATOR_BLOCK)
+                    .build());
+
     public static final BlockEntityType<PlayerDetectorBlockEntity> PLAYER_DETECTOR_BLOCK_BLOCK_ENTITY = register("player_detector",
             BlockEntityType.Builder.create(PlayerDetectorBlockEntity::new, Registration.PLAYER_DETECTOR_BLOCK)
                     .build());
@@ -172,6 +180,7 @@ public class Registration {
             BlockEntityType.Builder.create(WeatherDetectorBlockEntity::new, Registration.WEATHER_DETECTOR_BLOCK)
                     .build());
 
+    public static final SoundEvent EQUATOR_CLICK = register("equator_click");
     public static final SoundEvent REDSTONE_CROSSOVER_CLICK = register("redstone_crossover_click");
     public static final SoundEvent REDSTONE_INVERTER_CLICK = register("redstone_inverter_click");
     public static final SoundEvent REDSTONE_RSNORLATCH_CLICK = register("redstone_rsnorlatch_click");
@@ -242,6 +251,7 @@ public class Registration {
         // Creative Tab items
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> {
             entries.addAfter(Items.COMPARATOR,
+                    Registration.EQUATOR_ITEM,
                     Registration.REDSTONE_INVERTER_ITEM,
                     Registration.REDSTONE_AND_ITEM,
                     Registration.REDSTONE_OR_ITEM,
@@ -254,6 +264,7 @@ public class Registration {
             entries.addAfter(Items.DAYLIGHT_DETECTOR,
                     Registration.WEATHER_DETECTOR_ITEM,
                     Registration.PLAYER_DETECTOR_ITEM,
+                    Registration.TELEPORT_INHIBITOR_ITEM,
                     Registration.TELEPORTER_ITEM);
 
             entries.add(Registration.RESONATOR_ITEM);

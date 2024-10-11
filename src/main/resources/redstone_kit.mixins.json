@@ -4,7 +4,8 @@
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"EndermanEntityMixin",
-		"RedstoneWireBlockMixin"
+		"RedstoneWireBlockMixin",
+		"WorldMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

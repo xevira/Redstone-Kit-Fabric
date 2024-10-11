@@ -8,11 +8,12 @@ import github.xevira.redstone_kit.block.RedstoneTimerBlock;
 public class BlockProperties {
     public static final BooleanProperty LATCHED = BooleanProperty.of("latched");
 
-    public static final EnumProperty<InverterMode> INVERTER_MODE = EnumProperty.of("mode", InverterMode.class);
+    public static final EnumProperty<InverterModeEnum> INVERTER_MODE = EnumProperty.of("mode", InverterModeEnum.class);
+    public static final EnumProperty<CrossoverMode> CROSSOVER_MODE = EnumProperty.of("crossover", CrossoverMode.class);
+    public static final EnumProperty<EquatorModeEnum> EQUATOR_MODE = EnumProperty.of("equate", EquatorModeEnum.class);
 
     public static final IntProperty TIMER = IntProperty.of("timer", 0, RedstoneTimerBlock.MAX_TIMER);
 
-    public static final EnumProperty<CrossoverMode> CROSSOVER_MODE = EnumProperty.of("crossover", CrossoverMode.class);
 
     public static final BooleanProperty FRONT_POWER = BooleanProperty.of("front_power");
     public static final BooleanProperty BACK_POWER = BooleanProperty.of("back_power");

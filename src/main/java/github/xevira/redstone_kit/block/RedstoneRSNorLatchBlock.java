@@ -1,10 +1,7 @@
 package github.xevira.redstone_kit.block;
 
 import com.mojang.serialization.MapCodec;
-import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
-import github.xevira.redstone_kit.util.BlockProperties;
-import github.xevira.redstone_kit.util.InverterMode;
 import github.xevira.redstone_kit.util.RedstoneConnect;
 import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import net.minecraft.block.*;

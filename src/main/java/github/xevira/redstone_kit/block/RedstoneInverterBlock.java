@@ -4,7 +4,7 @@ import com.mojang.serialization.MapCodec;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.entity.RedstoneInverterBlockEntity;
 import github.xevira.redstone_kit.util.BlockProperties;
-import github.xevira.redstone_kit.util.InverterMode;
+import github.xevira.redstone_kit.util.InverterModeEnum;
 import github.xevira.redstone_kit.util.RedstoneConnect;
 import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import net.minecraft.block.*;
@@ -30,7 +30,7 @@ import net.minecraft.world.tick.TickPriority;
 public class RedstoneInverterBlock extends AbstractRedstoneGateBlock implements BlockEntityProvider, RedstoneConnect {
     public static final int FULL_POWER = 15;
     public static final MapCodec<RedstoneInverterBlock> CODEC = createCodec(RedstoneInverterBlock::new);
-    public static final EnumProperty<InverterMode> MODE = BlockProperties.INVERTER_MODE;
+    public static final EnumProperty<InverterModeEnum> MODE = BlockProperties.INVERTER_MODE;
     public static final BooleanProperty LIT = Properties.LIT;
 
     public RedstoneInverterBlock(Settings settings) {
@@ -39,7 +39,7 @@ public class RedstoneInverterBlock extends AbstractRedstoneGateBlock implements 
                 .with(FACING, Direction.NORTH)
                 .with(POWERED, false)
                 .with(LIT, true)
-                .with(MODE, InverterMode.DIGITAL)
+                .with(MODE, InverterModeEnum.DIGITAL)
         );
     }
 
@@ -89,7 +89,7 @@ public class RedstoneInverterBlock extends AbstractRedstoneGateBlock implements 
 
     private int calculateOutputSignal(World world, BlockPos pos, BlockState state) {
         int power = this.getPower(world, pos, state);
-        if (state.get(MODE) == InverterMode.DIGITAL)
+        if (state.get(MODE) == InverterModeEnum.DIGITAL)
         {
             if (power > 0) return 0;
 
@@ -157,7 +157,7 @@ public class RedstoneInverterBlock extends AbstractRedstoneGateBlock implements 
             return ActionResult.PASS;
         } else {
             state = state.cycle(MODE);
-            float f = state.get(MODE) == InverterMode.ANALOG ? 1.1F : 1.0F;
+            float f = state.get(MODE) == InverterModeEnum.ANALOG ? 1.1F : 1.0F;
             world.playSound(player, pos, Registration.REDSTONE_INVERTER_CLICK, SoundCategory.BLOCKS, 1.2F, f);
             world.setBlockState(pos, state, Block.NOTIFY_LISTENERS);
             this.update(world, pos, state);

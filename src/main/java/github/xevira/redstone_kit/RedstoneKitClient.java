@@ -22,25 +22,26 @@ public class RedstoneKitClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		// Client-side Event handlers
+		// - Handle the jump activation on teleporters
 		ClientTickEvents.END_CLIENT_TICK.register(TeleporterBlock.TeleportHandler::handleInput);
+		// - Handle owned block break protection
 		AttackBlockCallback.EVENT.register(OwnerBlockBreaker.INSTANCE);
 
 		// Render Layers
 		// Cutout - Where parts of the textures need to be transparent, but NOT translucent (use Translucent for that)
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
+				Registration.EQUATOR_BLOCK,
 				Registration.REDSTONE_AND_BLOCK,
 				Registration.REDSTONE_INVERTER_BLOCK,
-				Registration.REDSTONE_AND_BLOCK,
 				Registration.REDSTONE_OR_BLOCK,
-				Registration.REDSTONE_XOR_BLOCK,
 				Registration.REDSTONE_RSNORLATCH_BLOCK,
 				Registration.REDSTONE_TICKER_BLOCK,
 				Registration.REDSTONE_TIMER_BLOCK,
 				Registration.REDSTONE_XOR_BLOCK);
 
 		// Screen Handlers
-		HandledScreens.register(Registration.REDSTONE_TIMER_SCREEN_HANDLER, RedstoneTimerScreen::new);
 		HandledScreens.register(Registration.PLAYER_DETECTOR_SCREEN_HANDLER, PlayerDetectorScreen::new);
+		HandledScreens.register(Registration.REDSTONE_TIMER_SCREEN_HANDLER, RedstoneTimerScreen::new);
 		HandledScreens.register(Registration.TELEPORTER_SCREEN_HANDLER, TeleporterScreen::new);
 		HandledScreens.register(Registration.TELEPORT_INHIBITOR_SCREEN_HANDLER, TeleportInhibitorScreen::new);
 

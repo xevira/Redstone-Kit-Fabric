@@ -1,4 +1,10 @@
 {
+  "equator_click": {
+    "subtitle": "sound.redstone_kit.equator_click",
+    "sounds": [
+      "redstone_kit:redstone_click"
+    ]
+  },
   "redstone_crossover_click": {
     "subtitle": "sound.redstone_kit.redstone_crossover_click",
     "sounds": [

@@ -44,7 +44,7 @@ public class RedstoneCrossoverBlock extends AbstractRedstoneGateBlock implements
 
     @Override
     public RedstoneConnectEnum getRedstoneConnect() {
-        return RedstoneConnectEnum.NONE;
+        return RedstoneConnectEnum.ALWAYS;
     }
 
     @Override

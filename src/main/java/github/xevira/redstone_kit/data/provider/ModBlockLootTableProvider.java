@@ -27,5 +27,6 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(Registration.TELEPORT_INHIBITOR_BLOCK);
         addDrop(Registration.TELEPORTER_BLOCK);
         addDrop(Registration.WEATHER_DETECTOR_BLOCK);
+        addDrop(Registration.EQUATOR_BLOCK);
     }
 }

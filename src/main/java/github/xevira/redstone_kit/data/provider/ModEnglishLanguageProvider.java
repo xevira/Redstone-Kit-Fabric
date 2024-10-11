@@ -49,29 +49,31 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
 
     @Override
     public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
+        translationBuilder.add(Registration.EQUATOR_BLOCK, "Equator");
         translationBuilder.add(Registration.PLAYER_DETECTOR_BLOCK, "Player Detector");
+        translationBuilder.add(Registration.REDSTONE_AND_BLOCK, "Redstone AND Gate");
         translationBuilder.add(Registration.REDSTONE_CROSSOVER_BLOCK, "Redstone Crossover");
         translationBuilder.add(Registration.REDSTONE_INVERTER_BLOCK, "Redstone Inverter");
-        translationBuilder.add(Registration.REDSTONE_OR_BLOCK, "Redstone OR Gate");
-        translationBuilder.add(Registration.REDSTONE_AND_BLOCK, "Redstone AND Gate");
-        translationBuilder.add(Registration.REDSTONE_XOR_BLOCK, "Redstone XOR Gate");
-        translationBuilder.add(Registration.REDSTONE_RSNORLATCH_BLOCK, "Redstone RS-NOR Latch");
         translationBuilder.add(Registration.REDSTONE_MEMORY_BLOCK, "Redstone Memory Cell");
+        translationBuilder.add(Registration.REDSTONE_OR_BLOCK, "Redstone OR Gate");
+        translationBuilder.add(Registration.REDSTONE_RSNORLATCH_BLOCK, "Redstone RS-NOR Latch");
         translationBuilder.add(Registration.REDSTONE_TICKER_BLOCK, "Redstone Ticker");
         translationBuilder.add(Registration.REDSTONE_TIMER_BLOCK, "Redstone Timer");
-        translationBuilder.add(Registration.WEATHER_DETECTOR_BLOCK, "Weather Detector");
+        translationBuilder.add(Registration.REDSTONE_XOR_BLOCK, "Redstone XOR Gate");
         translationBuilder.add(Registration.TELEPORT_INHIBITOR_BLOCK, "Teleport Inhibitor");
         translationBuilder.add(Registration.TELEPORTER_BLOCK, "Teleporter");
+        translationBuilder.add(Registration.WEATHER_DETECTOR_BLOCK, "Weather Detector");
 
         translationBuilder.add(Registration.PLAYER_DETECTOR_OFFERINGS_TAG, "Player Detector Offerings");
         translationBuilder.add(Registration.PURPUR_BLOCKS_TAG, "Purpur Blocks");
         translationBuilder.add(Registration.TELEPORTER_OFFERINGS_TAG, "Teleporter Offerings");
 
-        addText(translationBuilder, RedstoneTimerBlockEntity.TITLE, "Redstone Timer");
         addText(translationBuilder, PlayerDetectorBlockEntity.TITLE, "Player Detector");
+        addText(translationBuilder, RedstoneTimerBlockEntity.TITLE, "Redstone Timer");
         addText(translationBuilder, TeleportInhibitorBlockEntity.TITLE, "Teleport Inhibitor");
         addText(translationBuilder, TeleporterBlockEntity.TITLE, "Teleporter");
 
+        addText(translationBuilder, "sound","equator_click", "Equator clicks");
         addText(translationBuilder, "sound","redstone_crossover_click", "Crossover clicks");
         addText(translationBuilder, "sound","redstone_inverter_click", "Inverter clicks");
         addText(translationBuilder, "sound","redstone_rsnorlatch_click", "Latch clicks");

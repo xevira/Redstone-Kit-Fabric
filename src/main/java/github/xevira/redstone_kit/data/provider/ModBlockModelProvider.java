@@ -1,21 +1,16 @@
 package github.xevira.redstone_kit.data.provider;
 
-import com.google.common.collect.ImmutableList;
 import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.*;
-import github.xevira.redstone_kit.util.InverterMode;
+import github.xevira.redstone_kit.util.EquatorModeEnum;
+import github.xevira.redstone_kit.util.InverterModeEnum;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.data.client.*;
 import net.minecraft.state.property.Properties;
-import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
-
-import java.util.Collections;
-import java.util.List;
 
 import static net.minecraft.data.client.BlockStateModelGenerator.createSouthDefaultHorizontalRotationStates;
 
@@ -103,7 +98,7 @@ public class ModBlockModelProvider extends FabricModelProvider {
                         .coordinate(BlockStateVariantMap.create(RedstoneInverterBlock.MODE, RedstoneInverterBlock.POWERED, RedstoneInverterBlock.LIT).register((mode, powered, lit) -> {
                             StringBuilder stringBuilder = new StringBuilder();
 
-                            if (mode == InverterMode.ANALOG)
+                            if (mode == InverterModeEnum.ANALOG)
                             {
                                 // Both of these can be on simultaneously
                                 if (lit)
@@ -219,6 +214,23 @@ public class ModBlockModelProvider extends FabricModelProvider {
                                     .append(right ? "_on" : "_off");
 
                             return BlockStateVariant.create().put(VariantSettings.MODEL, TextureMap.getSubId(Registration.REDSTONE_XOR_BLOCK, stringBuilder.toString()));
+                        }))
+                        .coordinate(createSouthDefaultHorizontalRotationStates())
+        );
+
+        blockStateModelGenerator.registerItemModel(Registration.EQUATOR_ITEM);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.EQUATOR_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(EquatorBlock.POWERED, EquatorBlock.MODE).register((p, m) -> {
+                            StringBuilder stringBuilder = new StringBuilder();
+
+                            if (m == EquatorModeEnum.FUZZY)
+                                stringBuilder.append("_fuzzy");
+
+                            if (p)
+                                stringBuilder.append("_on");
+
+                            return BlockStateVariant.create().put(VariantSettings.MODEL, TextureMap.getSubId(Registration.EQUATOR_BLOCK, stringBuilder.toString()));
                         }))
                         .coordinate(createSouthDefaultHorizontalRotationStates())
         );
