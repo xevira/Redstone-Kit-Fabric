@@ -236,6 +236,62 @@ public class ModBlockModelProvider extends FabricModelProvider {
                         .coordinate(createSouthDefaultHorizontalRotationStates())
         );
 
+        blockStateModelGenerator.registerParentedItemModel(Registration.REDSTONE_CROSSOVER_ITEM, RedstoneKit.id("block/redstone_crossover"));
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.REDSTONE_CROSSOVER_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(RedstoneCrossoverBlock.CROSSOVER, RedstoneCrossoverBlock.FRONT_POWER, RedstoneCrossoverBlock.BACK_POWER, RedstoneCrossoverBlock.LEFT_POWER, RedstoneCrossoverBlock.RIGHT_POWER).register((m, f, b, l, r) -> {
+                            StringBuilder stringBuilder = new StringBuilder();
+
+                            switch(m)
+                            {
+                                case ACROSS -> {
+                                    stringBuilder.append("_across");
+
+                                    if (f || b)
+                                        stringBuilder.append("_on");
+                                    else
+                                        stringBuilder.append("_off");
+
+                                    if (l || r)
+                                        stringBuilder.append("_on");
+                                    else
+                                        stringBuilder.append("_off");
+                                }
+
+                                case ANGLED -> {
+                                    stringBuilder.append("_angled");
+
+                                    if (l || b)
+                                        stringBuilder.append("_on");
+                                    else
+                                        stringBuilder.append("_off");
+
+                                    if (f || r)
+                                        stringBuilder.append("_on");
+                                    else
+                                        stringBuilder.append("_off");
+                                }
+
+                                case INVERTED -> {
+                                    stringBuilder.append("_inverted");
+
+                                    if (l || f)
+                                        stringBuilder.append("_on");
+                                    else
+                                        stringBuilder.append("_off");
+
+                                    if (b || r)
+                                        stringBuilder.append("_on");
+                                    else
+                                        stringBuilder.append("_off");
+                                }
+                            }
+
+                            return BlockStateVariant.create().put(VariantSettings.MODEL, TextureMap.getSubId(Registration.REDSTONE_CROSSOVER_BLOCK, stringBuilder.toString()));
+                        }))
+                        .coordinate(createSouthDefaultHorizontalRotationStates())
+        );
+
         blockStateModelGenerator.registerSimpleState(Registration.TELEPORT_INHIBITOR_BLOCK);
 
         blockStateModelGenerator.registerSimpleState(Registration.TELEPORTER_BLOCK);;

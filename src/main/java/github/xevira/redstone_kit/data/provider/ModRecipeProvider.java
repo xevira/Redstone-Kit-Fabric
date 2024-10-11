@@ -185,6 +185,17 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Items.AMETHYST_SHARD), conditionsFromItem(Items.AMETHYST_SHARD))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_CROSSOVER_BLOCK)
+                .input('r', Items.REDSTONE)
+                .input('S', Blocks.STONE)
+                .pattern(" r ")
+                .pattern("r r")
+                .pattern("SSS")
+                .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
+                .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
+                .offerTo(exporter);
+
+
         RedstoneKit.LOGGER.info("Finished generating recipes.");
     }
 }

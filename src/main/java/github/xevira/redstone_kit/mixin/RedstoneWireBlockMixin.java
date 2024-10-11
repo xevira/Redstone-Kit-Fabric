@@ -22,6 +22,7 @@ public class RedstoneWireBlockMixin {
         {
             switch(connecter.getRedstoneConnect())
             {
+                case NONE -> clr.setReturnValue(false);
                 case ALWAYS -> clr.setReturnValue(true);
                 case AXIS -> {
                     // Only allow along the axis of the FACING direction

@@ -75,6 +75,8 @@ public class Registration {
 
     public static final Block REDSTONE_XOR_BLOCK = register("redstone_xor", new RedstoneXorGateBlock(DEFAULT_GATE_SETTINGS));
 
+    public static final Block REDSTONE_CROSSOVER_BLOCK = register("redstone_crossover", new RedstoneCrossoverBlock(DEFAULT_GATE_SETTINGS));
+
     public static final Block PLAYER_DETECTOR_BLOCK = register("player_detector", new PlayerDetectorBlock(
             AbstractBlock.Settings.create()
                     .mapColor(MapColor.OFF_WHITE)
@@ -106,6 +108,9 @@ public class Registration {
 
     public static final BlockItem REDSTONE_AND_ITEM = register("redstone_and",
             new BlockItem(REDSTONE_AND_BLOCK, new Item.Settings()));
+
+    public static final BlockItem REDSTONE_CROSSOVER_ITEM = register("redstone_crossover",
+            new BlockItem(REDSTONE_CROSSOVER_BLOCK, new Item.Settings()));
 
     public static final BlockItem REDSTONE_INVERTER_ITEM = register("redstone_inverter",
             new BlockItem(REDSTONE_INVERTER_BLOCK, new Item.Settings()));
@@ -167,6 +172,7 @@ public class Registration {
             BlockEntityType.Builder.create(WeatherDetectorBlockEntity::new, Registration.WEATHER_DETECTOR_BLOCK)
                     .build());
 
+    public static final SoundEvent REDSTONE_CROSSOVER_CLICK = register("redstone_crossover_click");
     public static final SoundEvent REDSTONE_INVERTER_CLICK = register("redstone_inverter_click");
     public static final SoundEvent REDSTONE_RSNORLATCH_CLICK = register("redstone_rsnorlatch_click");
 
