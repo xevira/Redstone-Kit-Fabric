@@ -248,6 +248,24 @@ public class ModBlockModelProvider extends FabricModelProvider {
                         .coordinate(createSouthDefaultHorizontalRotationStates())
         );
 
+        blockStateModelGenerator.registerParentedItemModel(Registration.REDSTONE_NIBBLE_COUNTER_ITEM, RedstoneKit.id("block/redstone_nibble_counter"));
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.REDSTONE_NIBBLE_COUNTER_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(RedstoneNibbleCounterBlock.POWER, RedstoneNibbleCounterBlock.INVERTED).register((power, inverted) -> {
+                            StringBuilder stringBuilder = new StringBuilder();
+
+                            if (inverted)
+                                stringBuilder.append("_inverted");
+
+                            stringBuilder
+                                    .append("_")
+                                    .append(Integer.toString(power, 16).toLowerCase());
+
+                            return BlockStateVariant.create().put(VariantSettings.MODEL, TextureMap.getSubId(Registration.REDSTONE_NIBBLE_COUNTER_BLOCK, stringBuilder.toString()));
+                        }))
+                        .coordinate(createSouthDefaultHorizontalRotationStates())
+        );
+
         blockStateModelGenerator.registerParentedItemModel(Registration.REDSTONE_CROSSOVER_ITEM, RedstoneKit.id("block/redstone_crossover"));
         blockStateModelGenerator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(Registration.REDSTONE_CROSSOVER_BLOCK)

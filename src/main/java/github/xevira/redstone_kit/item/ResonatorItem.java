@@ -184,11 +184,7 @@ public class ResonatorItem extends Item {
 
         if(pos != null && worldId != null) {
 
-            tooltip.add(Text.literal(String.format("worldId = §e%s§r", worldId)));
-            if (MinecraftClient.getInstance().world == null)
-                tooltip.add(Text.literal("client world == null"));
-            else
-                tooltip.add(Text.literal(String.format("this world = §e%s§r", MinecraftClient.getInstance().world.getRegistryKey().getValue())));
+            tooltip.add(Text.literal(String.format("Target World: §e%s§r", worldId.getPath())));
 
             if (isSameWorld(worldId))
                 tooltip.add(Text.translatable(RedstoneKit.textPath("tooltip", "resonator.pending"), pos.getX(), pos.getY(), pos.getZ()));

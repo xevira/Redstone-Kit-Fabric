@@ -17,20 +17,21 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
-                .add(Registration.WEATHER_DETECTOR_BLOCK)
+                .add(Registration.EQUATOR_BLOCK)
                 .add(Registration.PLAYER_DETECTOR_BLOCK)
+                .add(Registration.REDSTONE_AND_BLOCK)
                 .add(Registration.REDSTONE_CROSSOVER_BLOCK)
                 .add(Registration.REDSTONE_INVERTER_BLOCK)
-                .add(Registration.REDSTONE_OR_BLOCK)
-                .add(Registration.REDSTONE_AND_BLOCK)
-                .add(Registration.REDSTONE_XOR_BLOCK)
                 .add(Registration.REDSTONE_MEMORY_BLOCK)
+                .add(Registration.REDSTONE_NIBBLE_COUNTER_BLOCK)
+                .add(Registration.REDSTONE_OR_BLOCK)
                 .add(Registration.REDSTONE_RSNORLATCH_BLOCK)
                 .add(Registration.REDSTONE_TICKER_BLOCK)
                 .add(Registration.REDSTONE_TIMER_BLOCK)
+                .add(Registration.REDSTONE_XOR_BLOCK)
                 .add(Registration.TELEPORT_INHIBITOR_BLOCK)
                 .add(Registration.TELEPORTER_BLOCK)
-                .add(Registration.EQUATOR_BLOCK);
+                .add(Registration.WEATHER_DETECTOR_BLOCK);
 
         getOrCreateTagBuilder(BlockTags.NEEDS_DIAMOND_TOOL)
                 .add(Registration.TELEPORT_INHIBITOR_BLOCK)
