@@ -17,6 +17,10 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
+                .add(Registration.CONVEYOR_BELT_SLOW_BLOCK)
+                .add(Registration.CONVEYOR_BELT_MEDIUM_BLOCK)
+                .add(Registration.CONVEYOR_BELT_FAST_BLOCK)
+                .add(Registration.CONVEYOR_BELT_EXTREME_BLOCK)
                 .add(Registration.EQUATOR_BLOCK)
                 .add(Registration.LIGHT_DISPLAY_BLOCK)
                 .add(Registration.LIGHT_DISPLAY_BULB_BLOCK)
@@ -36,10 +40,16 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .add(Registration.WEATHER_DETECTOR_BLOCK);
 
         getOrCreateTagBuilder(BlockTags.NEEDS_STONE_TOOL)
+                .add(Registration.CONVEYOR_BELT_SLOW_BLOCK)
                 .add(Registration.LIGHT_DISPLAY_BLOCK)
                 .add(Registration.LIGHT_DISPLAY_BULB_BLOCK);
 
+        getOrCreateTagBuilder(BlockTags.NEEDS_IRON_TOOL)
+                .add(Registration.CONVEYOR_BELT_MEDIUM_BLOCK)
+                .add(Registration.CONVEYOR_BELT_FAST_BLOCK);
+
         getOrCreateTagBuilder(BlockTags.NEEDS_DIAMOND_TOOL)
+                .add(Registration.CONVEYOR_BELT_EXTREME_BLOCK)
                 .add(Registration.TELEPORT_INHIBITOR_BLOCK)
                 .add(Registration.TELEPORTER_BLOCK);
 

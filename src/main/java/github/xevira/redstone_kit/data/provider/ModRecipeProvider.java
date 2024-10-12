@@ -249,7 +249,57 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Items.GLASS), conditionsFromItem(Items.GLASS))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, Registration.BELT_ITEM)
+                .input('k', Items.DRIED_KELP)
+                .input('s', Items.STRING)
+                .pattern("kkk")
+                .pattern("sss")
+                .pattern("kkk")
+                .criterion(hasItem(Items.DRIED_KELP), conditionsFromItem(Items.DRIED_KELP))
+                .criterion(hasItem(Items.STRING), conditionsFromItem(Items.STRING))
+                .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.CONVEYOR_BELT_SLOW_BLOCK)
+                .input('b', Registration.BELT_ITEM)
+                .input('i', Items.IRON_INGOT)
+                .input('n', Items.IRON_NUGGET)
+                .pattern("nbn")
+                .pattern("nin")
+                .criterion(hasItem(Registration.BELT_ITEM), conditionsFromItem(Registration.BELT_ITEM))
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .criterion(hasItem(Items.IRON_NUGGET), conditionsFromItem(Items.IRON_NUGGET))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.CONVEYOR_BELT_MEDIUM_BLOCK)
+                .input('b', Registration.BELT_ITEM)
+                .input('i', Items.GOLD_INGOT)
+                .input('n', Items.GOLD_NUGGET)
+                .pattern("nbn")
+                .pattern("nin")
+                .criterion(hasItem(Registration.BELT_ITEM), conditionsFromItem(Registration.BELT_ITEM))
+                .criterion(hasItem(Items.GOLD_INGOT), conditionsFromItem(Items.GOLD_INGOT))
+                .criterion(hasItem(Items.GOLD_NUGGET), conditionsFromItem(Items.GOLD_NUGGET))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.CONVEYOR_BELT_FAST_BLOCK)
+                .input('b', Registration.BELT_ITEM)
+                .input('i', Items.DIAMOND)
+                .pattern("ibi")
+                .pattern("iii")
+                .criterion(hasItem(Registration.BELT_ITEM), conditionsFromItem(Registration.BELT_ITEM))
+                .criterion(hasItem(Items.DIAMOND), conditionsFromItem(Items.DIAMOND))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.CONVEYOR_BELT_EXTREME_BLOCK)
+                .input('b', Registration.BELT_ITEM)
+                .input('i', Items.NETHERITE_INGOT)
+                .input('s', Items.NETHERITE_SCRAP)
+                .pattern("sbs")
+                .pattern("sis")
+                .criterion(hasItem(Registration.BELT_ITEM), conditionsFromItem(Registration.BELT_ITEM))
+                .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
+                .criterion(hasItem(Items.NETHERITE_SCRAP), conditionsFromItem(Items.NETHERITE_SCRAP))
+                .offerTo(exporter);
 
         RedstoneKit.LOGGER.info("Finished generating recipes.");
     }

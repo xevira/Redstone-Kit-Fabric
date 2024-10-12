@@ -55,6 +55,42 @@ public class Registration {
 
 
     // Blocks
+    public static final Block CONVEYOR_BELT_SLOW_BLOCK = register("conveyor_belt_slow", new ConveyorBeltBlock(0.1,
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.GREEN)
+                    .strength(3.0F, 6.0F)
+                    .sounds(BlockSoundGroup.METAL)
+                    .requiresTool()
+                    .solidBlock(Blocks::never)
+                    ));
+
+    public static final Block CONVEYOR_BELT_MEDIUM_BLOCK = register("conveyor_belt_medium", new ConveyorBeltBlock(0.2,
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.YELLOW)
+                    .strength(3.0F, 6.0F)
+                    .sounds(BlockSoundGroup.METAL)
+                    .requiresTool()
+                    .solidBlock(Blocks::never)
+    ));
+
+    public static final Block CONVEYOR_BELT_FAST_BLOCK = register("conveyor_belt_fast", new ConveyorBeltBlock(0.4,
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.RED)
+                    .strength(3.0F, 6.0F)
+                    .sounds(BlockSoundGroup.METAL)
+                    .requiresTool()
+                    .solidBlock(Blocks::never)
+    ));
+
+    public static final Block CONVEYOR_BELT_EXTREME_BLOCK = register("conveyor_belt_extreme", new ConveyorBeltBlock(0.8,
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.MAGENTA)
+                    .strength(3.0F, 6.0F)
+                    .sounds(BlockSoundGroup.METAL)
+                    .requiresTool()
+                    .solidBlock(Blocks::never)
+    ));
+
     public static final Block EQUATOR_BLOCK = register("equator", new EquatorBlock(DEFAULT_GATE_SETTINGS));
 
     public static final Block LIGHT_DISPLAY_BLOCK = register("light_display", new LightDisplayBlock(
@@ -130,6 +166,18 @@ public class Registration {
     ));
 
     // BlockItems
+    public static final BlockItem CONVEYOR_BELT_SLOW_ITEM = register("conveyor_belt_slow",
+            new BlockItem(CONVEYOR_BELT_SLOW_BLOCK, new Item.Settings()));
+
+    public static final BlockItem CONVEYOR_BELT_MEDIUM_ITEM = register("conveyor_belt_medium",
+            new BlockItem(CONVEYOR_BELT_MEDIUM_BLOCK, new Item.Settings()));
+
+    public static final BlockItem CONVEYOR_BELT_FAST_ITEM = register("conveyor_belt_fast",
+            new BlockItem(CONVEYOR_BELT_FAST_BLOCK, new Item.Settings()));
+
+    public static final BlockItem CONVEYOR_BELT_EXTREME_ITEM = register("conveyor_belt_extreme",
+            new BlockItem(CONVEYOR_BELT_EXTREME_BLOCK, new Item.Settings()));
+
     public static final BlockItem EQUATOR_ITEM = register("equator",
             new BlockItem(EQUATOR_BLOCK, new Item.Settings()));
 
@@ -183,6 +231,8 @@ public class Registration {
 
 
     // Items
+    public static final Item BELT_ITEM = register("belt", new Item(new Item.Settings()));
+
     public static final Item RESONATOR_ITEM = register("resonator", new ResonatorItem(new Item.Settings().maxCount(1).rarity(Rarity.COMMON)));
 
 
@@ -308,7 +358,13 @@ public class Registration {
                     Registration.WEATHER_DETECTOR_ITEM,
                     Registration.PLAYER_DETECTOR_ITEM,
                     Registration.TELEPORT_INHIBITOR_ITEM,
-                    Registration.TELEPORTER_ITEM);
+                    Registration.TELEPORTER_ITEM,
+                    Registration.LIGHT_DISPLAY_ITEM,
+                    Registration.LIGHT_DISPLAY_BULB_ITEM,
+                    Registration.CONVEYOR_BELT_SLOW_ITEM,
+                    Registration.CONVEYOR_BELT_MEDIUM_ITEM,
+                    Registration.CONVEYOR_BELT_FAST_ITEM,
+                    Registration.CONVEYOR_BELT_EXTREME_ITEM);
 
             entries.add(Registration.RESONATOR_ITEM);
         });

@@ -11,9 +11,7 @@ import net.minecraft.block.Block;
 import net.minecraft.data.client.*;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
 
-import static net.minecraft.data.client.BlockStateModelGenerator.createNorthDefaultRotationStates;
 import static net.minecraft.data.client.BlockStateModelGenerator.createSouthDefaultHorizontalRotationStates;
 
 public class ModBlockModelProvider extends FabricModelProvider {
@@ -357,17 +355,137 @@ public class ModBlockModelProvider extends FabricModelProvider {
         );
 
 
-                //.accept(blockStateModelGenerator.createCopperBulbBlockState(copperBulbBlock, identifier, identifier3, identifier2, identifier4));
-
-
         blockStateModelGenerator.registerSimpleState(Registration.TELEPORT_INHIBITOR_BLOCK);
 
         blockStateModelGenerator.registerSimpleState(Registration.TELEPORTER_BLOCK);;
+
+
+        blockStateModelGenerator.registerParentedItemModel(Registration.CONVEYOR_BELT_SLOW_ITEM, RedstoneKit.id("block/conveyor_belt_slow"));
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.CONVEYOR_BELT_SLOW_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(ConveyorBeltBlock.FACING, ConveyorBeltBlock.ENABLED, ConveyorBeltBlock.SLOPE).register((facing, enabled, slope) -> {
+                            BlockStateVariant variant = BlockStateVariant.create();
+
+                            StringBuilder builder = new StringBuilder();
+
+                            if (slope == ConveyorBeltBlock.ConveyorBeltSlopeEnum.DOWN)
+                                builder.append("_down");
+                            else if (slope == ConveyorBeltBlock.ConveyorBeltSlopeEnum.UP)
+                                builder.append("_up");
+
+                            if (!enabled)
+                                builder.append("_off");
+
+                            variant.put(VariantSettings.MODEL, TextureMap.getSubId(Registration.CONVEYOR_BELT_SLOW_BLOCK, builder.toString()));
+
+                            switch(facing)
+                            {
+                                case NORTH -> {}
+                                case SOUTH -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R180);
+                                case WEST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R270);
+                                case EAST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R90);
+                            }
+
+                            return variant;
+                        }))
+        );
+
+        blockStateModelGenerator.registerParentedItemModel(Registration.CONVEYOR_BELT_MEDIUM_ITEM, RedstoneKit.id("block/conveyor_belt_medium"));
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.CONVEYOR_BELT_MEDIUM_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(ConveyorBeltBlock.FACING, ConveyorBeltBlock.ENABLED, ConveyorBeltBlock.SLOPE).register((facing, enabled, slope) -> {
+                            BlockStateVariant variant = BlockStateVariant.create();
+
+                            StringBuilder builder = new StringBuilder();
+
+                            if (slope == ConveyorBeltBlock.ConveyorBeltSlopeEnum.DOWN)
+                                builder.append("_down");
+                            else if (slope == ConveyorBeltBlock.ConveyorBeltSlopeEnum.UP)
+                                builder.append("_up");
+
+                            if (!enabled)
+                                builder.append("_off");
+
+                            variant.put(VariantSettings.MODEL, TextureMap.getSubId(Registration.CONVEYOR_BELT_MEDIUM_BLOCK, builder.toString()));
+
+                            switch(facing)
+                            {
+                                case NORTH -> {}
+                                case SOUTH -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R180);
+                                case WEST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R270);
+                                case EAST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R90);
+                            }
+
+                            return variant;
+                        }))
+        );
+
+        blockStateModelGenerator.registerParentedItemModel(Registration.CONVEYOR_BELT_FAST_ITEM, RedstoneKit.id("block/conveyor_belt_fast"));
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.CONVEYOR_BELT_FAST_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(ConveyorBeltBlock.FACING, ConveyorBeltBlock.ENABLED, ConveyorBeltBlock.SLOPE).register((facing, enabled, slope) -> {
+                            BlockStateVariant variant = BlockStateVariant.create();
+
+                            StringBuilder builder = new StringBuilder();
+
+                            if (slope == ConveyorBeltBlock.ConveyorBeltSlopeEnum.DOWN)
+                                builder.append("_down");
+                            else if (slope == ConveyorBeltBlock.ConveyorBeltSlopeEnum.UP)
+                                builder.append("_up");
+
+                            if (!enabled)
+                                builder.append("_off");
+
+                            variant.put(VariantSettings.MODEL, TextureMap.getSubId(Registration.CONVEYOR_BELT_FAST_BLOCK, builder.toString()));
+
+                            switch(facing)
+                            {
+                                case NORTH -> {}
+                                case SOUTH -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R180);
+                                case WEST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R270);
+                                case EAST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R90);
+                            }
+
+                            return variant;
+                        }))
+        );
+
+        blockStateModelGenerator.registerParentedItemModel(Registration.CONVEYOR_BELT_EXTREME_ITEM, RedstoneKit.id("block/conveyor_belt_extreme"));
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.CONVEYOR_BELT_EXTREME_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(ConveyorBeltBlock.FACING, ConveyorBeltBlock.ENABLED, ConveyorBeltBlock.SLOPE).register((facing, enabled, slope) -> {
+                            BlockStateVariant variant = BlockStateVariant.create();
+
+                            StringBuilder builder = new StringBuilder();
+
+                            if (slope == ConveyorBeltBlock.ConveyorBeltSlopeEnum.DOWN)
+                                builder.append("_down");
+                            else if (slope == ConveyorBeltBlock.ConveyorBeltSlopeEnum.UP)
+                                builder.append("_up");
+
+                            if (!enabled)
+                                builder.append("_off");
+
+                            variant.put(VariantSettings.MODEL, TextureMap.getSubId(Registration.CONVEYOR_BELT_EXTREME_BLOCK, builder.toString()));
+
+                            switch(facing)
+                            {
+                                case NORTH -> {}
+                                case SOUTH -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R180);
+                                case WEST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R270);
+                                case EAST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R90);
+                            }
+
+                            return variant;
+                        }))
+        );
+
     }
 
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
+        itemModelGenerator.register(Registration.BELT_ITEM, Models.GENERATED);
         itemModelGenerator.register(Registration.RESONATOR_ITEM, Models.HANDHELD);
     }
 

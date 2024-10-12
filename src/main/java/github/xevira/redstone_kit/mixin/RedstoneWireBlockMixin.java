@@ -29,6 +29,11 @@ public class RedstoneWireBlockMixin {
                     Direction direction = state.get(Properties.HORIZONTAL_FACING);
                     clr.setReturnValue(direction == dir || direction.getOpposite() == dir);
                 }
+                case NOT_AXIS -> {
+                    // Only allow not along the axis of the FACING direction
+                    Direction direction = state.get(Properties.HORIZONTAL_FACING);
+                    clr.setReturnValue(direction.rotateYCounterclockwise() == dir && direction.rotateYClockwise() == dir);
+                }
                 case NOT_FACING -> {
                     // Any direction other than FACING.
                     Direction direction = state.get(Properties.HORIZONTAL_FACING);

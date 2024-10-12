@@ -14,6 +14,10 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
 
     @Override
     public void generate() {
+        addDrop(Registration.CONVEYOR_BELT_SLOW_BLOCK);
+        addDrop(Registration.CONVEYOR_BELT_MEDIUM_BLOCK);
+        addDrop(Registration.CONVEYOR_BELT_FAST_BLOCK);
+        addDrop(Registration.CONVEYOR_BELT_EXTREME_BLOCK);
         addDrop(Registration.EQUATOR_BLOCK);
         addDrop(Registration.LIGHT_DISPLAY_BLOCK);
         addDrop(Registration.LIGHT_DISPLAY_BULB_BLOCK);

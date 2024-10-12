@@ -50,6 +50,10 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
     @Override
     public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
         translationBuilder.add(Registration.EQUATOR_BLOCK, "Equator");
+        translationBuilder.add(Registration.CONVEYOR_BELT_SLOW_BLOCK, "Conveyor Belt (Slow)");
+        translationBuilder.add(Registration.CONVEYOR_BELT_MEDIUM_BLOCK, "Conveyor Belt (Medium)");
+        translationBuilder.add(Registration.CONVEYOR_BELT_FAST_BLOCK, "Conveyor Belt (Fast)");
+        translationBuilder.add(Registration.CONVEYOR_BELT_EXTREME_BLOCK, "Conveyor Belt (Extreme)");
         translationBuilder.add(Registration.LIGHT_DISPLAY_BLOCK, "Light Display");
         translationBuilder.add(Registration.LIGHT_DISPLAY_BULB_BLOCK, "Light Display Bulb");
         translationBuilder.add(Registration.PLAYER_DETECTOR_BLOCK, "Player Detector");
@@ -115,6 +119,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         addText(translationBuilder, "tooltip", "toggle_up_off", "Click to turn UP vision ON.");
         addText(translationBuilder, "tooltip", "toggle_down_off", "Click to turn DOWN vision ON.");
 
+        translationBuilder.add(Registration.BELT_ITEM, "Belt of Kelp");
         translationBuilder.add(Registration.RESONATOR_ITEM, "Resonator");
         addText(translationBuilder, "tooltip", "resonator", "Press §eShift§r for more Information!");
         addText(translationBuilder, "tooltip", "resonator.shift_down", "Links teleporters and breaks certain blocks.");

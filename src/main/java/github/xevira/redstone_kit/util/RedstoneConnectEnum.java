@@ -4,6 +4,6 @@ public enum RedstoneConnectEnum {
     NONE,
     ALWAYS,
     AXIS,
+    NOT_AXIS,
     NOT_FACING;
-
 }

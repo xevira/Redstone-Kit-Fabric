@@ -26,6 +26,9 @@ public class LightDisplayBlock extends FacingBlock implements BlockEntityProvide
 
     public LightDisplayBlock(Settings settings) {
         super(settings);
+        this.setDefaultState(
+                this.stateManager.getDefaultState().with(FACING, Direction.NORTH)
+        );
     }
 
     @Override
