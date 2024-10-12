@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "redstone_kit:block/light_display_side",
+    "east": "redstone_kit:block/light_display_side",
+    "north": "redstone_kit:block/light_display_top",
+    "particle": "redstone_kit:block/light_display_top",
+    "south": "redstone_kit:block/light_display_bottom",
+    "up": "redstone_kit:block/light_display_side",
+    "west": "redstone_kit:block/light_display_side"
+  }
+}

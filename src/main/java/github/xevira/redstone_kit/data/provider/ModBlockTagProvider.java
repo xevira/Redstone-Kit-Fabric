@@ -18,6 +18,8 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(Registration.EQUATOR_BLOCK)
+                .add(Registration.LIGHT_DISPLAY_BLOCK)
+                .add(Registration.LIGHT_DISPLAY_BULB_BLOCK)
                 .add(Registration.PLAYER_DETECTOR_BLOCK)
                 .add(Registration.REDSTONE_AND_BLOCK)
                 .add(Registration.REDSTONE_CROSSOVER_BLOCK)
@@ -32,6 +34,10 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .add(Registration.TELEPORT_INHIBITOR_BLOCK)
                 .add(Registration.TELEPORTER_BLOCK)
                 .add(Registration.WEATHER_DETECTOR_BLOCK);
+
+        getOrCreateTagBuilder(BlockTags.NEEDS_STONE_TOOL)
+                .add(Registration.LIGHT_DISPLAY_BLOCK)
+                .add(Registration.LIGHT_DISPLAY_BULB_BLOCK);
 
         getOrCreateTagBuilder(BlockTags.NEEDS_DIAMOND_TOOL)
                 .add(Registration.TELEPORT_INHIBITOR_BLOCK)

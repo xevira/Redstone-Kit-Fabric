@@ -50,6 +50,8 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
     @Override
     public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
         translationBuilder.add(Registration.EQUATOR_BLOCK, "Equator");
+        translationBuilder.add(Registration.LIGHT_DISPLAY_BLOCK, "Light Display");
+        translationBuilder.add(Registration.LIGHT_DISPLAY_BULB_BLOCK, "Light Display Bulb");
         translationBuilder.add(Registration.PLAYER_DETECTOR_BLOCK, "Player Detector");
         translationBuilder.add(Registration.REDSTONE_AND_BLOCK, "Redstone AND Gate");
         translationBuilder.add(Registration.REDSTONE_CROSSOVER_BLOCK, "Redstone Crossover");

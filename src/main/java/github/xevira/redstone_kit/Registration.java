@@ -9,6 +9,7 @@ import github.xevira.redstone_kit.screenhandler.RedstoneTimerScreenHandler;
 import github.xevira.redstone_kit.screenhandler.TeleportInhibitorScreenHandler;
 import github.xevira.redstone_kit.screenhandler.TeleporterScreenHandler;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityType;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -55,6 +56,25 @@ public class Registration {
 
     // Blocks
     public static final Block EQUATOR_BLOCK = register("equator", new EquatorBlock(DEFAULT_GATE_SETTINGS));
+
+    public static final Block LIGHT_DISPLAY_BLOCK = register("light_display", new LightDisplayBlock(
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.GRAY)
+                    .strength(3.0F, 6.0F)
+                    .sounds(BlockSoundGroup.METAL)
+                    .requiresTool()
+                    .solidBlock(Blocks::never)
+    ));
+
+    public static final Block LIGHT_DISPLAY_BULB_BLOCK = register("light_display_bulb", new LightDisplayBulbBlock(
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.DEEPSLATE_GRAY)
+                    .strength(3.0F, 6.0F)
+                    .sounds(BlockSoundGroup.METAL)
+                    .requiresTool()
+                    .solidBlock(Blocks::never)
+                    .luminance(Blocks.createLightLevelFromLitBlockState(15))
+    ));
 
     public static final Block PLAYER_DETECTOR_BLOCK = register("player_detector", new PlayerDetectorBlock(
             AbstractBlock.Settings.create()
@@ -109,10 +129,15 @@ public class Registration {
                     sounds(BlockSoundGroup.STONE)
     ));
 
-
     // BlockItems
     public static final BlockItem EQUATOR_ITEM = register("equator",
             new BlockItem(EQUATOR_BLOCK, new Item.Settings()));
+
+    public static final BlockItem LIGHT_DISPLAY_ITEM = register("light_display",
+            new BlockItem(LIGHT_DISPLAY_BLOCK, new Item.Settings()));
+
+    public static final BlockItem LIGHT_DISPLAY_BULB_ITEM = register("light_display_bulb",
+            new BlockItem(LIGHT_DISPLAY_BULB_BLOCK, new Item.Settings()));
 
     public static final BlockItem PLAYER_DETECTOR_ITEM = register("player_detector",
             new BlockItem(PLAYER_DETECTOR_BLOCK, new Item.Settings()));
@@ -164,6 +189,10 @@ public class Registration {
     // Block Entities
     public static final BlockEntityType<EquatorBlockEntity> EQUATOR_BLOCK_ENTITY = register("equator",
             BlockEntityType.Builder.create(EquatorBlockEntity::new, Registration.EQUATOR_BLOCK)
+                    .build());
+
+    public static final BlockEntityType<LightDisplayBlockEntity> LIGHT_DISPLAY_BLOCK_ENTITY = register("light_display",
+            BlockEntityType.Builder.create(LightDisplayBlockEntity::new, Registration.LIGHT_DISPLAY_BLOCK)
                     .build());
 
     public static final BlockEntityType<PlayerDetectorBlockEntity> PLAYER_DETECTOR_BLOCK_BLOCK_ENTITY = register("player_detector",

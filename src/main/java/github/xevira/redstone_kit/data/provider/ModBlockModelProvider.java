@@ -11,7 +11,9 @@ import net.minecraft.block.Block;
 import net.minecraft.data.client.*;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Direction;
 
+import static net.minecraft.data.client.BlockStateModelGenerator.createNorthDefaultRotationStates;
 import static net.minecraft.data.client.BlockStateModelGenerator.createSouthDefaultHorizontalRotationStates;
 
 public class ModBlockModelProvider extends FabricModelProvider {
@@ -321,6 +323,42 @@ public class ModBlockModelProvider extends FabricModelProvider {
                         }))
                         .coordinate(createSouthDefaultHorizontalRotationStates())
         );
+
+        blockStateModelGenerator.registerParentedItemModel(Registration.LIGHT_DISPLAY_BULB_ITEM, RedstoneKit.id("block/light_display_bulb"));
+        Identifier idLightDisplayBulb = Models.CUBE_ALL.upload(Registration.LIGHT_DISPLAY_BULB_BLOCK, TextureMap.all(Registration.LIGHT_DISPLAY_BULB_BLOCK), blockStateModelGenerator.modelCollector);
+        Identifier idLightDisplayBulbLit = blockStateModelGenerator.createSubModel(Registration.LIGHT_DISPLAY_BULB_BLOCK, "_lit", Models.CUBE_ALL, TextureMap::all);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.LIGHT_DISPLAY_BULB_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(LightDisplayBulbBlock.LIT).register((lit) -> BlockStateVariant.create().put(VariantSettings.MODEL,
+                                lit ? idLightDisplayBulbLit : idLightDisplayBulb)))
+        );
+
+
+        blockStateModelGenerator.registerParentedItemModel(Registration.LIGHT_DISPLAY_ITEM, RedstoneKit.id("block/light_display"));
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.LIGHT_DISPLAY_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(LightDisplayBlock.FACING).register((facing) -> {
+                            BlockStateVariant variant = BlockStateVariant.create();
+
+                            variant.put(VariantSettings.MODEL, TextureMap.getId(Registration.LIGHT_DISPLAY_BLOCK));
+
+                            switch(facing)
+                            {
+                                case DOWN -> variant.put(VariantSettings.X, VariantSettings.Rotation.R90);
+                                case UP -> variant.put(VariantSettings.X, VariantSettings.Rotation.R270);
+                                case NORTH -> {}
+                                case SOUTH -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R180);
+                                case WEST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R270);
+                                case EAST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R90);
+                            }
+
+                            return variant;
+                        }))
+        );
+
+
+                //.accept(blockStateModelGenerator.createCopperBulbBlockState(copperBulbBlock, identifier, identifier3, identifier2, identifier4));
+
 
         blockStateModelGenerator.registerSimpleState(Registration.TELEPORT_INHIBITOR_BLOCK);
 

@@ -223,6 +223,34 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.LIGHT_DISPLAY_BLOCK)
+                .input('i', Items.IRON_INGOT)
+                .input('q', Items.QUARTZ)
+                .input('r', Items.REDSTONE)
+                .input('O', Items.OBSERVER)
+                .pattern("iOi")
+                .pattern("iqi")
+                .pattern("iri")
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .criterion(hasItem(Items.QUARTZ), conditionsFromItem(Items.QUARTZ))
+                .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
+                .criterion(hasItem(Items.OBSERVER), conditionsFromItem(Items.OBSERVER))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.LIGHT_DISPLAY_BULB_BLOCK)
+                .input('b', Items.BLAZE_ROD)
+                .input('i', Items.IRON_INGOT)
+                .input('g', Items.GLASS)
+                .pattern("igi")
+                .pattern("gbg")
+                .pattern("igi")
+                .criterion(hasItem(Items.BLAZE_ROD), conditionsFromItem(Items.BLAZE_ROD))
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .criterion(hasItem(Items.GLASS), conditionsFromItem(Items.GLASS))
+                .offerTo(exporter);
+
+
+
         RedstoneKit.LOGGER.info("Finished generating recipes.");
     }
 }

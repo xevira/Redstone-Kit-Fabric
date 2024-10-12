@@ -15,6 +15,8 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
     @Override
     public void generate() {
         addDrop(Registration.EQUATOR_BLOCK);
+        addDrop(Registration.LIGHT_DISPLAY_BLOCK);
+        addDrop(Registration.LIGHT_DISPLAY_BULB_BLOCK);
         addDrop(Registration.PLAYER_DETECTOR_BLOCK);
         addDrop(Registration.REDSTONE_AND_BLOCK);
         addDrop(Registration.REDSTONE_CROSSOVER_BLOCK);
