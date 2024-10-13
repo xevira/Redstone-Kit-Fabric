@@ -15,12 +15,19 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.state.StateManager;
+import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.EnumProperty;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -46,9 +53,14 @@ public class TeleporterBlock extends BlockWithEntity implements OwnedBlock {
 
     public static final MapCodec<TeleporterBlock> CODEC = createCodec(TeleporterBlock::new);
 
+    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
 
     public TeleporterBlock(Settings settings) {
         super(settings);
+        this.setDefaultState(
+                this.getStateManager().getDefaultState()
+                        .with(FACING, Direction.NORTH)
+        );
     }
 
     @Override
@@ -69,6 +81,11 @@ public class TeleporterBlock extends BlockWithEntity implements OwnedBlock {
     @Override
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return Registration.TELEPORTER_BLOCK_ENTITY.instantiate(pos, state);
+    }
+
+    @Override
+    public BlockState getPlacementState(ItemPlacementContext ctx) {
+        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
     @Override
@@ -107,6 +124,11 @@ public class TeleporterBlock extends BlockWithEntity implements OwnedBlock {
     }
 
     @Override
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
+
+    @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         if(world.getBlockEntity(pos) instanceof TeleporterBlockEntity teleporter) {
             if (!teleporter.hasCooldown() && teleporter.isLinked()) {
@@ -142,6 +164,12 @@ public class TeleporterBlock extends BlockWithEntity implements OwnedBlock {
 
         private static void tryTelport(PlayerEntity player)
         {
+            Vec3d velocity = player.getVelocity();
+
+            // Must be not be moving laterally
+            if (Math.abs(velocity.x) > 1e-7 || Math.abs(velocity.z) > 1e-7)
+                return;
+
             World world = player.getWorld();
 
             BlockPos fromPos = getTeleporter(player);

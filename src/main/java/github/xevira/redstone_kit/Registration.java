@@ -9,7 +9,6 @@ import github.xevira.redstone_kit.screenhandler.RedstoneTimerScreenHandler;
 import github.xevira.redstone_kit.screenhandler.TeleportInhibitorScreenHandler;
 import github.xevira.redstone_kit.screenhandler.TeleporterScreenHandler;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityType;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -53,6 +52,8 @@ public class Registration {
     public static final ComponentType<Identifier> WORLD_ID =
             registerComponent("world_id", builder -> builder.codec(Identifier.CODEC));
 
+    public static final ComponentType<ResonatorItem.ResonatorTypeEnum> RESONATOR_TYPE =
+            registerComponent("resonator_type", builder -> builder.codec(ResonatorItem.ResonatorTypeEnum.CODEC));
 
     // Blocks
     public static final Block CONVEYOR_BELT_SLOW_BLOCK = register("conveyor_belt_slow", new ConveyorBeltBlock(0.1,

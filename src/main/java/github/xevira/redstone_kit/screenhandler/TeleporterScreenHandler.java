@@ -48,7 +48,7 @@ public class TeleporterScreenHandler extends ScreenHandler {
 
     public TeleporterScreenHandler(int syncId, PlayerInventory playerInventory, TeleporterScreenPayload payload)
     {
-        this(syncId, playerInventory, (TeleporterBlockEntity)playerInventory.player.getWorld().getBlockEntity(payload.pos()), new ArrayPropertyDelegate(2), payload.xp());
+        this(syncId, playerInventory, (TeleporterBlockEntity)playerInventory.player.getWorld().getBlockEntity(payload.pos()), new ArrayPropertyDelegate(4), payload.xp());
     }
 
     public TeleporterScreenHandler(int syncId, PlayerInventory playerInventory, TeleporterBlockEntity teleporterBlockEntity, PropertyDelegate propertyDelegate, boolean xpToLock) {
@@ -158,9 +158,9 @@ public class TeleporterScreenHandler extends ScreenHandler {
         return this.blockEntity.getOwnerName();
     }
 
-    public BlockPos getBlockPos()
+    public @Nullable TeleporterBlockEntity.TeleportLocation getLocation()
     {
-        return this.blockEntity.getPos();
+        return this.blockEntity.getLocation();
     }
 
     public boolean useXPtoLock()
@@ -178,7 +178,7 @@ public class TeleporterScreenHandler extends ScreenHandler {
         return this.blockEntity.isLinked();
     }
 
-    public BlockPos getLink()
+    public @Nullable TeleporterBlockEntity.TeleportLocation getLink()
     {
         return this.blockEntity.getLinkedTeleporter();
     }

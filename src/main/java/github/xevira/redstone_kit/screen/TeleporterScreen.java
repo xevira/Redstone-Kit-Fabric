@@ -2,6 +2,7 @@ package github.xevira.redstone_kit.screen;
 
 import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.block.RedstoneTimerBlock;
+import github.xevira.redstone_kit.block.entity.TeleporterBlockEntity;
 import github.xevira.redstone_kit.network.TeleporterSetCostPayload;
 import github.xevira.redstone_kit.network.TeleporterSetLockPayload;
 import github.xevira.redstone_kit.network.TeleporterSetUseXPPayload;
@@ -45,6 +46,7 @@ public class TeleporterScreen extends HandledScreen<TeleporterScreenHandler> {
     private static final Text TARGET_TEXT = Text.translatable(RedstoneKit.textPath("label", "teleporter.target"));
     private static final Text TARGET_UNLINKED_TEXT = Text.translatable(RedstoneKit.textPath("label", "teleporter.target.unlinked"));
     private static final String TARGET_POSITION_TEXT = RedstoneKit.textPath("label", "teleporter.target.position");
+    private static final String TARGET_DIFFERENT_WORLD_TEXT = RedstoneKit.textPath("label", "teleporter.target.different_world");
 
     private static final Text PEARL_COST_TEXT =  Text.translatable(RedstoneKit.textPath("label", "teleporter.pearl_cost"));
     private static final Text XP_COST_TEXT =  Text.translatable(RedstoneKit.textPath("label", "teleporter.xp_cost"));
@@ -256,14 +258,24 @@ public class TeleporterScreen extends HandledScreen<TeleporterScreenHandler> {
         int w = this.textRenderer.getWidth(TARGET_TEXT.asOrderedText());
         if (this.handler.isLinked())
         {
-            BlockPos sourcePos = this.handler.getBlockPos();
-            BlockPos targetPos = this.handler.getLink();
+            TeleporterBlockEntity.TeleportLocation sourceLoc = this.handler.getLocation();
+            TeleporterBlockEntity.TeleportLocation targetLoc = this.handler.getLink();
 
-            int dist = (int)Math.ceil(Math.sqrt(sourcePos.getSquaredDistance(targetPos)));
+            if (sourceLoc != null && targetLoc != null)
+            {
+                Text label;
+                if (!sourceLoc.isSameWorld(targetLoc))
+                {
+                    label = Text.translatable(TARGET_DIFFERENT_WORLD_TEXT, targetLoc.pos().getX(), targetLoc.pos().getY(), targetLoc.pos().getZ(), targetLoc.worldId().getPath());
+                }
+                else
+                {
+                    int dist = (int)Math.ceil(Math.sqrt(sourceLoc.getSquareDistance(targetLoc)));
+                    label = Text.translatable(TARGET_POSITION_TEXT, targetLoc.pos().getX(), targetLoc.pos().getY(), targetLoc.pos().getZ(), dist);
+                }
 
-            Text label = Text.translatable(TARGET_POSITION_TEXT, targetPos.getX(), targetPos.getY(), targetPos.getZ(), dist);
-
-            context.drawText(this.textRenderer, label, this.x + w + 12, this.y + 21, ScreenColors.DEFAULT, false);
+                context.drawText(this.textRenderer, label, this.x + w + 12, this.y + 21, ScreenColors.DEFAULT, false);
+            }
         }
         else
         {

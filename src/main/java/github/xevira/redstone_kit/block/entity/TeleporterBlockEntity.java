@@ -2,6 +2,7 @@ package github.xevira.redstone_kit.block.entity;
 
 import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
+import github.xevira.redstone_kit.block.TeleporterBlock;
 import github.xevira.redstone_kit.config.ServerConfig;
 import github.xevira.redstone_kit.network.TeleporterScreenPayload;
 import github.xevira.redstone_kit.screenhandler.TeleporterScreenHandler;
@@ -14,6 +15,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
 import net.minecraft.block.InventoryProvider;
 import net.minecraft.block.entity.*;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -26,14 +28,22 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -62,7 +72,7 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
     @Nullable
     private UUID owner;
     private String owner_name;
-    private BlockPos linked_teleporter;
+    private @Nullable TeleportLocation linked_teleporter;
     private int cooldown;
 
     // Configuration options
@@ -80,7 +90,7 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
 
         this.owner = null;
         this.owner_name = "";
-        this.linked_teleporter = this.pos.mutableCopy();
+        this.linked_teleporter = null;
         this.cooldown = 0;
 
         this.useXP = false;
@@ -94,6 +104,8 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
                 return switch(index) {
                     case 0 -> ServerConfig.getConfig().useXPtoLock() ? 255 : 0;
                     case 1 -> ServerConfig.getConfig().xpLockLevels();
+                    case 2 -> ServerConfig.getConfig().getInterdimensionalPearlCost();
+                    case 3 -> ServerConfig.getConfig().getInterdimensionalXPCost();
                     default -> 0;
                 };
             }
@@ -105,31 +117,31 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
 
             @Override
             public int size() {
-                return 2;
+                return 4;
             }
         };
     }
 
     public void clearLinkedTeleporter()
     {
-        this.linked_teleporter = this.pos.mutableCopy();
+        this.linked_teleporter = null;
         markDirty();
     }
 
-    public void setLinkedTeleporter(BlockPos bp)
+    public void setLinkedTeleporter(Identifier worldId, BlockPos bp)
     {
-        this.linked_teleporter = bp.mutableCopy();
+        this.linked_teleporter = new TeleportLocation(worldId, bp);
         markDirty();
     }
 
-    public BlockPos getLinkedTeleporter()
+    public @Nullable TeleportLocation getLinkedTeleporter()
     {
         return this.linked_teleporter;
     }
 
     public boolean isLinked()
     {
-        return !this.linked_teleporter.equals(this.pos);
+        return this.linked_teleporter != null;
     }
 
     public int getCooldown()
@@ -230,18 +242,55 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
         markDirty();
     }
 
+    public @Nullable TeleportLocation getLocation()
+    {
+        if (this.world == null) return null;
+
+        return new TeleportLocation(this.world.getRegistryKey().getValue(), this.pos);
+    }
+
+    private TeleporterBlockEntity getTeleporter(@Nullable TeleportLocation location)
+    {
+        if (location == null) return null;
+
+        if (this.world instanceof ServerWorld serverWorld)
+        {
+            RegistryKey<World> key = RegistryKey.of(RegistryKeys.WORLD, location.worldId);
+
+            World targetWorld = serverWorld.getServer().getWorld(key);
+            if (targetWorld == null) return null;   // World doesn't exist
+
+            if (targetWorld.getBlockEntity(location.pos()) instanceof TeleporterBlockEntity be)
+                return be;
+        }
+
+        return null;
+    }
+
+    public float getFacingYaw()
+    {
+        if (this.world == null) return 0.0f;
+
+        BlockState state = this.world.getBlockState(this.pos);
+
+        Direction facing = state.get(TeleporterBlock.FACING);
+
+        return facing.asRotation();
+    }
+
     public void teleportEntity(LivingEntity entity)
     {
         if (this.world == null) return;
 
         if (hasCooldown()) return;
 
-        if (!isLinked()) return;
+        if (this.linked_teleporter == null) return;
 
         if (entity instanceof PlayerEntity player && (player.isSpectator() || !player.isAlive()))
             return;
 
-        if (this.world.getBlockEntity(this.linked_teleporter) instanceof TeleporterBlockEntity teleporterBlockEntity)
+        TeleporterBlockEntity teleporterBlockEntity = getTeleporter(this.linked_teleporter);
+        if (teleporterBlockEntity != null)
         {
             if (!hasFuel(entity))
             {
@@ -261,16 +310,39 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
                 return;
             }
 
-            // Do the actual teleporting
-            entity.teleport(this.linked_teleporter.getX() + 0.5, this.linked_teleporter.getY() + 0.1875 /* 3 / 16 */, this.linked_teleporter.getZ() + 0.5, true);
+            TeleportTarget destination = getTeleportTarget(entity, teleporterBlockEntity);
+            if (destination != null) {
+                entity.teleportTo(destination);
 
-            useFuel(entity);
+                useFuel(entity);
 
-            // Both get cooldown
-            teleporterBlockEntity.cooldown = COOLDOWN_TICKS;
-            this.cooldown = COOLDOWN_TICKS;
+                // Both get cooldown
+                teleporterBlockEntity.cooldown = COOLDOWN_TICKS;
+                this.cooldown = COOLDOWN_TICKS;
+            }
         }
 
+    }
+
+    private TeleportTarget getTeleportTarget(LivingEntity entity, TeleporterBlockEntity teleporterBlockEntity) {
+        if (this.linked_teleporter == null) return null;
+
+        float sourceYaw = this.getFacingYaw();
+        float targetYaw = teleporterBlockEntity.getFacingYaw();
+
+
+        // Do the actual teleporting
+        return new TeleportTarget(
+                (ServerWorld) teleporterBlockEntity.getWorld(),
+                this.linked_teleporter.getCenterPos(),
+                new Vec3d(0, 0, 0),
+                entity.getYaw() + targetYaw - sourceYaw,    // Relative yaw
+                entity.getPitch(),
+                false,
+                entity1 -> {
+                    // Do nothing
+                }
+        );
     }
 
 
@@ -279,6 +351,22 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
         super.markDirty();
         if (this.world != null)
             world.updateListeners(this.pos, getCachedState(), getCachedState(), 3);
+    }
+
+    public boolean isTargetMate(TeleporterBlockEntity target)
+    {
+        if (this.world == null) return false;
+
+        TeleportLocation targetMate = target.getLinkedTeleporter();
+
+        if (targetMate == null)
+            return false;
+        else if (!this.pos.equals(targetMate.pos))
+            return false;
+        else if (!this.world.getRegistryKey().getValue().equals(targetMate.worldId))
+            return false;
+
+        return true;
     }
 
     public void serverTick()
@@ -291,9 +379,10 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
         if (isLinked())
         {
             boolean unlink = false;
-            if (world.getBlockEntity(this.linked_teleporter) instanceof TeleporterBlockEntity target)
+            TeleporterBlockEntity target = getTeleporter(this.linked_teleporter);
+            if (target != null)
             {
-                if (!this.pos.equals(target.getLinkedTeleporter()))
+                if (!isTargetMate(target))
                     unlink = true;
             }
             else
@@ -301,7 +390,7 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
 
             if (unlink)
             {
-                this.linked_teleporter = this.pos.mutableCopy();
+                this.linked_teleporter = null;
                 dirty = true;
             }
         }
@@ -344,10 +433,7 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
         else
             this.owner_name = "";
 
-        if (nbt.contains(LINKED_NBT, NbtElement.LONG_TYPE))
-            this.linked_teleporter = BlockPos.fromLong(nbt.getLong(LINKED_NBT));
-        else
-            this.linked_teleporter = this.pos.mutableCopy();
+        this.linked_teleporter = TeleportLocation.readNbt(LINKED_NBT, nbt);
 
         if (nbt.contains(COOLDOWN_NBT, NbtElement.INT_TYPE))
             this.cooldown = nbt.getInt(COOLDOWN_NBT);
@@ -374,7 +460,8 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
             nbt.putString(OWNER_NAME_NBT, this.owner_name);
         }
 
-        nbt.putLong(LINKED_NBT, this.linked_teleporter.asLong());
+        if (this.linked_teleporter != null)
+            this.linked_teleporter.writeNbt(LINKED_NBT, nbt);
         nbt.putInt(COOLDOWN_NBT, this.cooldown);
 
         NbtCompound options = new NbtCompound();
@@ -394,29 +481,43 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
         return BlockEntityUpdateS2CPacket.create(this);
     }
 
-    public double getSquareDistance()
+    public boolean isDestinationSameWorld()
     {
-        if (this.world == null || !isLinked()) return -1.0;
+        if (this.world == null || this.linked_teleporter == null) return false;
 
-        return this.pos.getSquaredDistance(this.linked_teleporter);
+        return this.world.getRegistryKey().getValue().equals(this.linked_teleporter.worldId);
     }
 
     public int getTeleportPearlCost()
     {
-        double dist = getSquareDistance();
+        if (this.linked_teleporter == null) return -1;
 
-        if (dist <= 0.0) return -1;
+        if (this.linked_teleporter.isSameWorld(this.world)) {
 
-        return (int) Math.ceil(this.pearlPerBlock * Math.sqrt(dist));
+            double dist = this.linked_teleporter.getSquareDistance(this.pos);
+
+            if (dist <= 0.0) return -1;
+
+            return (int) Math.ceil(this.pearlPerBlock * Math.sqrt(dist));
+        }
+
+        return (int) Math.ceil(this.pearlPerBlock * ServerConfig.getConfig().getInterdimensionalPearlCost());
     }
 
     public int getTeleportXPCost()
     {
-        double dist = getSquareDistance();
+        if (this.linked_teleporter == null) return -1;
 
-        if (dist <= 0.0) return -1;
+        if (this.linked_teleporter.isSameWorld(this.world)) {
 
-        return (int) Math.ceil(this.xpPerBlock * Math.sqrt(dist));
+            double dist = this.linked_teleporter.getSquareDistance(this.pos);
+
+            if (dist <= 0.0) return -1;
+
+            return (int) Math.ceil(this.xpPerBlock * Math.sqrt(dist));
+        }
+
+        return (int) Math.ceil(this.xpPerBlock * ServerConfig.getConfig().getInterdimensionalXPCost());
     }
 
     private boolean hasFuel(LivingEntity entity)
@@ -428,6 +529,8 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
         if (!(entity instanceof PlayerEntity player))
             return false;
 
+        if (player.isCreative()) return true;
+
         if (isOwner(player) && isLocked()) return true;
 
         if (this.useXP) {
@@ -438,15 +541,16 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
         } else {
             BlockPos invPos = this.pos.down();
 
-            Inventory inventory = getBlockInventoryAt(this.world, invPos, world.getBlockState(invPos));
-            if (inventory == null) return false;
-
             int cost = getTeleportPearlCost();
             if (cost < 0) return false;
 
-            int pearls = 0;
 
             if (cost > 0) {
+                int pearls = 0;
+
+                Inventory inventory = getBlockInventoryAt(this.world, invPos, world.getBlockState(invPos));
+                if (inventory == null) return false;
+
                 for (int i = 0; i < inventory.size(); i++) {
                     ItemStack stack = inventory.getStack(i);
                     if (stack.isOf(Items.ENDER_PEARL)) {
@@ -470,14 +574,14 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
         if (!(entity instanceof PlayerEntity player))
             return;
 
+        if (player.isCreative()) return;
+
         if (isOwner(player) && isLocked()) return;
 
         if (this.useXP) {
             int xp = getTeleportXPCost();
 
             if (xp > 0) {
-                if (player.isCreative()) return;
-
                 int cost = getTeleportXPCost();
                 if (cost < 0) return;
 
@@ -487,11 +591,11 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
         } else {
             BlockPos invPos = this.pos.down();
 
-            Inventory inventory = getBlockInventoryAt(this.world, invPos, world.getBlockState(invPos));
-            if (inventory == null) return;
-
             int pearls = getTeleportPearlCost();
             if (pearls > 0) {
+                Inventory inventory = getBlockInventoryAt(this.world, invPos, world.getBlockState(invPos));
+                if (inventory == null) return;
+
                 for (int i : getAvailableSlots(inventory)) {
                     ItemStack stack = inventory.getStack(i);
                     if (stack.isOf(Items.ENDER_PEARL)) {
@@ -569,5 +673,64 @@ public class TeleporterBlockEntity extends BlockEntity implements OwnedBlockEnti
     @Override
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
         return new TeleporterScreenHandler(syncId, playerInventory, this, this.propertyDelegate, ServerConfig.getConfig().useXPtoLock());
+    }
+
+    public record TeleportLocation(Identifier worldId, BlockPos pos)
+    {
+        public void writeNbt(String key, NbtCompound nbt)
+        {
+            NbtCompound location = new NbtCompound();
+
+            location.putString("world", worldId.toString());
+            location.putInt("x", pos.getX());
+            location.putInt("y", pos.getY());
+            location.putInt("z", pos.getZ());
+
+            nbt.put(key, location);
+        }
+
+        public static @Nullable TeleportLocation readNbt(String key, NbtCompound nbt)
+        {
+            if(nbt.contains(key, NbtElement.COMPOUND_TYPE)) {
+                NbtCompound location = nbt.getCompound(key);
+
+                String id = location.getString("world");
+                int x = location.getInt("x");
+                int y = location.getInt("y");
+                int z = location.getInt("z");
+
+                return new TeleportLocation(Identifier.of(id), new BlockPos(x, y, z));
+            }
+
+            return null;
+        }
+
+        public Vec3d getCenterPos()
+        {
+            return new Vec3d(pos.getX() + 0.5, pos.getY() + 0.1875 /* 3 / 16 */, pos.getZ() + 0.5);
+        }
+
+        public boolean isSameWorld(TeleportLocation other)
+        {
+            return worldId.equals(other.worldId);
+        }
+
+        public boolean isSameWorld(World other)
+        {
+            if (other == null) return false;
+
+            return worldId.equals(other.getRegistryKey().getValue());
+        }
+
+        public double getSquareDistance(TeleportLocation other)
+        {
+            return pos.getSquaredDistance(other.pos);
+        }
+
+        public double getSquareDistance(BlockPos other)
+        {
+            return pos.getSquaredDistance(other);
+        }
+
     }
 }

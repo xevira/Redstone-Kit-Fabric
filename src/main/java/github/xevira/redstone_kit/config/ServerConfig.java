@@ -1,16 +1,15 @@
 package github.xevira.redstone_kit.config;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import github.xevira.redstone_kit.RedstoneKit;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.WorldSavePath;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class ServerConfig {
@@ -19,6 +18,8 @@ public class ServerConfig {
 
     private static final String USE_XP_TO_LOCK_FIELD = "useXPtoLock";
     private static final String XP_LOCK_LEVELS_FIELD = "xpLockLevels";
+    private static final String INTERDIMENSIONAL_PEARL_COST_FIELD = "interdimensionalPearlCost";
+    private static final String INTERDIMENSIONAL_XP_COST_FIELD = "interdimensionalXPCost";
     private static final String INHIBITOR_COST_FIELD = "inhibitorCost";
 
     private static ServerConfig currentConfig;
@@ -26,11 +27,15 @@ public class ServerConfig {
     private boolean useXPtoLock;
     private int xpLockLevels;
     private long inhibitorCost;
+    private int interdimensionalPearlCost;
+    private int interdimensionalXPCost;
 
     public ServerConfig()
     {
         this.useXPtoLock = false;
         this.xpLockLevels = 1;
+        this.interdimensionalPearlCost = 250;
+        this.interdimensionalXPCost = 250;
         this.inhibitorCost = FluidConstants.NUGGET;
     }
 
@@ -108,21 +113,45 @@ public class ServerConfig {
 
         json.add(USE_XP_TO_LOCK_FIELD, new JsonPrimitive(this.useXPtoLock));
         json.add(XP_LOCK_LEVELS_FIELD, new JsonPrimitive(this.xpLockLevels));
+        json.add(INTERDIMENSIONAL_PEARL_COST_FIELD, new JsonPrimitive(this.interdimensionalPearlCost));
+        json.add(INTERDIMENSIONAL_XP_COST_FIELD, new JsonPrimitive(this.interdimensionalXPCost));
         json.add(INHIBITOR_COST_FIELD, new JsonPrimitive(this.inhibitorCost));
 
         return json;
     }
 
+    private boolean isJsonPrimitive(JsonObject json, String key)
+    {
+        if (!json.has(key)) return false;
+
+        JsonElement element = json.get(key);
+        return element.isJsonPrimitive();
+    }
+
     private void deserialize(JsonObject json) {
-        this.useXPtoLock = json.getAsJsonPrimitive(USE_XP_TO_LOCK_FIELD).getAsBoolean();
-        this.xpLockLevels = json.getAsJsonPrimitive(XP_LOCK_LEVELS_FIELD).getAsInt();
-        this.inhibitorCost = json.getAsJsonPrimitive(INHIBITOR_COST_FIELD).getAsLong();
+        if (isJsonPrimitive(json, USE_XP_TO_LOCK_FIELD))
+            this.useXPtoLock = json.getAsJsonPrimitive(USE_XP_TO_LOCK_FIELD).getAsBoolean();
+
+        if (isJsonPrimitive(json, XP_LOCK_LEVELS_FIELD))
+            this.xpLockLevels = json.getAsJsonPrimitive(XP_LOCK_LEVELS_FIELD).getAsInt();
+
+        if (isJsonPrimitive(json, INTERDIMENSIONAL_PEARL_COST_FIELD))
+            this.interdimensionalPearlCost = json.getAsJsonPrimitive(INTERDIMENSIONAL_PEARL_COST_FIELD).getAsInt();
+
+        if (isJsonPrimitive(json, INTERDIMENSIONAL_XP_COST_FIELD))
+            this.interdimensionalXPCost = json.getAsJsonPrimitive(INTERDIMENSIONAL_XP_COST_FIELD).getAsInt();
+
+
+        if (isJsonPrimitive(json, INHIBITOR_COST_FIELD))
+            this.inhibitorCost = json.getAsJsonPrimitive(INHIBITOR_COST_FIELD).getAsLong();
     }
 
 
     // Getters
     public boolean useXPtoLock() { return this.useXPtoLock; }
     public int xpLockLevels() { return this.xpLockLevels; }
+    public int getInterdimensionalPearlCost() { return this.interdimensionalPearlCost; }
+    public int getInterdimensionalXPCost() { return this.interdimensionalXPCost; }
     public long inhibitorCost() { return this.inhibitorCost; }
 
 }
