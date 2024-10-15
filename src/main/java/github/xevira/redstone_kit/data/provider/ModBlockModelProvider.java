@@ -480,12 +480,40 @@ public class ModBlockModelProvider extends FabricModelProvider {
                         }))
         );
 
+        blockStateModelGenerator.registerTorch(Registration.ENDER_TORCH_BLOCK, Registration.ENDER_WALL_TORCH_BLOCK);
+        blockStateModelGenerator.registerLantern(Registration.ENDER_LANTERN_BLOCK);
+
+        //blockStateModelGenerator.registerParentedItemModel(Registration.REDSTONE_TRANSMITTER_ITEM, RedstoneKit.id("block/redstone_transmitter_off_off"));
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.REDSTONE_TRANSMITTER_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(RedstoneTransmitterBlock.FACING, RedstoneTransmitterBlock.POWERED, RedstoneTransmitterBlock.SENDING).register((facing, powered, enabled) -> {
+                            BlockStateVariant variant = BlockStateVariant.create();
+
+                            StringBuilder builder = new StringBuilder();
+
+                            builder.append(powered ? "_on" : "_off");
+                            builder.append(enabled ? "_on" : "_off");
+
+                            variant.put(VariantSettings.MODEL, TextureMap.getSubId(Registration.REDSTONE_TRANSMITTER_BLOCK, builder.toString()));
+
+                            switch(facing)
+                            {
+                                case NORTH -> {}
+                                case SOUTH -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R180);
+                                case WEST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R270);
+                                case EAST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R90);
+                            }
+
+                            return variant;
+                        }))
+        );
     }
 
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         itemModelGenerator.register(Registration.BELT_ITEM, Models.GENERATED);
+        itemModelGenerator.register(Registration.ENDER_DISH_ITEM, Models.GENERATED);
         itemModelGenerator.register(Registration.RESONATOR_ITEM, Models.HANDHELD);
     }
 

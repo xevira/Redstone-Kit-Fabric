@@ -141,10 +141,13 @@ public class TeleportInhibitors {
         return !p.isNumber();
     }
 
+    public static void init()
+    {
+        POI.clear();
+    }
+
     public static boolean readJSON(JsonObject json, MinecraftServer server, ServerWorld world)
     {
-        // Remove the existing list for this world
-        POI.remove(world);
 
         if (json.has(JSON_TAG)) {
             JsonElement element = json.get(JSON_TAG);

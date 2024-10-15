@@ -259,7 +259,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Items.STRING), conditionsFromItem(Items.STRING))
                 .offerTo(exporter);
 
-        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.CONVEYOR_BELT_SLOW_BLOCK)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.CONVEYOR_BELT_SLOW_BLOCK, 4)
                 .input('b', Registration.BELT_ITEM)
                 .input('i', Items.IRON_INGOT)
                 .input('n', Items.IRON_NUGGET)
@@ -270,7 +270,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Items.IRON_NUGGET), conditionsFromItem(Items.IRON_NUGGET))
                 .offerTo(exporter);
 
-        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.CONVEYOR_BELT_MEDIUM_BLOCK)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.CONVEYOR_BELT_MEDIUM_BLOCK, 4)
                 .input('b', Registration.BELT_ITEM)
                 .input('i', Items.GOLD_INGOT)
                 .input('n', Items.GOLD_NUGGET)
@@ -281,7 +281,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Items.GOLD_NUGGET), conditionsFromItem(Items.GOLD_NUGGET))
                 .offerTo(exporter);
 
-        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.CONVEYOR_BELT_FAST_BLOCK)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.CONVEYOR_BELT_FAST_BLOCK, 4)
                 .input('b', Registration.BELT_ITEM)
                 .input('i', Items.DIAMOND)
                 .pattern("ibi")
@@ -290,7 +290,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Items.DIAMOND), conditionsFromItem(Items.DIAMOND))
                 .offerTo(exporter);
 
-        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.CONVEYOR_BELT_EXTREME_BLOCK)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.CONVEYOR_BELT_EXTREME_BLOCK, 4)
                 .input('b', Registration.BELT_ITEM)
                 .input('i', Items.NETHERITE_INGOT)
                 .input('s', Items.NETHERITE_SCRAP)
@@ -299,6 +299,48 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Registration.BELT_ITEM), conditionsFromItem(Registration.BELT_ITEM))
                 .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
                 .criterion(hasItem(Items.NETHERITE_SCRAP), conditionsFromItem(Items.NETHERITE_SCRAP))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, Registration.ENDER_TORCH_ITEM)
+                .input('T', Items.TORCH)
+                .input('E', Items.ENDER_PEARL)
+                .pattern("E")
+                .pattern("T")
+                .criterion(hasItem(Items.TORCH), conditionsFromItem(Items.TORCH))
+                .criterion(hasItem(Items.ENDER_PEARL), conditionsFromItem(Items.ENDER_PEARL))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, Registration.ENDER_LANTERN_BLOCK)
+                .input('i', Items.IRON_NUGGET)
+                .input('t', Registration.ENDER_TORCH_ITEM)
+                .pattern("iii")
+                .pattern("iti")
+                .pattern("iii")
+                .criterion(hasItem(Items.IRON_NUGGET), conditionsFromItem(Items.IRON_NUGGET))
+                .criterion(hasItem(Registration.ENDER_TORCH_ITEM), conditionsFromItem(Registration.ENDER_TORCH_ITEM))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.ENDER_DISH_ITEM)
+                .input('E', Registration.ENDER_TORCH_ITEM)
+                .input('i', Items.IRON_INGOT)
+                .pattern("iEi")
+                .pattern(" i ")
+                .criterion(hasItem(Registration.ENDER_TORCH_ITEM), conditionsFromItem(Registration.ENDER_TORCH_ITEM))
+                .criterion(hasItem(Items.IRON_INGOT), conditionsFromItem(Items.IRON_INGOT))
+                .offerTo(exporter);
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_TRANSMITTER_BLOCK)
+                .input('E', Registration.ENDER_DISH_ITEM)
+                .input('r', Items.REDSTONE)
+                .input('R', Items.REDSTONE_TORCH)
+                .input('S', Blocks.STONE)
+                .pattern(" E ")
+                .pattern("RrR")
+                .pattern("SSS")
+                .criterion(hasItem(Registration.ENDER_DISH_ITEM), conditionsFromItem(Registration.ENDER_DISH_ITEM))
+                .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
+                .criterion(hasItem(Items.REDSTONE_TORCH), conditionsFromItem(Items.REDSTONE_TORCH))
+                .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
                 .offerTo(exporter);
 
         RedstoneKit.LOGGER.info("Finished generating recipes.");

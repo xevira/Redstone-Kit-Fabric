@@ -4,8 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import github.xevira.redstone_kit.config.ServerConfig;
 import github.xevira.redstone_kit.poi.POILoader;
+import github.xevira.redstone_kit.poi.WirelessNetwork;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -20,10 +22,15 @@ public class RedstoneKit implements ModInitializer {
 	public void onInitialize() {
 		Registration.load();
 
-		ServerWorldEvents.LOAD.register((server, world) -> ServerConfig.onServerLoad(server));
-		ServerWorldEvents.LOAD.register((server, world) -> POILoader.onServerWorldLoad(server, world));
-		ServerWorldEvents.UNLOAD.register((server, world) -> ServerConfig.onServerSave(server));
-		ServerWorldEvents.UNLOAD.register((server, world) -> POILoader.onServerWorldSave(server, world));
+
+		ServerLifecycleEvents.SERVER_STARTED.register(ServerConfig::onServerLoad);
+		ServerLifecycleEvents.SERVER_STARTED.register(WirelessNetwork::onServerStarted);
+		ServerLifecycleEvents.SERVER_STOPPED.register(ServerConfig::onServerSave);
+		ServerLifecycleEvents.SERVER_STOPPED.register(WirelessNetwork::onServerStopped);
+		ServerLifecycleEvents.AFTER_SAVE.register(WirelessNetwork::onAfterSave);
+
+		ServerWorldEvents.LOAD.register(POILoader::onServerWorldLoad);
+		ServerWorldEvents.UNLOAD.register(POILoader::onServerWorldSave);
 
 		//PlayerBlockBreakEvents.BEFORE.register(OwnerBlockBreaker.INSTANCE);
 		//PlayerBlockBreakEvents.CANCELED.register(OwnerBlockBreaker.INSTANCE);

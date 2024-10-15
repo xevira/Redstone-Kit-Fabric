@@ -18,6 +18,8 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(Registration.CONVEYOR_BELT_MEDIUM_BLOCK);
         addDrop(Registration.CONVEYOR_BELT_FAST_BLOCK);
         addDrop(Registration.CONVEYOR_BELT_EXTREME_BLOCK);
+        addDrop(Registration.ENDER_TORCH_BLOCK);
+        addDrop(Registration.ENDER_LANTERN_BLOCK);
         addDrop(Registration.EQUATOR_BLOCK);
         addDrop(Registration.LIGHT_DISPLAY_BLOCK);
         addDrop(Registration.LIGHT_DISPLAY_BULB_BLOCK);
@@ -31,6 +33,7 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(Registration.REDSTONE_RSNORLATCH_BLOCK);
         addDrop(Registration.REDSTONE_TICKER_BLOCK);
         addDrop(Registration.REDSTONE_TIMER_BLOCK);
+        addDrop(Registration.REDSTONE_TRANSMITTER_BLOCK);
         addDrop(Registration.REDSTONE_XOR_BLOCK);
         addDrop(Registration.TELEPORT_INHIBITOR_BLOCK);
         addDrop(Registration.TELEPORTER_BLOCK);

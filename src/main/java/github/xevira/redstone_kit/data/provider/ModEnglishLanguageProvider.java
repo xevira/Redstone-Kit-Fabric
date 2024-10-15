@@ -49,11 +49,13 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
 
     @Override
     public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
-        translationBuilder.add(Registration.EQUATOR_BLOCK, "Equator");
         translationBuilder.add(Registration.CONVEYOR_BELT_SLOW_BLOCK, "Conveyor Belt (Slow)");
         translationBuilder.add(Registration.CONVEYOR_BELT_MEDIUM_BLOCK, "Conveyor Belt (Medium)");
         translationBuilder.add(Registration.CONVEYOR_BELT_FAST_BLOCK, "Conveyor Belt (Fast)");
         translationBuilder.add(Registration.CONVEYOR_BELT_EXTREME_BLOCK, "Conveyor Belt (Extreme)");
+        translationBuilder.add(Registration.ENDER_LANTERN_BLOCK, "Ender Lantern");
+        translationBuilder.add(Registration.ENDER_TORCH_BLOCK, "Ender Torch");
+        translationBuilder.add(Registration.EQUATOR_BLOCK, "Equator");
         translationBuilder.add(Registration.LIGHT_DISPLAY_BLOCK, "Light Display");
         translationBuilder.add(Registration.LIGHT_DISPLAY_BULB_BLOCK, "Light Display Bulb");
         translationBuilder.add(Registration.PLAYER_DETECTOR_BLOCK, "Player Detector");
@@ -66,6 +68,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(Registration.REDSTONE_RSNORLATCH_BLOCK, "Redstone RS-NOR Latch");
         translationBuilder.add(Registration.REDSTONE_TICKER_BLOCK, "Redstone Ticker");
         translationBuilder.add(Registration.REDSTONE_TIMER_BLOCK, "Redstone Timer");
+        translationBuilder.add(Registration.REDSTONE_TRANSMITTER_BLOCK, "Redstone Transmitter");
         translationBuilder.add(Registration.REDSTONE_XOR_BLOCK, "Redstone XOR Gate");
         translationBuilder.add(Registration.TELEPORT_INHIBITOR_BLOCK, "Teleport Inhibitor");
         translationBuilder.add(Registration.TELEPORTER_BLOCK, "Teleporter");
@@ -120,6 +123,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         addText(translationBuilder, "tooltip", "toggle_down_off", "Click to turn DOWN vision ON.");
 
         translationBuilder.add(Registration.BELT_ITEM, "Belt of Kelp");
+        translationBuilder.add(Registration.ENDER_DISH_ITEM, "Ender Antenna Dish");
         translationBuilder.add(Registration.RESONATOR_ITEM, "Resonator");
         addText(translationBuilder, "tooltip", "resonator", "Press §eShift§r for more Information!");
         addText(translationBuilder, "tooltip", "resonator.shift_down", "Links teleporters and wireless redstone.");
@@ -163,5 +167,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         addText(translationBuilder, "tooltip", "teleporter.xp_cost", "Number of Experience points used per block traveled.");
         addText(translationBuilder, "tooltip", "teleporter.pearl_cost.set", "Click to set the Ender Pearl cost per block.");
         addText(translationBuilder, "tooltip", "teleporter.xp_cost.set", "Click to set the Experience cost per block.");
+
+        addText(translationBuilder, "text", "channel_in_use", "Channel (%s, %s, %s, %s) is already in use.");
     }
 }

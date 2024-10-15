@@ -9,23 +9,20 @@ import github.xevira.redstone_kit.screenhandler.RedstoneTimerScreenHandler;
 import github.xevira.redstone_kit.screenhandler.TeleportInhibitorScreenHandler;
 import github.xevira.redstone_kit.screenhandler.TeleporterScreenHandler;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.MapColor;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.component.ComponentType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKeys;
@@ -37,6 +34,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 import java.util.function.UnaryOperator;
 
@@ -54,6 +52,10 @@ public class Registration {
 
     public static final ComponentType<ResonatorItem.ResonatorTypeEnum> RESONATOR_TYPE =
             registerComponent("resonator_type", builder -> builder.codec(ResonatorItem.ResonatorTypeEnum.CODEC));
+
+
+    // Particles
+    public static final SimpleParticleType ENDER_FLAME_PARTICLE = registerParticle("ender_flame", false);
 
     // Blocks
     public static final Block CONVEYOR_BELT_SLOW_BLOCK = register("conveyor_belt_slow", new ConveyorBeltBlock(0.1,
@@ -90,6 +92,18 @@ public class Registration {
                     .sounds(BlockSoundGroup.METAL)
                     .requiresTool()
                     .solidBlock(Blocks::never)
+    ));
+
+    public static final Block ENDER_LANTERN_BLOCK = register("ender_lantern", new LanternBlock(
+            AbstractBlock.Settings.create().mapColor(MapColor.IRON_GRAY).solid().requiresTool().strength(3.5F).sounds(BlockSoundGroup.LANTERN).luminance(state -> 8).nonOpaque().pistonBehavior(PistonBehavior.DESTROY)
+    ));
+
+    public static final Block ENDER_TORCH_BLOCK = register("ender_torch", new TorchBlock(ENDER_FLAME_PARTICLE,
+            AbstractBlock.Settings.create().noCollision().breakInstantly().luminance(state -> 8).sounds(BlockSoundGroup.WOOD).pistonBehavior(PistonBehavior.DESTROY)
+    ));
+
+    public static final Block ENDER_WALL_TORCH_BLOCK = register("ender_wall_torch", new WallTorchBlock(ENDER_FLAME_PARTICLE,
+            AbstractBlock.Settings.create().noCollision().breakInstantly().luminance(state -> 8).sounds(BlockSoundGroup.WOOD).dropsLike(ENDER_TORCH_BLOCK).pistonBehavior(PistonBehavior.DESTROY)
     ));
 
     public static final Block EQUATOR_BLOCK = register("equator", new EquatorBlock(DEFAULT_GATE_SETTINGS));
@@ -140,6 +154,8 @@ public class Registration {
 
     public static final Block REDSTONE_TIMER_BLOCK = register("redstone_timer", new RedstoneTimerBlock(DEFAULT_GATE_SETTINGS));
 
+    public static final Block REDSTONE_TRANSMITTER_BLOCK = register("redstone_transmitter", new RedstoneTransmitterBlock(DEFAULT_GATE_SETTINGS));
+
     public static final Block REDSTONE_XOR_BLOCK = register("redstone_xor", new RedstoneXorGateBlock(DEFAULT_GATE_SETTINGS));
 
     public static final Block TELEPORT_INHIBITOR_BLOCK = register( "teleport_inhibitor", new TeleportInhibitorBlock(
@@ -178,6 +194,12 @@ public class Registration {
 
     public static final BlockItem CONVEYOR_BELT_EXTREME_ITEM = register("conveyor_belt_extreme",
             new BlockItem(CONVEYOR_BELT_EXTREME_BLOCK, new Item.Settings()));
+
+    public static final BlockItem ENDER_LANTERN_ITEM = register("ender_lantern",
+            new BlockItem(ENDER_LANTERN_BLOCK, new Item.Settings()));
+
+    public static final BlockItem ENDER_TORCH_ITEM = register("ender_torch",
+            new VerticallyAttachableBlockItem(ENDER_TORCH_BLOCK, ENDER_WALL_TORCH_BLOCK, new Item.Settings(), Direction.DOWN));
 
     public static final BlockItem EQUATOR_ITEM = register("equator",
             new BlockItem(EQUATOR_BLOCK, new Item.Settings()));
@@ -218,6 +240,9 @@ public class Registration {
     public static final BlockItem REDSTONE_TIMER_ITEM = register("redstone_timer",
             new BlockItem(REDSTONE_TIMER_BLOCK, new Item.Settings()));
 
+    public static final BlockItem REDSTONE_TRANSMITTER_ITEM = register("redstone_transmitter",
+            new BlockItem(REDSTONE_TRANSMITTER_BLOCK, new Item.Settings()));
+
     public static final BlockItem REDSTONE_XOR_ITEM = register("redstone_xor",
             new BlockItem(REDSTONE_XOR_BLOCK, new Item.Settings()));
 
@@ -233,6 +258,8 @@ public class Registration {
 
     // Items
     public static final Item BELT_ITEM = register("belt", new Item(new Item.Settings()));
+
+    public static final Item ENDER_DISH_ITEM = register("ender_dish", new Item(new Item.Settings()));
 
     public static final Item RESONATOR_ITEM = register("resonator", new ResonatorItem(new Item.Settings().maxCount(1).rarity(Rarity.COMMON)));
 
@@ -260,6 +287,10 @@ public class Registration {
 
     public static final BlockEntityType<RedstoneTimerBlockEntity> REDSTONE_TIMER_BLOCK_ENTITY = register("redstone_timer",
             BlockEntityType.Builder.create(RedstoneTimerBlockEntity::new, Registration.REDSTONE_TIMER_BLOCK)
+                    .build());
+
+    public static final BlockEntityType<RedstoneTransmitterBlockEntity> REDSTONE_TRANSMITTER_BLOCK_ENTITY = register("redstone_transmitter",
+            BlockEntityType.Builder.create(RedstoneTransmitterBlockEntity::new, Registration.REDSTONE_TRANSMITTER_BLOCK)
                     .build());
 
     public static final BlockEntityType<TeleportInhibitorBlockEntity> TELEPORT_INHIBITOR_BLOCK_ENTITY = register("teleporter_inhibitor",
@@ -290,7 +321,6 @@ public class Registration {
     public static final TagKey<Item> PURPUR_BLOCKS_TAG = registerItemTag("purpur_blocks");
     public static final TagKey<Item> PLAYER_DETECTOR_OFFERINGS_TAG = registerItemTag("player_detector_offering");
     public static final TagKey<Item> TELEPORTER_OFFERINGS_TAG = registerItemTag("teleporter_offering");
-
 
     // Registration Functions
     public static <T extends Block> T register(String name, T block) {
@@ -339,6 +369,11 @@ public class Registration {
                 builderOperator.apply(ComponentType.builder()).build());
     }
 
+    public static SimpleParticleType registerParticle(String name, boolean alwaysShow)
+    {
+        return Registry.register(Registries.PARTICLE_TYPE, RedstoneKit.id(name), FabricParticleTypes.simple(alwaysShow));
+    }
+
 
     public static void load() {
         // Creative Tab items
@@ -368,6 +403,15 @@ public class Registration {
                     Registration.CONVEYOR_BELT_EXTREME_ITEM);
 
             entries.add(Registration.RESONATOR_ITEM);
+            entries.add(Registration.ENDER_DISH_ITEM);
+        });
+
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(entries -> {
+           entries.addAfter(Items.SOUL_TORCH,
+                   Registration.ENDER_TORCH_ITEM);
+
+           entries.addAfter(Items.SOUL_LANTERN,
+                   Registration.ENDER_LANTERN_ITEM);
         });
 
         // All packet and handler registration

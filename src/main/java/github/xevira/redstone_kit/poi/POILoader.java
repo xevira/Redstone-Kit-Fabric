@@ -2,7 +2,6 @@ package github.xevira.redstone_kit.poi;
 
 import com.google.gson.JsonObject;
 import github.xevira.redstone_kit.RedstoneKit;
-import github.xevira.redstone_kit.config.ServerConfig;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.WorldSavePath;
@@ -13,6 +12,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class POILoader {
+
+    public static void init()
+    {
+
+    }
 
     public static void onServerWorldLoad(MinecraftServer server, ServerWorld world)
     {
