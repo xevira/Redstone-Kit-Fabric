@@ -13,6 +13,7 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.WorldSavePath;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import org.apache.http.impl.conn.Wire;
@@ -29,7 +30,7 @@ public class WirelessNetwork {
 
     private static final Map<Integer, WirelessChannelData> CHANNELS = new HashMap<>();
 
-    private static String decodeChannel(int channel)
+    public static String decodeChannel(int channel)
     {
         DyeColor a = DyeColor.byId((channel >> 12) & 15);
         DyeColor b = DyeColor.byId((channel >> 8) & 15);
@@ -78,7 +79,7 @@ public class WirelessNetwork {
     {
         WirelessChannelData data = getChannel(channel);
 
-        return (data != null) ? data.getSignal() : -1;
+        return (data != null) ? MathHelper.clamp(data.getSignal(), 0, 15) : 0;
     }
 
     /**

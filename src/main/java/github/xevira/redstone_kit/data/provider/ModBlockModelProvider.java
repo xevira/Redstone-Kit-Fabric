@@ -507,6 +507,30 @@ public class ModBlockModelProvider extends FabricModelProvider {
                             return variant;
                         }))
         );
+
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.REDSTONE_RECEIVER_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(RedstoneReceiverBlock.FACING, RedstoneReceiverBlock.POWERED, RedstoneReceiverBlock.RECEIVING).register((facing, powered, enabled) -> {
+                            BlockStateVariant variant = BlockStateVariant.create();
+
+                            StringBuilder builder = new StringBuilder();
+
+                            builder.append(powered ? "_on" : "_off");
+                            builder.append(enabled ? "_on" : "_off");
+
+                            variant.put(VariantSettings.MODEL, TextureMap.getSubId(Registration.REDSTONE_RECEIVER_BLOCK, builder.toString()));
+
+                            switch(facing)
+                            {
+                                case NORTH -> {}
+                                case SOUTH -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R180);
+                                case WEST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R270);
+                                case EAST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R90);
+                            }
+
+                            return variant;
+                        }))
+        );
     }
 
 

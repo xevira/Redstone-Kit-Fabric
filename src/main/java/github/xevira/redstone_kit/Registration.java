@@ -148,6 +148,8 @@ public class Registration {
 
     public static final Block REDSTONE_OR_BLOCK = register("redstone_or", new RedstoneOrGateBlock(DEFAULT_GATE_SETTINGS));
 
+    public static final Block REDSTONE_RECEIVER_BLOCK = register("redstone_receiver", new RedstoneReceiverBlock(DEFAULT_GATE_SETTINGS));
+
     public static final Block REDSTONE_RSNORLATCH_BLOCK = register("redstone_rsnorlatch", new RedstoneRSNorLatchBlock(DEFAULT_GATE_SETTINGS));
 
     public static final Block REDSTONE_TICKER_BLOCK = register("redstone_ticker", new RedstoneTickerBlock(DEFAULT_GATE_SETTINGS));
@@ -231,6 +233,9 @@ public class Registration {
     public static final BlockItem REDSTONE_OR_ITEM = register("redstone_or",
             new BlockItem(REDSTONE_OR_BLOCK, new Item.Settings()));
 
+    public static final BlockItem REDSTONE_RECEIVER_ITEM = register("redstone_receiver",
+            new BlockItem(REDSTONE_RECEIVER_BLOCK, new Item.Settings()));
+
     public static final BlockItem REDSTONE_RSNORLATCH_ITEM = register("redstone_rsnorlatch",
             new BlockItem(REDSTONE_RSNORLATCH_BLOCK, new Item.Settings()));
 
@@ -256,7 +261,7 @@ public class Registration {
             new BlockItem(WEATHER_DETECTOR_BLOCK, new Item.Settings()));
 
 
-    // Items
+    // (Pure) Items
     public static final Item BELT_ITEM = register("belt", new Item(new Item.Settings()));
 
     public static final Item ENDER_DISH_ITEM = register("ender_dish", new Item(new Item.Settings()));
@@ -279,6 +284,10 @@ public class Registration {
 
     public static final BlockEntityType<RedstoneInverterBlockEntity> REDSTONE_INVERTER_BLOCK_ENTITY = register("redstone_inverter",
             BlockEntityType.Builder.create(RedstoneInverterBlockEntity::new, Registration.REDSTONE_INVERTER_BLOCK)
+                    .build());
+
+    public static final BlockEntityType<RedstoneReceiverBlockEntity> REDSTONE_RECEIVER_BLOCK_ENTITY = register("redstone_receiver",
+            BlockEntityType.Builder.create(RedstoneReceiverBlockEntity::new, Registration.REDSTONE_RECEIVER_BLOCK)
                     .build());
 
     public static final BlockEntityType<RedstoneTickerBlockEntity> REDSTONE_TICKER_BLOCK_ENTITY = register("redstone_ticker",
@@ -388,7 +397,9 @@ public class Registration {
                     Registration.REDSTONE_MEMORY_ITEM,
                     Registration.REDSTONE_NIBBLE_COUNTER_ITEM,
                     Registration.REDSTONE_TICKER_ITEM,
-                    Registration.REDSTONE_TIMER_ITEM);
+                    Registration.REDSTONE_TIMER_ITEM,
+                    Registration.REDSTONE_RECEIVER_ITEM,
+                    Registration.REDSTONE_TRANSMITTER_ITEM);
 
             entries.addAfter(Items.DAYLIGHT_DETECTOR,
                     Registration.WEATHER_DETECTOR_ITEM,

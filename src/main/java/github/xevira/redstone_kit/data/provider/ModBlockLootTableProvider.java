@@ -30,6 +30,7 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(Registration.REDSTONE_MEMORY_BLOCK);
         addDrop(Registration.REDSTONE_NIBBLE_COUNTER_BLOCK);
         addDrop(Registration.REDSTONE_OR_BLOCK);
+        addDrop(Registration.REDSTONE_RECEIVER_BLOCK);
         addDrop(Registration.REDSTONE_RSNORLATCH_BLOCK);
         addDrop(Registration.REDSTONE_TICKER_BLOCK);
         addDrop(Registration.REDSTONE_TIMER_BLOCK);

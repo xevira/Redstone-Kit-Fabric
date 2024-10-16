@@ -3,6 +3,7 @@ package github.xevira.redstone_kit;
 import github.xevira.redstone_kit.block.TeleporterBlock;
 import github.xevira.redstone_kit.client.particle.ModFlameParticle;
 import github.xevira.redstone_kit.events.OwnerBlockBreaker;
+import github.xevira.redstone_kit.renderer.RedstoneReceiverBlockEntityRenderer;
 import github.xevira.redstone_kit.renderer.RedstoneTransmitterBlockEntityRenderer;
 import github.xevira.redstone_kit.renderer.TeleportBlockEntityRenderer;
 import github.xevira.redstone_kit.renderer.TeleportInhibitorBlockEntityRenderer;
@@ -45,6 +46,7 @@ public class RedstoneKitClient implements ClientModInitializer {
 				Registration.REDSTONE_AND_BLOCK,
 				Registration.REDSTONE_INVERTER_BLOCK,
 				Registration.REDSTONE_OR_BLOCK,
+				Registration.REDSTONE_RECEIVER_BLOCK,
 				Registration.REDSTONE_RSNORLATCH_BLOCK,
 				Registration.REDSTONE_TICKER_BLOCK,
 				Registration.REDSTONE_TIMER_BLOCK,
@@ -60,6 +62,7 @@ public class RedstoneKitClient implements ClientModInitializer {
 		HandledScreens.register(Registration.TELEPORT_INHIBITOR_SCREEN_HANDLER, TeleportInhibitorScreen::new);
 
 		// Block Entity Renderers
+		BlockEntityRendererFactories.register(Registration.REDSTONE_RECEIVER_BLOCK_ENTITY, RedstoneReceiverBlockEntityRenderer::new);
 		BlockEntityRendererFactories.register(Registration.REDSTONE_TRANSMITTER_BLOCK_ENTITY, RedstoneTransmitterBlockEntityRenderer::new);
 		BlockEntityRendererFactories.register(Registration.TELEPORT_INHIBITOR_BLOCK_ENTITY, TeleportInhibitorBlockEntityRenderer::new);
 		BlockEntityRendererFactories.register(Registration.TELEPORTER_BLOCK_ENTITY, TeleportBlockEntityRenderer::new);
