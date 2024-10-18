@@ -12,6 +12,7 @@ import net.minecraft.data.client.*;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 
+import static net.minecraft.data.client.BlockStateModelGenerator.createNorthDefaultRotationStates;
 import static net.minecraft.data.client.BlockStateModelGenerator.createSouthDefaultHorizontalRotationStates;
 
 public class ModBlockModelProvider extends FabricModelProvider {
@@ -556,6 +557,19 @@ public class ModBlockModelProvider extends FabricModelProvider {
                         }))
         );
 
+        blockStateModelGenerator.registerParentedItemModel(Registration.COMPARATOR_RELAY_ITEM, RedstoneKit.id("block/comparator_relay"));
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.COMPARATOR_RELAY_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(ComparatorRelayBlock.POWERED).register((p) -> {
+                            StringBuilder stringBuilder = new StringBuilder();
+
+                            if (p)
+                                stringBuilder.append("_on");
+
+                            return BlockStateVariant.create().put(VariantSettings.MODEL, TextureMap.getSubId(Registration.COMPARATOR_RELAY_BLOCK, stringBuilder.toString()));
+                        }))
+                        .coordinate(createNorthDefaultRotationStates())
+        );
     }
 
 

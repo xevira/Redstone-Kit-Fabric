@@ -72,6 +72,16 @@ public class Registration {
                     .solidBlock(Blocks::never)
     ));
 
+    public static final Block COMPARATOR_RELAY_BLOCK = register("comparator_relay", new ComparatorRelayBlock(
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.LIGHT_GRAY)
+                    .instrument(NoteBlockInstrument.BELL)
+                    .strength(1.5f, 3600000.0F)
+                    .sounds(BlockSoundGroup.STONE)
+                    .allowsSpawning(Blocks::never)
+                    .nonOpaque()
+    ));
+
     public static final Block CONVEYOR_BELT_SLOW_BLOCK = register("conveyor_belt_slow", new ConveyorBeltBlock(0.1,
             AbstractBlock.Settings.create()
                     .mapColor(MapColor.GREEN)
@@ -211,6 +221,9 @@ public class Registration {
     public static final BlockItem BOUNCY_PAD_ITEM = register("bouncy_pad",
             new BlockItem(BOUNCY_PAD_BLOCK, new Item.Settings()));
 
+    public static final BlockItem COMPARATOR_RELAY_ITEM = register("comparator_relay",
+            new BlockItem(COMPARATOR_RELAY_BLOCK, new Item.Settings()));
+
     public static final BlockItem CONVEYOR_BELT_SLOW_ITEM = register("conveyor_belt_slow",
             new BlockItem(CONVEYOR_BELT_SLOW_BLOCK, new Item.Settings()));
 
@@ -299,6 +312,10 @@ public class Registration {
 
 
     // Block Entities
+    public static final BlockEntityType<ComparatorRelayBlockEntity> COMPARATOR_RELAY_BLOCK_ENTITY = register("comparator_relay",
+            BlockEntityType.Builder.create(ComparatorRelayBlockEntity::new, Registration.COMPARATOR_RELAY_BLOCK)
+                    .build());
+
     public static final BlockEntityType<EquatorBlockEntity> EQUATOR_BLOCK_ENTITY = register("equator",
             BlockEntityType.Builder.create(EquatorBlockEntity::new, Registration.EQUATOR_BLOCK)
                     .build());
@@ -422,6 +439,7 @@ public class Registration {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(entries -> {
             entries.addAfter(Items.COMPARATOR,
                     Registration.EQUATOR_ITEM,
+                    Registration.COMPARATOR_RELAY_ITEM,
                     Registration.REDSTONE_INVERTER_ITEM,
                     Registration.REDSTONE_AND_ITEM,
                     Registration.REDSTONE_OR_ITEM,
@@ -437,6 +455,7 @@ public class Registration {
             entries.addAfter(Items.DAYLIGHT_DETECTOR,
                     Registration.WEATHER_DETECTOR_ITEM,
                     Registration.PLAYER_DETECTOR_ITEM,
+                    Registration.ITEM_DETECTOR_ITEM,
                     Registration.TELEPORT_INHIBITOR_ITEM,
                     Registration.TELEPORTER_ITEM,
                     Registration.LIGHT_DISPLAY_ITEM,

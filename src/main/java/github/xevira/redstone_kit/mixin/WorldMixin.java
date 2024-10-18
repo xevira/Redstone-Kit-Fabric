@@ -1,6 +1,7 @@
 package github.xevira.redstone_kit.mixin;
 
 import github.xevira.redstone_kit.Registration;
+import github.xevira.redstone_kit.util.ComparatorLike;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -23,12 +24,12 @@ public class WorldMixin
             BlockPos blockPos = pos.offset(direction);
             if (((World)(Object)this).isChunkLoaded(blockPos)) {
                 BlockState blockState = ((World)(Object)this).getBlockState(blockPos);
-                if (blockState.isOf(Registration.EQUATOR_BLOCK)) {
+                if (blockState.getBlock() instanceof ComparatorLike) {
                     ((World)(Object)this).updateNeighbor(blockState, blockPos, block, pos, false);
                 } else if (blockState.isSolidBlock((World)(Object)this, blockPos)) {
                     blockPos = blockPos.offset(direction);
                     blockState = ((World)(Object)this).getBlockState(blockPos);
-                    if (blockState.isOf(Registration.EQUATOR_BLOCK)) {
+                    if (blockState.getBlock() instanceof ComparatorLike) {
                         ((World)(Object)this).updateNeighbor(blockState, blockPos, block, pos, false);
                     }
                 }

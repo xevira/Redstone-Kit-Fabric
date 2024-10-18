@@ -17,6 +17,7 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(Registration.BOUNCY_PAD_BLOCK)
+                .add(Registration.COMPARATOR_RELAY_BLOCK)
                 .add(Registration.CONVEYOR_BELT_SLOW_BLOCK)
                 .add(Registration.CONVEYOR_BELT_MEDIUM_BLOCK)
                 .add(Registration.CONVEYOR_BELT_FAST_BLOCK)

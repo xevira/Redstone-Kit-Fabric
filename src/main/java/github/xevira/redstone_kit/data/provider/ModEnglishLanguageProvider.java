@@ -50,6 +50,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
     @Override
     public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
         translationBuilder.add(Registration.BOUNCY_PAD_BLOCK, "Bouncy Pad");
+        translationBuilder.add(Registration.COMPARATOR_RELAY_BLOCK, "Comparator Relay");
         translationBuilder.add(Registration.CONVEYOR_BELT_SLOW_BLOCK, "Conveyor Belt (Slow)");
         translationBuilder.add(Registration.CONVEYOR_BELT_MEDIUM_BLOCK, "Conveyor Belt (Medium)");
         translationBuilder.add(Registration.CONVEYOR_BELT_FAST_BLOCK, "Conveyor Belt (Fast)");

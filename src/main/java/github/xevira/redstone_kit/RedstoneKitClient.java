@@ -42,6 +42,7 @@ public class RedstoneKitClient implements ClientModInitializer {
 		// Render Layers
 		// Cutout - Where parts of the textures need to be transparent, but NOT translucent (use Translucent for that)
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
+				Registration.COMPARATOR_RELAY_BLOCK,
 				Registration.ENDER_TORCH_BLOCK,
 				Registration.ENDER_WALL_TORCH_BLOCK,
 				Registration.EQUATOR_BLOCK,

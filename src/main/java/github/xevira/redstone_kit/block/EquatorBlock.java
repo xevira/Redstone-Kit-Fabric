@@ -3,10 +3,7 @@ package github.xevira.redstone_kit.block;
 import com.mojang.serialization.MapCodec;
 import github.xevira.redstone_kit.Registration;
 import github.xevira.redstone_kit.block.entity.EquatorBlockEntity;
-import github.xevira.redstone_kit.util.BlockProperties;
-import github.xevira.redstone_kit.util.EquatorModeEnum;
-import github.xevira.redstone_kit.util.RedstoneConnect;
-import github.xevira.redstone_kit.util.RedstoneConnectEnum;
+import github.xevira.redstone_kit.util.*;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ComparatorBlockEntity;
@@ -33,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class EquatorBlock extends AbstractRedstoneGateBlock implements BlockEntityProvider, RedstoneConnect {
+public class EquatorBlock extends AbstractRedstoneGateBlock implements BlockEntityProvider, RedstoneConnect, ComparatorLike {
     public static final MapCodec<EquatorBlock> CODEC = createCodec(EquatorBlock::new);
 
     public static final EnumProperty<EquatorModeEnum> MODE = BlockProperties.EQUATOR_MODE;
