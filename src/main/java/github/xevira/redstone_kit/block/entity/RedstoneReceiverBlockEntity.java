@@ -88,8 +88,6 @@ public class RedstoneReceiverBlockEntity extends BlockEntity implements ServerTi
 
             if (signal != this.redstoneSignal)
             {
-                RedstoneKit.LOGGER.info("RedstoneReceiver: detect redstone change on channel {}: {} to {}", WirelessNetwork.decodeChannel(this.networkChannel), this.redstoneSignal, signal);
-
                 this.redstoneSignal = signal;
 
                 BlockState state = this.world.getBlockState(this.pos);

@@ -2,6 +2,7 @@ package github.xevira.redstone_kit.block;
 
 import com.mojang.serialization.MapCodec;
 import github.xevira.redstone_kit.Registration;
+import github.xevira.redstone_kit.block.entity.LightDisplayBlockEntity;
 import github.xevira.redstone_kit.util.RedstoneConnect;
 import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import github.xevira.redstone_kit.util.ServerTickableBlockEntity;
@@ -74,6 +75,19 @@ public class LightDisplayBlock extends FacingBlock implements BlockEntityProvide
     @Override
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return Registration.LIGHT_DISPLAY_BLOCK_ENTITY.instantiate(pos, state);
+    }
+
+    @Override
+    protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.isOf(newState.getBlock()))
+        {
+            if (world.getBlockEntity(pos) instanceof LightDisplayBlockEntity display)
+            {
+                display.unregisterBulbs();
+            }
+        }
+
+        super.onStateReplaced(state, world, pos, newState, moved);
     }
 
     @Override

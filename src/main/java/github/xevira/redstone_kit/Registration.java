@@ -8,6 +8,7 @@ import github.xevira.redstone_kit.screenhandler.PlayerDetectorScreenHandler;
 import github.xevira.redstone_kit.screenhandler.RedstoneTimerScreenHandler;
 import github.xevira.redstone_kit.screenhandler.TeleportInhibitorScreenHandler;
 import github.xevira.redstone_kit.screenhandler.TeleporterScreenHandler;
+import github.xevira.redstone_kit.util.Boxi;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
@@ -21,7 +22,6 @@ import net.minecraft.item.*;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -47,17 +47,31 @@ public class Registration {
     public static final ComponentType<BlockPos> COORDINATES =
             registerComponent("coordinates", builder -> builder.codec(BlockPos.CODEC));
 
+    public static final ComponentType<BlockPos> COORDINATES2 =
+            registerComponent("coordinates2", builder -> builder.codec(BlockPos.CODEC));
+
     public static final ComponentType<Identifier> WORLD_ID =
             registerComponent("world_id", builder -> builder.codec(Identifier.CODEC));
 
     public static final ComponentType<ResonatorItem.ResonatorTypeEnum> RESONATOR_TYPE =
             registerComponent("resonator_type", builder -> builder.codec(ResonatorItem.ResonatorTypeEnum.CODEC));
 
+    public static final ComponentType<Boxi> INT_BOX_TYPE =
+            registerComponent("boxi", builder -> builder.codec(Boxi.CODEC));
 
     // Particles
     public static final SimpleParticleType ENDER_FLAME_PARTICLE = registerParticle("ender_flame", false);
 
     // Blocks
+    public static final Block BOUNCY_PAD_BLOCK = register("bouncy_pad", new BouncyPadBlock(
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.GREEN)
+                    .strength(3.0F, 6.0F)
+                    .sounds(BlockSoundGroup.STONE)
+                    .requiresTool()
+                    .solidBlock(Blocks::never)
+    ));
+
     public static final Block CONVEYOR_BELT_SLOW_BLOCK = register("conveyor_belt_slow", new ConveyorBeltBlock(0.1,
             AbstractBlock.Settings.create()
                     .mapColor(MapColor.GREEN)
@@ -107,6 +121,15 @@ public class Registration {
     ));
 
     public static final Block EQUATOR_BLOCK = register("equator", new EquatorBlock(DEFAULT_GATE_SETTINGS));
+
+    public static final Block ITEM_DETECTOR_BLOCK = register("item_detector", new ItemDetectorBlock(
+            AbstractBlock.Settings.create()
+                    .mapColor(MapColor.GRAY)
+                    .instrument(NoteBlockInstrument.BELL)
+                    .strength(1.5f, 3600000.0F)
+                    .sounds(BlockSoundGroup.STONE)
+                    .allowsSpawning(Blocks::never)
+    ));
 
     public static final Block LIGHT_DISPLAY_BLOCK = register("light_display", new LightDisplayBlock(
             AbstractBlock.Settings.create()
@@ -185,6 +208,9 @@ public class Registration {
     ));
 
     // BlockItems
+    public static final BlockItem BOUNCY_PAD_ITEM = register("bouncy_pad",
+            new BlockItem(BOUNCY_PAD_BLOCK, new Item.Settings()));
+
     public static final BlockItem CONVEYOR_BELT_SLOW_ITEM = register("conveyor_belt_slow",
             new BlockItem(CONVEYOR_BELT_SLOW_BLOCK, new Item.Settings()));
 
@@ -205,6 +231,9 @@ public class Registration {
 
     public static final BlockItem EQUATOR_ITEM = register("equator",
             new BlockItem(EQUATOR_BLOCK, new Item.Settings()));
+
+    public static final BlockItem ITEM_DETECTOR_ITEM = register("item_detector",
+            new BlockItem(ITEM_DETECTOR_BLOCK, new Item.Settings()));
 
     public static final BlockItem LIGHT_DISPLAY_ITEM = register("light_display",
             new BlockItem(LIGHT_DISPLAY_BLOCK, new Item.Settings()));
@@ -272,6 +301,10 @@ public class Registration {
     // Block Entities
     public static final BlockEntityType<EquatorBlockEntity> EQUATOR_BLOCK_ENTITY = register("equator",
             BlockEntityType.Builder.create(EquatorBlockEntity::new, Registration.EQUATOR_BLOCK)
+                    .build());
+
+    public static final BlockEntityType<ItemDetectorBlockEntity> ITEM_DETECTOR_BLOCK_ENTITY = register("item_detector",
+            BlockEntityType.Builder.create(ItemDetectorBlockEntity::new, Registration.ITEM_DETECTOR_BLOCK)
                     .build());
 
     public static final BlockEntityType<LightDisplayBlockEntity> LIGHT_DISPLAY_BLOCK_ENTITY = register("light_display",

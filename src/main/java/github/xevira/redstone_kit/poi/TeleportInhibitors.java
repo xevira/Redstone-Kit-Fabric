@@ -148,7 +148,6 @@ public class TeleportInhibitors {
 
     public static boolean readJSON(JsonObject json, MinecraftServer server, ServerWorld world)
     {
-
         if (json.has(JSON_TAG)) {
             JsonElement element = json.get(JSON_TAG);
             if (element.isJsonArray())
@@ -213,7 +212,7 @@ public class TeleportInhibitors {
                         poiPos.add(pos);
                     }
                     else
-                        RedstoneKit.LOGGER.error("Invalid element in '{}' array in {}} POI.", w, JSON_TAG);
+                        RedstoneKit.LOGGER.error("Invalid element in '{}' array in {} POI.", w, JSON_TAG);
                 }
 
                 POI.put(world, poiPos);

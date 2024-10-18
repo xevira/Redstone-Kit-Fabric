@@ -21,6 +21,7 @@ public class ModBlockLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(Registration.ENDER_TORCH_BLOCK);
         addDrop(Registration.ENDER_LANTERN_BLOCK);
         addDrop(Registration.EQUATOR_BLOCK);
+        addDrop(Registration.ITEM_DETECTOR_BLOCK);
         addDrop(Registration.LIGHT_DISPLAY_BLOCK);
         addDrop(Registration.LIGHT_DISPLAY_BULB_BLOCK);
         addDrop(Registration.PLAYER_DETECTOR_BLOCK);

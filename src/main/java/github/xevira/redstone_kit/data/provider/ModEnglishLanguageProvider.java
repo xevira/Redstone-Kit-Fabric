@@ -49,6 +49,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
 
     @Override
     public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
+        translationBuilder.add(Registration.BOUNCY_PAD_BLOCK, "Bouncy Pad");
         translationBuilder.add(Registration.CONVEYOR_BELT_SLOW_BLOCK, "Conveyor Belt (Slow)");
         translationBuilder.add(Registration.CONVEYOR_BELT_MEDIUM_BLOCK, "Conveyor Belt (Medium)");
         translationBuilder.add(Registration.CONVEYOR_BELT_FAST_BLOCK, "Conveyor Belt (Fast)");
@@ -56,6 +57,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(Registration.ENDER_LANTERN_BLOCK, "Ender Lantern");
         translationBuilder.add(Registration.ENDER_TORCH_BLOCK, "Ender Torch");
         translationBuilder.add(Registration.EQUATOR_BLOCK, "Equator");
+        translationBuilder.add(Registration.ITEM_DETECTOR_BLOCK, "Item Detector");
         translationBuilder.add(Registration.LIGHT_DISPLAY_BLOCK, "Light Display");
         translationBuilder.add(Registration.LIGHT_DISPLAY_BULB_BLOCK, "Light Display Bulb");
         translationBuilder.add(Registration.PLAYER_DETECTOR_BLOCK, "Player Detector");
@@ -127,17 +129,20 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(Registration.ENDER_DISH_ITEM, "Ender Antenna Dish");
         translationBuilder.add(Registration.RESONATOR_ITEM, "Resonator");
         addText(translationBuilder, "tooltip", "resonator", "Press §eShift§r for more Information!");
-        addText(translationBuilder, "tooltip", "resonator.shift_down", "Links teleporters and wireless redstone.");
+        addText(translationBuilder, "tooltip", "resonator.shift_down", "Used to link/unlink various blocks.");
         addText(translationBuilder, "tooltip", "resonator.pending", "Pending Linkage:");
         addText(translationBuilder, "tooltip", "resonator.dimension", "Dimension: §e%s§r");
         addText(translationBuilder, "tooltip", "resonator.position", "Position: §e(%s, %s, %s)§r");
-        addText(translationBuilder, "tooltip", "resonator.source.receiver", "Source: §eRedstone Receiver§r");
+        addText(translationBuilder, "tooltip", "resonator.line", "Line: §e(%s, %s, %s)§r to §e(%s, %s, %s)§r");
         addText(translationBuilder, "tooltip", "resonator.source.teleporter", "Source: §eTeleporter§r");
-        addText(translationBuilder, "tooltip", "resonator.source.transmitter", "Source: §eRedstone Transmitter§r");
+        addText(translationBuilder, "tooltip", "resonator.source.light_display", "Source: §eLight Display§r");
+        addText(translationBuilder, "tooltip", "resonator.source.bulb", "Source: §eLight Display Bulb§r");
+        addText(translationBuilder, "tooltip", "resonator.source.bulb_line", "Source: §eLight Display Bulb (Line)§r");
         addText(translationBuilder, "text", "resonator.unlinked", "Resonator unlinked.");
-        addText(translationBuilder, "text", "resonator.pending.receiver", "§cThe Resonator is currently linking a redstone receiver.§r");
         addText(translationBuilder, "text", "resonator.pending.teleporter", "§cThe Resonator is currently linking a teleporter.§r");
-        addText(translationBuilder, "text", "resonator.pending.transmitter", "§cThe Resonator is currently linking a redstone transmitter.§r");
+        addText(translationBuilder, "text", "resonator.pending.light_display", "§cThe Resonator is currently linking a light display.§r");
+        addText(translationBuilder, "text", "resonator.pending.bulb", "§cThe Resonator is currently linking a light display bulb.§r");
+        addText(translationBuilder, "text", "resonator.pending.bulb_line", "§cThe Resonator is currently linking a light display bulb array.§r");
         addText(translationBuilder, "text", "resonator.teleporter.linked", "The teleporter has been linked to §e(%s, %s, %s)§r.");
         addText(translationBuilder, "text", "resonator.teleporter.unlinked", "The teleporter has been unlinked.");
         addText(translationBuilder, "text", "resonator.teleporter.not_linked", "The teleporter is currently not linked.");
@@ -145,6 +150,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         addText(translationBuilder, "text", "resonator.teleporter.target_already_linked", "Teleporter at §e(%s, %s, %s)§r has already been linked.");
         addText(translationBuilder, "text", "resonator.teleporter.wrong_dimension", "Teleporters must be in the same dimension to be linked.");
         addText(translationBuilder, "text", "resonator.teleporter.linked_different_dimension", "§cResonator is currently linked to a different dimension.§r");
+        addText(translationBuilder, "text", "resonator.bulb_already_in_use", "§cOne or more of the bulbs are already used by another light display.§r");
 
         addText(translationBuilder, "text", "teleporter.linked.pearl", "The teleporter is linked to §e(%s, %s, %s)§r.  It will cost 1 Ender Pearls to teleport.");
         addText(translationBuilder, "text", "teleporter.linked.pearls", "The teleporter is linked to §e(%s, %s, %s)§r.  It will cost %s Ender Pearls to teleport.");

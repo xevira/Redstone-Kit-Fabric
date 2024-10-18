@@ -9,15 +9,13 @@ import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.*;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -292,7 +290,7 @@ public class ConveyorBeltBlock extends HorizontalFacingBlock implements Redstone
 
         private final String name;
 
-        private ConveyorBeltSlopeEnum(final String name) {
+        ConveyorBeltSlopeEnum(final String name) {
             this.name = name;
         }
 
@@ -304,6 +302,5 @@ public class ConveyorBeltBlock extends HorizontalFacingBlock implements Redstone
         public String asString() {
             return this.name;
         }
-
     }
 }

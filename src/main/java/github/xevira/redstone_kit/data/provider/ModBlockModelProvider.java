@@ -531,6 +531,31 @@ public class ModBlockModelProvider extends FabricModelProvider {
                             return variant;
                         }))
         );
+
+        blockStateModelGenerator.registerSimpleState(Registration.BOUNCY_PAD_BLOCK);
+
+        blockStateModelGenerator.registerParentedItemModel(Registration.ITEM_DETECTOR_ITEM, RedstoneKit.id("block/item_detector"));
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.ITEM_DETECTOR_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(ItemDetectorBlock.FACING, ItemDetectorBlock.POWER).register((facing, power) -> {
+                            BlockStateVariant variant = BlockStateVariant.create();
+
+                            variant.put(VariantSettings.MODEL, TextureMap.getSubId(Registration.ITEM_DETECTOR_BLOCK, (power > 0) ? "_on" : ""));
+
+                            switch(facing)
+                            {
+                                case DOWN -> variant.put(VariantSettings.X, VariantSettings.Rotation.R90);
+                                case UP -> variant.put(VariantSettings.X, VariantSettings.Rotation.R270);
+                                case NORTH -> {}
+                                case SOUTH -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R180);
+                                case WEST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R270);
+                                case EAST -> variant.put(VariantSettings.Y, VariantSettings.Rotation.R90);
+                            }
+
+                            return variant;
+                        }))
+        );
+
     }
 
 
@@ -538,7 +563,7 @@ public class ModBlockModelProvider extends FabricModelProvider {
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         itemModelGenerator.register(Registration.BELT_ITEM, Models.GENERATED);
         itemModelGenerator.register(Registration.ENDER_DISH_ITEM, Models.GENERATED);
-        itemModelGenerator.register(Registration.RESONATOR_ITEM, Models.HANDHELD);
+        //itemModelGenerator.register(Registration.RESONATOR_ITEM, Models.HANDHELD);
     }
 
 }

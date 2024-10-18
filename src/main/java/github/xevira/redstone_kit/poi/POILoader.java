@@ -55,6 +55,11 @@ public class POILoader {
         {
             RedstoneKit.LOGGER.error("Failed to load Teleportors POI data for world {}.", world.getRegistryKey().getValue());
         }
+
+        if (!LightDisplayBulbs.readJSON(json, server, world))
+        {
+            RedstoneKit.LOGGER.error("Failed to load Light Display Bulbs POI data for world {}.", world.getRegistryKey().getValue());
+        }
     }
 
     private static JsonObject serialize(ServerWorld world)
@@ -62,6 +67,7 @@ public class POILoader {
         JsonObject json = new JsonObject();
 
         TeleportInhibitors.writeJSON(json, world);
+        LightDisplayBulbs.writeJSON(json, world);
 
         return json;
     }

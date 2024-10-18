@@ -7,5 +7,8 @@ public enum RedstoneConnectEnum {
     BACK,
     FRONT,
     NOT_AXIS,
-    NOT_FACING;
+    NOT_FACING,
+    FRONT_ALL,
+    BACK_ALL;
+
 }

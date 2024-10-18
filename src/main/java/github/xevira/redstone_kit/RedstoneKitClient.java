@@ -3,6 +3,7 @@ package github.xevira.redstone_kit;
 import github.xevira.redstone_kit.block.TeleporterBlock;
 import github.xevira.redstone_kit.client.particle.ModFlameParticle;
 import github.xevira.redstone_kit.events.OwnerBlockBreaker;
+import github.xevira.redstone_kit.item.ResonatorItem;
 import github.xevira.redstone_kit.renderer.RedstoneReceiverBlockEntityRenderer;
 import github.xevira.redstone_kit.renderer.RedstoneTransmitterBlockEntityRenderer;
 import github.xevira.redstone_kit.renderer.TeleportBlockEntityRenderer;
@@ -19,6 +20,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.particle.FlameParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
@@ -53,8 +55,6 @@ public class RedstoneKitClient implements ClientModInitializer {
 				Registration.REDSTONE_TRANSMITTER_BLOCK,
 				Registration.REDSTONE_XOR_BLOCK);
 
-		// Translucent
-
 		// Screen Handlers
 		HandledScreens.register(Registration.PLAYER_DETECTOR_SCREEN_HANDLER, PlayerDetectorScreen::new);
 		HandledScreens.register(Registration.REDSTONE_TIMER_SCREEN_HANDLER, RedstoneTimerScreen::new);
@@ -69,5 +69,8 @@ public class RedstoneKitClient implements ClientModInitializer {
 
 		// Particles
 		ParticleFactoryRegistry.getInstance().register(Registration.ENDER_FLAME_PARTICLE, ModFlameParticle.Factory::new);
+
+		// Model Predicates
+		ModelPredicateProviderRegistry.register(RedstoneKit.id("pending"), ResonatorItem::getModelPredicate);
 	}
 }

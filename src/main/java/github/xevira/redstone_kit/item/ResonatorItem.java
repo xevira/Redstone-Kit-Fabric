@@ -3,13 +3,17 @@ package github.xevira.redstone_kit.item;
 import com.mojang.serialization.Codec;
 import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
+import github.xevira.redstone_kit.block.entity.LightDisplayBlockEntity;
 import github.xevira.redstone_kit.block.entity.TeleporterBlockEntity;
+import github.xevira.redstone_kit.util.Boxi;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.session.report.ReporterEnvironment;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -21,6 +25,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +43,7 @@ public class ResonatorItem extends Item {
     public static final String RESONATOR_SOURCE_PREFIX_MSG = RedstoneKit.textPath("tooltip", "resonator.source.");
     public static final String RESONATOR_DIMENSION_MSG = RedstoneKit.textPath("tooltip", "resonator.dimension");
     public static final String RESONATOR_POSITION_MSG = RedstoneKit.textPath("tooltip", "resonator.position");
+    public static final String RESONATOR_LINE_MSG = RedstoneKit.textPath("tooltip", "resonator.line");
 
     public static final String RESONATOR_PENDING_PREFIX_MSG = RedstoneKit.textPath("text", "resonator.pending.");
     public static final String TELEPORTER_LINKED_MSG = RedstoneKit.textPath("text", "resonator.teleporter.linked");
@@ -48,14 +54,17 @@ public class ResonatorItem extends Item {
     public static final Text TELEPORTER_WRONG_DIMENSION_TEXT = Text.translatable(RedstoneKit.textPath("text", "resonator.teleporter.wrong_dimension"));
     public static final Text TELEPORTER_DIFFERENT_DIMENSION_TEXT = Text.translatable(RedstoneKit.textPath("text", "resonator.teleporter.linked_different_dimension"));
 
+    public static final Text BULB_ALREADY_IN_USE_TEXT = Text.translatable(RedstoneKit.textPath("text", "resonator.bulb_already_in_use"));
+
     public ResonatorItem(Settings settings) {
         super(settings);
     }
 
-    private static void setResonatorData(@NotNull ItemStack stack, @NotNull ResonatorTypeEnum type, @NotNull World world, @NotNull BlockPos pos)
+    private static void setResonatorData(@NotNull ItemStack stack, @NotNull ResonatorTypeEnum type, @NotNull World world, @NotNull BlockPos start, @Nullable BlockPos end)
     {
         stack.set(Registration.RESONATOR_TYPE, type);
-        stack.set(Registration.COORDINATES, pos);
+        stack.set(Registration.COORDINATES, start);
+        stack.set(Registration.COORDINATES2, end);
         stack.set(Registration.WORLD_ID, world.getRegistryKey().getValue());
     }
 
@@ -64,6 +73,7 @@ public class ResonatorItem extends Item {
         stack.set(Registration.RESONATOR_TYPE, null);
         stack.set(Registration.COORDINATES, null);
         stack.set(Registration.WORLD_ID, null);
+        stack.set(Registration.INT_BOX_TYPE, null);
     }
 
     private static void unlinkResonator(@NotNull ItemStack stack, @NotNull PlayerEntity player)
@@ -149,9 +159,8 @@ public class ResonatorItem extends Item {
         BlockPos sourcePos = context.getBlockPos();
         BlockPos targetPos = stack.get(Registration.COORDINATES);
 
-        if (state.isOf(Registration.TELEPORTER_BLOCK))
-        {
-            if (world.getBlockEntity(sourcePos) instanceof  TeleporterBlockEntity sourceTeleporter) {
+        if (state.isOf(Registration.TELEPORTER_BLOCK)) {
+            if (world.getBlockEntity(sourcePos) instanceof TeleporterBlockEntity sourceTeleporter) {
                 if (!sourceTeleporter.canConfigure(player))
                     return ActionResult.SUCCESS;
 
@@ -201,7 +210,7 @@ public class ResonatorItem extends Item {
                     }
 
                 } else {
-                    setResonatorData(stack, ResonatorTypeEnum.TELEPORTER, world, sourcePos);
+                    setResonatorData(stack, ResonatorTypeEnum.TELEPORTER, world, sourcePos, null);
 
                     // TODO: Play sound
                 }
@@ -209,11 +218,130 @@ public class ResonatorItem extends Item {
 
             return ActionResult.SUCCESS;
 
+        } else if (state.isOf(Registration.LIGHT_DISPLAY_BULB_BLOCK)) {
+            if (type != null && type != ResonatorTypeEnum.BULB) {
+                player.sendMessage(Text.translatable(RESONATOR_PENDING_PREFIX_MSG + type));
+            } else if (targetWorld != null && targetPos != null) {
+                if (targetWorld != world)
+                {
+                    // TODO: Translation
+                    player.sendMessage(Text.literal("§eBulbs must be in the same dimension as the display.§r"));
+                    return ActionResult.SUCCESS;
+                }
+
+                BlockState targetState = targetWorld.getBlockState(targetPos);
+
+                // Make sure it's still a light bulb
+                if (targetState.isOf(Registration.LIGHT_DISPLAY_BULB_BLOCK)) {
+                    Boxi box = new Boxi(targetPos, sourcePos);
+                    RedstoneKit.LOGGER.info("bulb line: {}", box);
+                    Direction.Axis axis = box.getColumnAxis();
+
+                    if (axis == null) {
+                        // TODO: Translation
+                        player.sendMessage(Text.literal("§ePlease select a column of bulbs only.§r"));
+                    } else {
+                        setResonatorData(stack, ResonatorTypeEnum.BULB_LINE, world, targetPos, sourcePos);
+
+                        // TODO: Play sound
+                    }
+                }
+            } else {
+                setResonatorData(stack, ResonatorTypeEnum.BULB, world, sourcePos, null);
+
+                // TODO: Play sound
+            }
+
+            return ActionResult.SUCCESS;
+        } else if (state.isOf(Registration.LIGHT_DISPLAY_BLOCK)) {
+
+            if (type == null) {
+                // Nothing was clicked before
+                setResonatorData(stack, ResonatorTypeEnum.LIGHT_DISPLAY, world, sourcePos, null);
+
+                // TODO: Play sound
+            } else if (type == ResonatorTypeEnum.LIGHT_DISPLAY) {
+                if (targetWorld != null && targetPos != null)
+                {
+                    if (targetWorld == world && targetPos.equals(sourcePos))
+                    {
+                        if (world.getBlockEntity(sourcePos) instanceof LightDisplayBlockEntity display)
+                        {
+                            display.clearBulbs();
+                            clearResonatorData(stack);
+
+                            // TODO: Language file
+                            player.sendMessage(Text.literal("Light Display changed to autodetect."));
+                            return ActionResult.SUCCESS;
+                        }
+                    }
+                }
+
+                // TODO: Error message
+
+            } else if (type == ResonatorTypeEnum.BULB) {
+                // TODO: Translation
+                player.sendMessage(Text.literal("Please select a second light display bulb."));
+
+            } else if (type == ResonatorTypeEnum.BULB_LINE) {
+                BlockPos secondBulb = stack.get(Registration.COORDINATES2);
+                if (targetWorld != null && targetPos != null && secondBulb != null)
+                {
+                    if (world.getBlockEntity(sourcePos) instanceof LightDisplayBlockEntity display)
+                    {
+                        if (!display.setBulbs(targetPos, secondBulb))
+                        {
+                            player.sendMessage(BULB_ALREADY_IN_USE_TEXT);
+                        }
+                        else
+                        {
+                            // TODO: Translation
+                            player.sendMessage(Text.literal("Light Display linked to bulbs."));
+                        }
+                        clearResonatorData(stack);
+
+                        return ActionResult.SUCCESS;
+                    }
+                }
+
+                // TODO: Error message
+            }
+            else
+            {
+                player.sendMessage(Text.translatable(RESONATOR_PENDING_PREFIX_MSG + type));
+            }
+
+            return ActionResult.SUCCESS;
         } else {
             if (player.isSneaking())
             {
                 unlinkResonator(stack, player);
                 return ActionResult.SUCCESS;
+            }
+
+            if (type == ResonatorTypeEnum.BULB && targetWorld != null && targetPos != null) {
+                if (targetWorld != world) {
+                    player.sendMessage(Text.literal("§eBulbs must be in the same dimension.§r"));
+                    return ActionResult.SUCCESS;
+                }
+
+                BlockState targetState = targetWorld.getBlockState(targetPos);
+
+                // Make sure it's still a light bulb
+                if (targetState.isOf(Registration.LIGHT_DISPLAY_BULB_BLOCK)) {
+                    Boxi box = new Boxi(targetPos, sourcePos);
+                    RedstoneKit.LOGGER.info("bulb line: {}", box);
+                    Direction.Axis axis = box.getColumnAxis();
+
+                    if (axis == null) {
+                        player.sendMessage(Text.literal("§ePlease select a column of bulbs only.§r"));
+                    } else {
+                        setResonatorData(stack, ResonatorTypeEnum.BULB_LINE, world, targetPos, sourcePos);
+
+                        // TODO: Play sound
+                    }
+                    return ActionResult.SUCCESS;
+                }
             }
         }
 
@@ -230,29 +358,52 @@ public class ResonatorItem extends Item {
     @Override
     @Environment(EnvType.CLIENT)
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        if (Screen.hasShiftDown())
+        if (Screen.hasShiftDown()) {
             tooltip.add(RESONATOR_SHIFT_DOWN_TOOLTIP);
+
+            ResonatorTypeEnum resonatorType = stack.get(Registration.RESONATOR_TYPE);
+            BlockPos pos = stack.get(Registration.COORDINATES);
+            BlockPos pos2 = stack.get(Registration.COORDINATES2);
+            Identifier worldId = stack.get(Registration.WORLD_ID);
+
+            if(resonatorType != null && pos != null && worldId != null) {
+                tooltip.add(RESONATOR_PENDING_TOOLTIP);
+                tooltip.add(Text.translatable(RESONATOR_DIMENSION_MSG, worldId.getPath()));
+                tooltip.add(Text.translatable(RESONATOR_SOURCE_PREFIX_MSG + resonatorType));
+                if (pos2 != null)
+                    tooltip.add(Text.translatable(RESONATOR_LINE_MSG, pos.getX(), pos.getY(), pos.getZ(), pos2.getX(), pos2.getY(), pos2.getZ()));
+                else
+                    tooltip.add(Text.translatable(RESONATOR_POSITION_MSG, pos.getX(), pos.getY(), pos.getZ()));
+            }
+        }
         else
             tooltip.add(RESONATOR_TOOLTIP);
 
-        ResonatorTypeEnum resonatorType = stack.get(Registration.RESONATOR_TYPE);
-        BlockPos pos = stack.get(Registration.COORDINATES);
-        Identifier worldId = stack.get(Registration.WORLD_ID);
-
-        if(resonatorType != null && pos != null && worldId != null) {
-            tooltip.add(RESONATOR_PENDING_TOOLTIP);
-            tooltip.add(Text.translatable(RESONATOR_DIMENSION_MSG, worldId.getPath()));
-            tooltip.add(Text.translatable(RESONATOR_SOURCE_PREFIX_MSG + resonatorType));
-            tooltip.add(Text.translatable(RESONATOR_POSITION_MSG, pos.getX(), pos.getY(), pos.getZ()));
-        }
 
         super.appendTooltip(stack, context, tooltip, type);
     }
 
+    @Environment(EnvType.CLIENT)
+    public static float getModelPredicate(ItemStack stack, ClientWorld world, LivingEntity entity, int seed)
+    {
+        ResonatorTypeEnum type = stack.get(Registration.RESONATOR_TYPE);
+
+//        if (type != null)
+//            return switch(type)
+//            {
+//                case TELEPORTER -> 1f;
+//                case BULB -> 2f;
+//                case BULB_LINE -> 3f;
+//                case LIGHT_DISPLAY -> 4f;
+//            };
+        return type != null ? 1f : 0f;
+    }
+
     public enum ResonatorTypeEnum implements StringIdentifiable {
-        RECEIVER("receiver"),           // Initial link was on a Receiver
-        TELEPORTER("teleporter"),       // Initial link was on a Teleporter
-        TRANSMITTER("transmitter")      // Initial link was on a Transmitter
+        TELEPORTER("teleporter"),       // Initial link was on a teleporter
+        LIGHT_DISPLAY("light_display"), // Initial link was on a light display
+        BULB("bulb"),                   // Initial link was on a light display bulb
+        BULB_LINE("bulb_line")          // A BOXI of light display bulb
         ;
 
         private final String name;

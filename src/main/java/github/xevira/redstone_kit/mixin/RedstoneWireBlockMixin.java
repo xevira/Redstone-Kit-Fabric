@@ -41,6 +41,8 @@ public class RedstoneWireBlockMixin {
                     Direction direction = state.get(Properties.HORIZONTAL_FACING);
                     clr.setReturnValue(direction.getOpposite() != dir);   // Back side should not connect
                 }
+                case FRONT_ALL -> clr.setReturnValue(state.get(Properties.FACING) == dir);
+                case BACK_ALL -> clr.setReturnValue(state.get(Properties.FACING).getOpposite() == dir);
             }
         }
     }
