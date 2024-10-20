@@ -6,6 +6,7 @@ import net.minecraft.state.property.IntProperty;
 import github.xevira.redstone_kit.block.RedstoneTimerBlock;
 
 public class BlockProperties {
+    public static final BooleanProperty CARRY = BooleanProperty.of("carry");
     public static final BooleanProperty LATCHED = BooleanProperty.of("latched");
 
     public static final EnumProperty<InverterModeEnum> INVERTER_MODE = EnumProperty.of("mode", InverterModeEnum.class);

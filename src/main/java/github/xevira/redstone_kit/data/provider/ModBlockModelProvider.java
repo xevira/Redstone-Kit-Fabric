@@ -570,6 +570,20 @@ public class ModBlockModelProvider extends FabricModelProvider {
                         }))
                         .coordinate(createNorthDefaultRotationStates())
         );
+
+        blockStateModelGenerator.registerParentedItemModel(Registration.REDSTONE_COUNTER_ITEM, RedstoneKit.id("block/redstone_counter_inventory"));
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(Registration.REDSTONE_COUNTER_BLOCK)
+                        .coordinate(BlockStateVariantMap.create(RedstoneCounterBlock.INVERTED).register((inverted) -> {
+                            StringBuilder stringBuilder = new StringBuilder();
+
+                            if (inverted)
+                                stringBuilder.append("_inverted");
+
+                            return BlockStateVariant.create().put(VariantSettings.MODEL, TextureMap.getSubId(Registration.REDSTONE_COUNTER_BLOCK, stringBuilder.toString()));
+                        }))
+                        .coordinate(createSouthDefaultHorizontalRotationStates())
+        );
     }
 
 

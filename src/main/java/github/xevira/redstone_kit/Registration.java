@@ -4,10 +4,7 @@ import github.xevira.redstone_kit.block.*;
 import github.xevira.redstone_kit.block.entity.*;
 import github.xevira.redstone_kit.item.ResonatorItem;
 import github.xevira.redstone_kit.network.*;
-import github.xevira.redstone_kit.screenhandler.PlayerDetectorScreenHandler;
-import github.xevira.redstone_kit.screenhandler.RedstoneTimerScreenHandler;
-import github.xevira.redstone_kit.screenhandler.TeleportInhibitorScreenHandler;
-import github.xevira.redstone_kit.screenhandler.TeleporterScreenHandler;
+import github.xevira.redstone_kit.screenhandler.*;
 import github.xevira.redstone_kit.util.Boxi;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
@@ -171,6 +168,8 @@ public class Registration {
 
     public static final Block REDSTONE_AND_BLOCK = register("redstone_and", new RedstoneAndGateBlock(DEFAULT_GATE_SETTINGS));
 
+    public static final Block REDSTONE_COUNTER_BLOCK = register("redstone_counter", new RedstoneCounterBlock(DEFAULT_GATE_SETTINGS));
+
     public static final Block REDSTONE_CROSSOVER_BLOCK = register("redstone_crossover", new RedstoneCrossoverBlock(DEFAULT_GATE_SETTINGS));
 
     public static final Block REDSTONE_INVERTER_BLOCK = register("redstone_inverter", new RedstoneInverterBlock(DEFAULT_GATE_SETTINGS));
@@ -260,6 +259,9 @@ public class Registration {
     public static final BlockItem REDSTONE_AND_ITEM = register("redstone_and",
             new BlockItem(REDSTONE_AND_BLOCK, new Item.Settings()));
 
+    public static final BlockItem REDSTONE_COUNTER_ITEM = register("redstone_counter",
+            new BlockItem(REDSTONE_COUNTER_BLOCK, new Item.Settings()));
+
     public static final BlockItem REDSTONE_CROSSOVER_ITEM = register("redstone_crossover",
             new BlockItem(REDSTONE_CROSSOVER_BLOCK, new Item.Settings()));
 
@@ -332,6 +334,10 @@ public class Registration {
             BlockEntityType.Builder.create(PlayerDetectorBlockEntity::new, Registration.PLAYER_DETECTOR_BLOCK)
                     .build());
 
+    public static final BlockEntityType<RedstoneCounterBlockEntity> REDSTONE_COUNTER_BLOCK_ENTITY = register("redstone_counter",
+            BlockEntityType.Builder.create(RedstoneCounterBlockEntity::new, Registration.REDSTONE_COUNTER_BLOCK)
+                    .build());
+
     public static final BlockEntityType<RedstoneInverterBlockEntity> REDSTONE_INVERTER_BLOCK_ENTITY = register("redstone_inverter",
             BlockEntityType.Builder.create(RedstoneInverterBlockEntity::new, Registration.REDSTONE_INVERTER_BLOCK)
                     .build());
@@ -371,6 +377,7 @@ public class Registration {
     public static final SoundEvent REDSTONE_RSNORLATCH_CLICK = register("redstone_rsnorlatch_click");
 
     // Screen Handlers
+    public static final ScreenHandlerType<RedstoneCounterScreenHandler> REDSTONE_COUNTER_SCREEN_HANDLER = register("redstone_counter",RedstoneCounterScreenHandler::new, RedstoneCounterPayload.PACKET_CODEC);
     public static final ScreenHandlerType<RedstoneTimerScreenHandler> REDSTONE_TIMER_SCREEN_HANDLER = register("redstone_timer", RedstoneTimerScreenHandler::new, BlockPosPayload.PACKET_CODEC);
     public static final ScreenHandlerType<PlayerDetectorScreenHandler> PLAYER_DETECTOR_SCREEN_HANDLER = register("player_detector", PlayerDetectorScreenHandler::new, BlockPosPayload.PACKET_CODEC);
     public static final ScreenHandlerType<TeleportInhibitorScreenHandler> TELEPORT_INHIBITOR_SCREEN_HANDLER = register("teleport_inhibitor",TeleportInhibitorScreenHandler::new, BlockPosPayload.PACKET_CODEC);
@@ -447,6 +454,7 @@ public class Registration {
                     Registration.REDSTONE_RSNORLATCH_ITEM,
                     Registration.REDSTONE_MEMORY_ITEM,
                     Registration.REDSTONE_NIBBLE_COUNTER_ITEM,
+                    Registration.REDSTONE_COUNTER_ITEM,
                     Registration.REDSTONE_TICKER_ITEM,
                     Registration.REDSTONE_TIMER_ITEM,
                     Registration.REDSTONE_RECEIVER_ITEM,

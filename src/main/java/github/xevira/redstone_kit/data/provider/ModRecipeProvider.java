@@ -380,6 +380,22 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .criterion(hasItem(Items.STONE), conditionsFromItem(Items.STONE))
                 .offerTo(exporter);
 
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Registration.REDSTONE_COUNTER_BLOCK)
+                .input('C', Items.COMPARATOR)
+                .input('r', Items.REDSTONE)
+                .input('d', Items.DIAMOND)
+                .input('N', Registration.REDSTONE_NIBBLE_COUNTER_ITEM)
+                .input('S', Blocks.STONE)
+                .pattern(" C ")
+                .pattern("rNr")
+                .pattern("SdS")
+                .criterion(hasItem(Items.COMPARATOR), conditionsFromItem(Items.COMPARATOR))
+                .criterion(hasItem(Items.REDSTONE), conditionsFromItem(Items.REDSTONE))
+                .criterion(hasItem(Items.DIAMOND), conditionsFromItem(Items.DIAMOND))
+                .criterion(hasItem(Registration.REDSTONE_NIBBLE_COUNTER_ITEM), conditionsFromItem(Registration.REDSTONE_NIBBLE_COUNTER_ITEM))
+                .criterion(hasItem(Blocks.STONE), conditionsFromItem(Blocks.STONE))
+                .offerTo(exporter);
+
 
         RedstoneKit.LOGGER.info("Finished generating recipes.");
     }

@@ -1,6 +1,7 @@
 package github.xevira.redstone_kit.block;
 
 import com.mojang.serialization.MapCodec;
+import github.xevira.redstone_kit.util.BlockProperties;
 import github.xevira.redstone_kit.util.RedstoneConnect;
 import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import net.minecraft.block.*;
@@ -25,7 +26,7 @@ public class RedstoneNibbleCounterBlock extends AbstractRedstoneGateBlock implem
 
     public static final IntProperty POWER = Properties.POWER;
     public static final BooleanProperty INVERTED = Properties.INVERTED;
-    public static final BooleanProperty CARRY = BooleanProperty.of("carry");
+    public static final BooleanProperty CARRY = BlockProperties.CARRY;
 
     public RedstoneNibbleCounterBlock(Settings settings) {
         super(settings);

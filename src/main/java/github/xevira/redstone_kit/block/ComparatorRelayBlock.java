@@ -41,10 +41,10 @@ public class ComparatorRelayBlock extends FacingBlock implements BlockEntityProv
             Block.createCuboidShape(12,12,0, 16,16, 4),
             Block.createCuboidShape(0,12,12, 4,16, 16),
             Block.createCuboidShape(12,12,12, 16, 16,16),
-            Block.createCuboidShape(0,5,5,1,11,11),     // wesr
-            Block.createCuboidShape(5,15, 5, 11,16,11), // up
-            Block.createCuboidShape(15,5,5, 16, 11, 11),// east
-            Block.createCuboidShape(5,0,5, 11,1,11),    // down
+            Block.createCuboidShape(0,5,5,1,11,11),
+            Block.createCuboidShape(5,15, 5, 11,16,11),
+            Block.createCuboidShape(15,5,5, 16, 11, 11),
+            Block.createCuboidShape(5,0,5, 11,1,11),
             Block.createCuboidShape(5,5,0,11,11,1),
             Block.createCuboidShape(4,4,15, 12,12,16)
     ).simplify();

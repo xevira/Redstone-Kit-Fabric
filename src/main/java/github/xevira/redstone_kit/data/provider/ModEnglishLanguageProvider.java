@@ -2,10 +2,7 @@ package github.xevira.redstone_kit.data.provider;
 
 import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.Registration;
-import github.xevira.redstone_kit.block.entity.PlayerDetectorBlockEntity;
-import github.xevira.redstone_kit.block.entity.RedstoneTimerBlockEntity;
-import github.xevira.redstone_kit.block.entity.TeleportInhibitorBlockEntity;
-import github.xevira.redstone_kit.block.entity.TeleporterBlockEntity;
+import github.xevira.redstone_kit.block.entity.*;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.registry.RegistryWrapper;
@@ -63,6 +60,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(Registration.LIGHT_DISPLAY_BULB_BLOCK, "Light Display Bulb");
         translationBuilder.add(Registration.PLAYER_DETECTOR_BLOCK, "Player Detector");
         translationBuilder.add(Registration.REDSTONE_AND_BLOCK, "Redstone AND Gate");
+        translationBuilder.add(Registration.REDSTONE_COUNTER_BLOCK, "Redstone Counter");
         translationBuilder.add(Registration.REDSTONE_CROSSOVER_BLOCK, "Redstone Crossover");
         translationBuilder.add(Registration.REDSTONE_INVERTER_BLOCK, "Redstone Inverter");
         translationBuilder.add(Registration.REDSTONE_MEMORY_BLOCK, "Redstone Memory Cell");
@@ -83,6 +81,7 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         translationBuilder.add(Registration.TELEPORTER_OFFERINGS_TAG, "Teleporter Offerings");
 
         addText(translationBuilder, PlayerDetectorBlockEntity.TITLE, "Player Detector");
+        addText(translationBuilder, RedstoneCounterBlockEntity.TITLE, "Redstone Counter");
         addText(translationBuilder, RedstoneTimerBlockEntity.TITLE, "Redstone Timer");
         addText(translationBuilder, TeleportInhibitorBlockEntity.TITLE, "Teleport Inhibitor");
         addText(translationBuilder, TeleporterBlockEntity.TITLE, "Teleporter");
@@ -177,5 +176,14 @@ public class ModEnglishLanguageProvider extends FabricLanguageProvider {
         addText(translationBuilder, "tooltip", "teleporter.xp_cost.set", "Click to set the Experience cost per block.");
 
         addText(translationBuilder, "text", "channel_in_use", "Channel (%s, %s, %s, %s) is already in use.");
+
+        addText(translationBuilder, "label", "redstone_counter.inverted","CARRY and INPUT sides flipped");
+        addText(translationBuilder, "tooltip", "redstone_counter.inverted","Click to invert CARRY and INPUT sides.");
+        addText(translationBuilder, "label", "redstone_counter.automatic","Counter resets automatically");
+        addText(translationBuilder, "tooltip", "redstone_counter.automatic","Click to set counter to MANUAL mode.");
+        addText(translationBuilder, "tooltip", "redstone_counter.manual","Click to set counter to AUTOMATIC mode.");
+        addText(translationBuilder, "label", "redstone_counter.max_count","Max Count:");
+        addText(translationBuilder, "tooltip", "redstone_counter.max_count","Provide a positive integer.");
+        addText(translationBuilder, "tooltip", "redstone_counter.max_count.set","Click to set the maximum count.");
     }
 }

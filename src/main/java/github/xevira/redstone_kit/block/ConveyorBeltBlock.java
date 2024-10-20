@@ -3,13 +3,15 @@ package github.xevira.redstone_kit.block;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import github.xevira.redstone_kit.RedstoneKit;
+import github.xevira.redstone_kit.util.IItemEntityMixin;
 import github.xevira.redstone_kit.util.RedstoneConnect;
 import github.xevira.redstone_kit.util.RedstoneConnectEnum;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
@@ -40,23 +42,79 @@ public class ConveyorBeltBlock extends HorizontalFacingBlock implements Redstone
 
     static {
         SLOPED_SHAPES.put(Direction.NORTH, VoxelShapes.union(
-                Block.createCuboidShape(0.0,0.0,0.0,16.0,8.0,16.0),
-                Block.createCuboidShape(0.0,8.0,0.0,16.0,16.0,8.0)
+                Block.createCuboidShape(0.0,0.0,15.0,16.0,2.0,16.0),
+                Block.createCuboidShape(0.0,1.0,14.0,16.0,3.0,15.0),
+                Block.createCuboidShape(0.0,2.0,13.0,16.0,4.0,14.0),
+                Block.createCuboidShape(0.0,3.0,12.0,16.0,5.0,13.0),
+                Block.createCuboidShape(0.0,4.0,11.0,16.0,6.0,12.0),
+                Block.createCuboidShape(0.0,5.0,10.0,16.0,7.0,11.0),
+                Block.createCuboidShape(0.0,6.0,9.0,16.0,8.0,10.0),
+                Block.createCuboidShape(0.0,7.0,8.0,16.0,9.0,9.0),
+                Block.createCuboidShape(0.0,8.0,7.0,16.0,10.0,8.0),
+                Block.createCuboidShape(0.0,9.0,6.0,16.0,11.0,7.0),
+                Block.createCuboidShape(0.0,10.0,5.0,16.0,12.0,6.0),
+                Block.createCuboidShape(0.0,11.0,4.0,16.0,13.0,5.0),
+                Block.createCuboidShape(0.0,12.0,3.0,16.0,14.0,4.0),
+                Block.createCuboidShape(0.0,13.0,2.0,16.0,15.0,3.0),
+                Block.createCuboidShape(0.0,14.0,1.0,16.0,16.0,2.0),
+                Block.createCuboidShape(0.0,15.0,0.0,16.0,17.0,1.0)
         ).simplify());
 
         SLOPED_SHAPES.put(Direction.SOUTH, VoxelShapes.union(
-                Block.createCuboidShape(0.0,0.0,0.0,16.0,8.0,16.0),
-                Block.createCuboidShape(0.0,8.0,8.0,16.0,16.0,16.0)
+                Block.createCuboidShape(0.0,0.0,0.0,16.0,2.0,1.0),
+                Block.createCuboidShape(0.0,1.0,1.0,16.0,3.0,2.0),
+                Block.createCuboidShape(0.0,2.0,2.0,16.0,4.0,3.0),
+                Block.createCuboidShape(0.0,3.0,3.0,16.0,5.0,4.0),
+                Block.createCuboidShape(0.0,4.0,4.0,16.0,6.0,5.0),
+                Block.createCuboidShape(0.0,5.0,5.0,16.0,7.0,6.0),
+                Block.createCuboidShape(0.0,6.0,6.0,16.0,8.0,7.0),
+                Block.createCuboidShape(0.0,7.0,7.0,16.0,9.0,8.0),
+                Block.createCuboidShape(0.0,8.0,8.0,16.0,10.0,9.0),
+                Block.createCuboidShape(0.0,9.0,9.0,16.0,11.0,10.0),
+                Block.createCuboidShape(0.0,10.0,10.0,16.0,12.0,11.0),
+                Block.createCuboidShape(0.0,11.0,11.0,16.0,13.0,12.0),
+                Block.createCuboidShape(0.0,12.0,12.0,16.0,14.0,13.0),
+                Block.createCuboidShape(0.0,13.0,13.0,16.0,15.0,14.0),
+                Block.createCuboidShape(0.0,14.0,14.0,16.0,16.0,15.0),
+                Block.createCuboidShape(0.0,15.0,15.0,16.0,17.0,16.0)
         ).simplify());
 
         SLOPED_SHAPES.put(Direction.EAST, VoxelShapes.union(
-                Block.createCuboidShape(0.0,0.0,0.0,16.0,8.0,16.0),
-                Block.createCuboidShape(8.0,8.0,0.0,16.0,16.0,16.0)
+                Block.createCuboidShape(0.0,0.0,0.0,1.0,2.0,16.0),
+                Block.createCuboidShape(1.0,1.0,0.0,2.0,3.0,16.0),
+                Block.createCuboidShape(2.0,2.0,0.0,3.0,4.0,16.0),
+                Block.createCuboidShape(3.0,3.0,0.0,4.0,5.0,16.0),
+                Block.createCuboidShape(4.0,4.0,0.0,5.0,6.0,16.0),
+                Block.createCuboidShape(5.0,5.0,0.0,6.0,7.0,16.0),
+                Block.createCuboidShape(6.0,6.0,0.0,7.0,8.0,16.0),
+                Block.createCuboidShape(7.0,7.0,0.0,8.0,9.0,16.0),
+                Block.createCuboidShape(8.0,8.0,0.0,9.0,10.0,16.0),
+                Block.createCuboidShape(9.0,9.0,0.0,10.0,11.0,16.0),
+                Block.createCuboidShape(10.0,10.0,0.0,11.0,12.0,16.0),
+                Block.createCuboidShape(11.0,11.0,0.0,12.0,13.0,16.0),
+                Block.createCuboidShape(12.0,12.0,0.0,13.0,14.0,16.0),
+                Block.createCuboidShape(13.0,13.0,0.0,14.0,15.0,16.0),
+                Block.createCuboidShape(14.0,14.0,0.0,15.0,16.0,16.0),
+                Block.createCuboidShape(15.0,15.0,0.0,16.0,17.0,16.0)
         ).simplify());
 
         SLOPED_SHAPES.put(Direction.WEST, VoxelShapes.union(
-                Block.createCuboidShape(0.0,0.0,0.0,16.0,8.0,16.0),
-                Block.createCuboidShape(0.0,8.0,0.0,8.0,16.0,16.0)
+                Block.createCuboidShape(15.0,0.0,0.0,16.0,2.0,16.0),
+                Block.createCuboidShape(14.0,1.0,0.0,15.0,3.0,16.0),
+                Block.createCuboidShape(13.0,2.0,0.0,14.0,4.0,16.0),
+                Block.createCuboidShape(12.0,3.0,0.0,13.0,5.0,16.0),
+                Block.createCuboidShape(11.0,4.0,0.0,12.0,6.0,16.0),
+                Block.createCuboidShape(10.0,5.0,0.0,11.0,7.0,16.0),
+                Block.createCuboidShape(9.0,6.0,0.0,10.0,8.0,16.0),
+                Block.createCuboidShape(8.0,7.0,0.0,9.0,9.0,16.0),
+                Block.createCuboidShape(7.0,8.0,0.0,8.0,10.0,16.0),
+                Block.createCuboidShape(6.0,9.0,0.0,7.0,11.0,16.0),
+                Block.createCuboidShape(5.0,0.0,0.0,6.0,12.0,16.0),
+                Block.createCuboidShape(4.0,1.0,0.0,5.0,13.0,16.0),
+                Block.createCuboidShape(3.0,2.0,0.0,4.0,14.0,16.0),
+                Block.createCuboidShape(2.0,3.0,0.0,3.0,15.0,16.0),
+                Block.createCuboidShape(1.0,4.0,0.0,2.0,16.0,16.0),
+                Block.createCuboidShape(0.0,5.0,0.0,1.0,17.0,16.0)
         ).simplify());
     }
 
@@ -127,6 +185,49 @@ public class ConveyorBeltBlock extends HorizontalFacingBlock implements Redstone
                 (entity.getY() <= (pos.getY() + 0.5f + 1.0E-7));
     }
 
+    private boolean isOnSlopeNS(boolean up, BlockPos pos, Entity entity)
+    {
+        double z;
+        if (up) {
+            z = Math.max(Math.ceil((entity.getZ() - pos.getZ()) * 16.0) * 0.0625, 0);
+        } else {
+            z = 1.0 - Math.max(Math.floor((entity.getZ() - pos.getZ()) * 16.0) * 0.0625, 0);
+        }
+
+//        if (entity.getY() <= pos.getY() + z + 0.5 + 1.0E-7)
+//        {
+//            RedstoneKit.LOGGER.info("isOnSlopeNS - true");
+//            return true;
+//        }
+//        else {
+//            RedstoneKit.LOGGER.info("isOnSlopeNS - {} ?= {} ({})", entity.getY(), (pos.getY() + z + 0.5 + 1.0E-7), z);
+//            return false;
+//        }
+        return (entity.getY() <= pos.getY() + z + 0.5 + 1.0E-7);
+    }
+
+
+    private boolean isOnSlopeEW(boolean up, BlockPos pos, Entity entity)
+    {
+        double x;
+        if (up) {
+            x = Math.max(Math.ceil((entity.getX() - pos.getX()) * 16.0) * 0.0625, 0);
+        } else {
+            x = 1.0 - Math.max(Math.floor((entity.getX() - pos.getX()) * 16.0) * 0.0625, 0);
+        }
+
+//        if (entity.getY() <= pos.getY() + x + 0.5 + 1.0E-7)
+//        {
+//            RedstoneKit.LOGGER.info("isOnSlopeEW - true");
+//            return true;
+//        }
+//        else {
+//            RedstoneKit.LOGGER.info("isOnSlopeEW - {} ?= {} ({})", entity.getY(), (pos.getY() + x + 0.5 + 1.0E-7), x);
+//            return false;
+//        }
+        return (entity.getY() <= pos.getY() + x + 0.5 + 1.0E-7);
+    }
+
     private boolean isWithinEasement(BlockPos pos, Entity entity, boolean ns)
     {
         return ns ? ((entity.getX() >= (pos.getX() + 0.125f)) && (entity.getX() <= (pos.getX() + 0.875f))) :
@@ -147,13 +248,13 @@ public class ConveyorBeltBlock extends HorizontalFacingBlock implements Redstone
 
                     case UP -> {
                         if (isWithinEasement(pos, entity, true)) {
-                            return isOnStep(entity.getZ() >= (pos.getZ() + 0.5f), pos, entity);
+                            return isOnSlopeNS(false, pos, entity);
                         }
                     }
 
                     case DOWN -> {
                         if (isWithinEasement(pos, entity, true)) {
-                            return isOnStep(entity.getZ() < (pos.getZ() + 0.5f), pos, entity);
+                            return isOnSlopeNS(true, pos, entity);
                         }
                     }
                 }
@@ -166,13 +267,13 @@ public class ConveyorBeltBlock extends HorizontalFacingBlock implements Redstone
 
                     case UP -> {
                         if (isWithinEasement(pos, entity, true)) {
-                            return isOnStep(entity.getZ() < (pos.getZ() + 0.5f), pos, entity);
+                            return isOnSlopeNS(true, pos, entity);
                         }
                     }
 
                     case DOWN -> {
                         if (isWithinEasement(pos, entity, true)) {
-                            return isOnStep(entity.getZ() >= (pos.getZ() + 0.5f), pos, entity);
+                            return isOnSlopeNS(false, pos, entity);
                         }
                     }
                 }
@@ -185,13 +286,13 @@ public class ConveyorBeltBlock extends HorizontalFacingBlock implements Redstone
 
                     case UP -> {
                         if (isWithinEasement(pos, entity, false)) {
-                            return isOnStep(entity.getX() >= (pos.getX() + 0.5f), pos, entity);
+                            return isOnSlopeEW(true, pos, entity);
                         }
                     }
 
                     case DOWN -> {
                         if (isWithinEasement(pos, entity, false)) {
-                            return isOnStep(entity.getX() < (pos.getX() + 0.5f), pos, entity);
+                            return isOnSlopeEW(false, pos, entity);
                         }
                     }
                 }
@@ -204,13 +305,13 @@ public class ConveyorBeltBlock extends HorizontalFacingBlock implements Redstone
 
                     case UP -> {
                         if (isWithinEasement(pos, entity, false)) {
-                            return isOnStep(entity.getX() < (pos.getX() + 0.5f), pos, entity);
+                            return isOnSlopeEW(false, pos, entity);
                         }
                     }
 
                     case DOWN -> {
                         if (isWithinEasement(pos, entity, false)) {
-                            return isOnStep(entity.getX() >= (pos.getX() + 0.5f), pos, entity);
+                            return isOnSlopeEW(true, pos, entity);
                         }
                     }
                 }
@@ -220,18 +321,49 @@ public class ConveyorBeltBlock extends HorizontalFacingBlock implements Redstone
         return false;
     }
 
-    @Override
-    protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+    private void conveyorEntity(World world, BlockPos pos, BlockState state, Entity entity, double speedMultiplier)
+    {
         if (state.get(ENABLED) && !entity.isSneaking() && isOnBelt(state, pos, entity)) {
             Direction facing = state.get(FACING);
 
             Vec3i facingVector = facing.getVector();
-            Vec3d motion = new Vec3d(facingVector.getX(), facingVector.getY(), facingVector.getZ()).multiply(this.belt_speed);
+//            if (state.get(SLOPE) == ConveyorBeltSlopeEnum.UP)
+//                facingVector = facingVector.add(0,1,0);
 
-            //RedstoneKit.LOGGER.info("onEntityCollision: motion = {}", motion);
+            Vec3d velocity = entity.getVelocity();
+
+            Vec3d motion = new Vec3d(facingVector.getX(), 0, facingVector.getZ()).multiply(this.belt_speed * speedMultiplier).add(0, velocity.getY(), 0);
+
+            if (state.get(SLOPE) == ConveyorBeltSlopeEnum.UP) {
+                motion = new Vec3d(motion.getX(), 0.1 * speedMultiplier, motion.getZ());
+            }
+
+//            if (state.get(SLOPE) != ConveyorBeltSlopeEnum.FLAT)
+//                RedstoneKit.LOGGER.info("conveyorEntity: motion = {}", motion);
 
             entity.setVelocity(motion);
+
+            // Keep any item *on* an enabled belt from despawning
+            if (entity instanceof ItemEntity itemEntity && itemEntity.getItemAge() > 0)
+            {
+                if (entity instanceof IItemEntityMixin mixin) {
+
+                    //IItemEntityMixin item = ((IItemEntityMixin)(Object)itemEntity);
+
+                    mixin.setItemAge(0);
+                }
+            }
         }
+    }
+
+    @Override
+    protected void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        conveyorEntity(world, pos, state, entity, 1.0);
+    }
+
+    @Override
+    public void onSteppedOn(World world, BlockPos pos, BlockState state, Entity entity) {
+        conveyorEntity(world, pos, state, entity, 1.05);
     }
 
     @Override
@@ -274,7 +406,7 @@ public class ConveyorBeltBlock extends HorizontalFacingBlock implements Redstone
     protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         if (!oldState.isOf(state.getBlock())) {
             this.updateEnabled(world, pos, state);
-            //this.updateSlope(world, pos, state);
+            this.updateSlope(world, pos, state);
         }
     }
 

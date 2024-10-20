@@ -3,6 +3,7 @@ package github.xevira.redstone_kit.network;
 import github.xevira.redstone_kit.RedstoneKit;
 import github.xevira.redstone_kit.block.entity.TeleporterBlockEntity;
 import github.xevira.redstone_kit.screenhandler.PlayerDetectorScreenHandler;
+import github.xevira.redstone_kit.screenhandler.RedstoneCounterScreenHandler;
 import github.xevira.redstone_kit.screenhandler.RedstoneTimerScreenHandler;
 import github.xevira.redstone_kit.screenhandler.TeleporterScreenHandler;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -14,11 +15,14 @@ public class Networking {
     public static void register() {
         // Packet Registration
         // - Client -> Server
-        PayloadTypeRegistry.playC2S().register(TimerSetTimePayload.ID, TimerSetTimePayload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(TimerSetRepeatPayload.ID, TimerSetRepeatPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(PlayerDetectorLockDetectorPayload.ID, PlayerDetectorLockDetectorPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(PlayerDetectorUnlockDetectorPayload.ID, PlayerDetectorUnlockDetectorPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(PlayerDetectorSetVisionPayload.ID, PlayerDetectorSetVisionPayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(RedstoneCounterSetAutomaticPayload.ID, RedstoneCounterSetAutomaticPayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(RedstoneCounterSetInvertedPayload.ID, RedstoneCounterSetInvertedPayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(RedstoneCounterSetMaxCountPayload.ID, RedstoneCounterSetMaxCountPayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(TimerSetTimePayload.ID, TimerSetTimePayload.PACKET_CODEC);
+        PayloadTypeRegistry.playC2S().register(TimerSetRepeatPayload.ID, TimerSetRepeatPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(TeleporterTeleportPlayerPayload.ID, TeleporterTeleportPlayerPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(TeleporterSetUseXPPayload.ID, TeleporterSetUseXPPayload.PACKET_CODEC);
         PayloadTypeRegistry.playC2S().register(TeleporterSetCostPayload.ID, TeleporterSetCostPayload.PACKET_CODEC);
@@ -137,6 +141,45 @@ public class Networking {
                 }
 
                 handler.setLocked(context.player(), payload.locked());
+            }
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(RedstoneCounterSetAutomaticPayload.ID, (payload, context) -> {
+            if (context.player().currentScreenHandler instanceof RedstoneCounterScreenHandler handler)
+            {
+                if (!handler.canUse(context.player()))
+                {
+                    RedstoneKit.LOGGER.debug("Player {} interacted with invalid menu {} for RedstoneCounterScreenHandler", context.player(), handler);
+                    return;
+                }
+
+                handler.setAutomatic(payload.automatic());
+            }
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(RedstoneCounterSetInvertedPayload.ID, (payload, context) -> {
+            if (context.player().currentScreenHandler instanceof RedstoneCounterScreenHandler handler)
+            {
+                if (!handler.canUse(context.player()))
+                {
+                    RedstoneKit.LOGGER.debug("Player {} interacted with invalid menu {} for RedstoneCounterScreenHandler", context.player(), handler);
+                    return;
+                }
+
+                handler.setInverted(payload.inverted());
+            }
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(RedstoneCounterSetMaxCountPayload.ID, (payload, context) -> {
+            if (context.player().currentScreenHandler instanceof RedstoneCounterScreenHandler handler)
+            {
+                if (!handler.canUse(context.player()))
+                {
+                    RedstoneKit.LOGGER.debug("Player {} interacted with invalid menu {} for RedstoneCounterScreenHandler", context.player(), handler);
+                    return;
+                }
+
+                handler.setMaxCount(payload.max_count());
             }
         });
     }
